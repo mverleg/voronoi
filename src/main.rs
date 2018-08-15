@@ -3,6 +3,8 @@
 extern crate image;
 extern crate rand;
 
+pub mod dims;
+
 use image::DynamicImage;
 use rand::{Rng, SeedableRng, StdRng};
 use std::collections::HashSet;
@@ -10,12 +12,7 @@ use std::env;
 use std::path::Path;
 use std::process::Command;
 use std::ops::Mul;
-
-#[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
-struct X(usize);
-
-#[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
-struct Y(usize);
+use dims::{X, Y};
 
 impl Mul<Y> for X {
     type Output = usize;
@@ -40,6 +37,7 @@ struct Point {
 }
 
 struct Points {
+    // The points must be unique.
     points: Vec<Point>,
 }
 
@@ -95,7 +93,8 @@ fn main() {
         // Write the output image
         let mut outpth = env::temp_dir().join("voronoi_gen.png");
         img.save(outpth.clone()).unwrap();
-        Command::new("eog").arg(outpth).spawn().unwrap();
+        //TODO @mark: turn on again:
+        //Command::new("eog").arg(outpth).spawn().unwrap();
     } else {
         panic!("Wrong image type (maybe there is an alpha channel?)");
     }
