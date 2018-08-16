@@ -13,6 +13,7 @@ use std::path::Path;
 use std::process::Command;
 use std::ops::Mul;
 use dims::{X, Y};
+use dims::X;
 
 impl Mul<Y> for X {
     type Output = usize;
