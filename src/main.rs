@@ -12,6 +12,7 @@ use std::env;
 use std::path::Path;
 use std::process::Command;
 use dims::{X, Y};
+use dims::Count;
 
 #[derive(Debug, Hash, PartialEq, Eq)]
 struct Point {
@@ -44,16 +45,16 @@ impl Points {
 }
 
 fn make_grid(width: X, height: Y) -> Vec<Vec<usize>> {
-    vec![vec![0; width._value()]; height._value()]
+    vec![vec![0; width._expose()]; height._expose()]
 }
 
-fn generate_points(width: X, height: Y, count: usize, mut rng: StdRng) -> Points {
-    assert!(width * height > 2 * count);
-    let mut pointset = HashSet::<Point>::with_capacity(count);
-    while pointset.len() < count {
+fn generate_points(width: X, height: Y, count: Count, mut rng: StdRng) -> Points {
+    assert!(width * height > count * 2);
+    let mut pointset = HashSet::<Point>::with_capacity(count._expose());
+    while pointset.len() < count._expose() {
         let point = Point {
-            x: X::new(rng.gen_range(0, width.0)),
-            y: Y::new(rng.gen_range(0, height.0)),
+            x: X::new(rng.gen_range(0, width._expose())),
+            y: Y::new(rng.gen_range(0, height._expose())),
         };
         if !pointset.contains(&point) {
             pointset.insert(point);
