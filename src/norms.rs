@@ -2,13 +2,31 @@
 //noinspection RsTypeAliasNaming
 pub type norm = Fun(&dX, &dY) -> Dist;
 
+#[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
+pub struct Dist {
+    value: f64,
+}
+
+impl Dist {
+    pub fn new(value: f64) -> Option<Self> {
+        if (value < 0) {
+            return None;
+        }
+        Some(Dist { value })
+    }
+
+    pub fn fnew(value: f64) -> Self {
+        Self::new(value).unwrap()
+    }
+}
+
 /// Manhattan (L1) distance for horizontal/vertical edges.
 pub fn manhattan(dx: &dX, dy: &dY) -> Dist {
     Dist.fnew(dx.abs() + dy.abs())
 }
 
 /// Euclidean (L2) distance squared for straight edges in any direction (standard Voronoi).
-pub fn euclidean2(dx: &dX, dy: &dY) -> Dist {
+pub fn euclidean(dx: &dX, dy: &dY) -> Dist {
     Dist.fnew(dx*dx + dy*dy)
 }
 
@@ -23,7 +41,7 @@ mod tests {
     use super::*;
 
     fn get_norm_funcs() {
-        vec![manhattan, euclidean2, L3];
+        vec![manhattan, euclidean, L3];
     }
 
     #[test]
@@ -66,4 +84,19 @@ mod tests {
         }
     }
 
+    #[test]
+    fn test_manhattan() {
+        assert_eq!(Dist::fnew(4), manhattan(X(2) - X(0), Y(2) - Y(0)));
+    }
+
+    #[test]
+    fn test_euclidean() {
+        assert_eq!(Dist::fnew(4), euclidean(X(2) - X(0), Y(2) - Y(0)));
+    }
+
+    //noinspection RsFunctionNaming
+    #[test]
+    fn test_L3() {
+        assert_eq!(Dist::fnew(4), L3(X(2) - X(0), Y(2) - Y(0)));
+    }
 }

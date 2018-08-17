@@ -1,38 +1,66 @@
 
+use std::ops::{Add, Sub};
+
 /// These X and Y are indices (unsigned integers), not physical distances.
 
-#[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
-pub struct X {
-    value: usize,
-}
-
-#[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
-pub struct Y {
-    value: usize,
-}
-
-//noinspection RsStructNaming
-#[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
-pub struct dX(usize);
-
-//noinspection RsStructNaming
-#[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
-pub struct dY(usize);
-
-#[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
-pub struct Dist {
-    value: f64,
-}
-
-impl Dist {
-    pub fn new(value: f64) -> Option<Self> {
-        if (value < 0) {
-            return None;
+macro_rules! make_dim {
+    ( $T:ident, $dT:ident ) => {
+        #[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
+        pub struct $T {
+            value: usize,
         }
-        Some(Dist { value })
-    }
 
-    pub fn fnew(value: f64) -> Self {
-        Self::new(value).unwrap()
+        impl $T {
+            pub fn new(value: usize) -> Self {
+                $T { value }
+            }
+        }
+
+        //noinspection RsStructNaming
+        #[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
+        pub struct $dT {
+            step: i32,
+        }
+
+        impl $dT {
+            pub fn new(value: usize) -> Self {
+                $dT { value }
+            }
+        }
+
+        impl Sub<$T> for $T {
+            type Output = $dT;
+
+            fn sub(self, other: $T) -> Self::Output {
+                $ dT { step: self.value - other.value }
+            }
+        }
+
+        impl Sub<$dT> for $T {
+            type Output = $T;
+
+            fn sub(self, other: $dT) -> Self::Output {
+                if self.value < other.step {
+                    $ T { value: 0 }
+                } else {
+                    $ T { value: self.value - other.value }
+                }
+            }
+        }
+
+        impl Add<$dT> for $T {
+            type Output = $T;
+
+            fn add(self, other: $dT) -> Self::Output {
+                if self.value < -other.step {
+                    $ T { value: 0 }
+                } else {
+                    $ T { value: self.value - other.value }
+                }
+            }
+        }
     }
 }
+
+make_dim!(X, dX);
+make_dim!(Y, dY);
