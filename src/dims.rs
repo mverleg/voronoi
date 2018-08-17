@@ -1,6 +1,7 @@
 
 use std::ops::{Add, Sub, Mul};
 use std::ops::Div;
+use norms::Dist;
 
 /// These X and Y are indices (unsigned integers), not physical distances.
 
@@ -65,6 +66,17 @@ macro_rules! make_dim {
             pub fn new(step: i32) -> Self {
                 $dT { step }
             }
+
+            pub fn abs(&self) -> Self {
+                if self.step < 0 {
+                    return $dT { step: self.step }
+                }
+                self.clone()
+            }
+
+//            pub fn dist(self) -> Dist {
+//                Dist::fnew(self.step.abs() as f64)
+//            }
         }
 
         impl Sub<$T> for $T {
@@ -117,5 +129,28 @@ impl Mul<Y> for X {
 
     fn mul(self, other: Y) -> Self::Output {
         Count { value: self.value * other.value }
+    }
+}
+
+impl Mul<dY> for dX {
+    type Output = Dist;
+
+    fn mul(self, other: dY) -> Self::Output {
+        Dist { value: (self.step + other.step) as f64 }
+    }
+}
+
+impl Add<dY> for dX {
+    type Output = Count;
+
+    fn add(self, other: dY) -> Self::Output {
+        //TODO @mark: this is unsafe, could be negative
+        Count { value: (self.step + other.step) as usize }
+    }
+}
+
+impl From<Count> for Dist {
+    fn from(count: Count) -> Self {
+        Dist { value: count.value as f64 }
     }
 }

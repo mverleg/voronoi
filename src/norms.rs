@@ -1,15 +1,18 @@
 
-//noinspection RsTypeAliasNaming
-pub type norm = Fun(&dX, &dY) -> Dist;
+use dims::{dX, dY};
+use std::ops::Add;
 
-#[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
+//noinspection RsTypeAliasNaming
+pub type norm = Fn(&dX, &dY) -> Dist;
+
+#[derive(Debug, PartialEq, PartialOrd, Clone, Copy)]
 pub struct Dist {
     value: f64,
 }
 
 impl Dist {
     pub fn new(value: f64) -> Option<Self> {
-        if (value < 0) {
+        if value < 0.0 {
             return None;
         }
         Some(Dist { value })
@@ -20,20 +23,34 @@ impl Dist {
     }
 }
 
+impl Add<Dist> for Dist {
+    type Output = Dist;
+
+    fn add(self, other: Dist) -> Self::Output {
+        Dist { value: self.value + other.value }
+    }
+}
+
 /// Manhattan (L1) distance for horizontal/vertical edges.
 pub fn manhattan(dx: &dX, dy: &dY) -> Dist {
-    Dist.fnew(dx.abs() + dy.abs())
+    let dx = dx.abs();
+    let dy = dy.abs();
+    (dx + dy).into()
 }
 
 /// Euclidean (L2) distance squared for straight edges in any direction (standard Voronoi).
 pub fn euclidean(dx: &dX, dy: &dY) -> Dist {
-    Dist.fnew(dx*dx + dy*dy)
+    let dx = dx.abs();
+    let dy = dy.abs();
+    Dist::fnew(dx*dx + dy*dy)
 }
 
 //noinspection RsFunctionNaming
 /// L3 distance cubed for curved edges.
 pub fn L3(dx: &dX, dy: &dY) -> Dist {
-    Dist.fnew(dx*dx*dx + dy*dy*dy)
+    let dx = dx.abs().dist();
+    let dy = dy.abs().dist();
+    Dist::fnew(dx*dx*dx + dy*dy*dy)
 }
 
 #[cfg(test)]
