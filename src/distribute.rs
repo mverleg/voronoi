@@ -2,7 +2,6 @@ use dims::{X, Y};
 use points::UPoints;
 use rand::{Rng, StdRng};
 use std::collections::HashSet;
-use points::Point;
 use points::Point2D;
 use norms::Norm;
 

@@ -3,6 +3,7 @@ use dims::{dX, dY};
 use std::ops::Add;
 use points::Step2D;
 use dims::Dim;
+use std::ops::Mul;
 
 /// Trait for objects that have a length (norm). Specifically L1, L2 and L3.
 //noinspection RsMethodNaming
@@ -68,6 +69,14 @@ impl Add<Dist> for Dist {
 
     fn add(self, other: Dist) -> Self::Output {
         Dist { value: self.value + other.value }
+    }
+}
+
+impl Mul<Dist> for Dist {
+    type Output = PseudoDist;
+
+    fn mul(self, other: Dist) -> Self::Output {
+        PseudoDist { value: self.value * other.value }
     }
 }
 
