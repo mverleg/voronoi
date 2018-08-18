@@ -6,7 +6,7 @@ use points::Point;
 use points::Point2D;
 
 pub fn generate_points(width: X, height: Y, count: usize, mut rng: StdRng) -> UPoints<Point2D> {
-    assert!(width * height > count * 2);
+    assert!(width.euclidean_norm() * height.euclidean_norm() > count * 2);
     let mut pointset = HashSet::<Point>::with_capacity(count._expose());
     while pointset.len() < count._expose() {
         let point = Point2D {

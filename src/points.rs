@@ -83,5 +83,3 @@ impl<P> UPoints<P> where P: Point {
         unimplemented!()
     }
 }
-
-
