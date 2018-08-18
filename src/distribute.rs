@@ -1,22 +1,22 @@
 use dims::{X, Y};
-use dims::Count;
-use points::Points;
+use points::UPoints;
 use rand::{Rng, StdRng};
 use std::collections::HashSet;
 use points::Point;
+use norms::Dist;
+use points::Point2D;
 
-pub fn generate_points(width: X, height: Y, count: Count, mut rng: StdRng) -> Points {
+pub fn generate_points(width: X, height: Y, count: Dist, mut rng: StdRng) -> UPoints<Point2D> {
     assert!(width * height > count * 2);
     let mut pointset = HashSet::<Point>::with_capacity(count._expose());
     while pointset.len() < count._expose() {
-        let point = Point {
+        let point = Point2D {
             x: X::new(rng.gen_range(0, width._expose())),
             y: Y::new(rng.gen_range(0, height._expose())),
         };
         if !pointset.contains(&point) {
             pointset.insert(point);
-        } else {
-        }
+        } else {}
     }
-    Points::new(pointset.into_iter().collect())
+    UPoints::new(pointset.into_iter().collect())
 }

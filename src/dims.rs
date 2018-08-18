@@ -5,44 +5,11 @@ use norms::Dist;
 
 /// These X and Y are indices (unsigned integers), not physical distances.
 
-/// The number of units in X or Y dimension, used as an area.
-#[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
-pub struct Count {
-    value: usize,
-}
-
-impl Count {
-    pub fn new(value: usize) -> Self {
-        Count { value }
-    }
-
-    /// Expose the internal usize. Should only be used when required for external code.
-    pub fn _expose(&self) -> usize {
-        self.value
-    }
-}
-
-impl Mul<usize> for Count {
-    type Output = Count;
-
-    fn mul(self, other: usize) -> Self::Output {
-        Count { value: self.value * other }
-    }
-}
-
-impl Div<usize> for Count {
-    type Output = Count;
-
-    fn div(self, other: usize) -> Self::Output {
-        Count { value: self.value / other }
-    }
-}
-
 macro_rules! make_dim {
     ( $T:ident, $dT:ident ) => {
         #[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
         pub struct $T {
-            value: usize,
+            value: i32,
         }
 
         impl $T {
@@ -73,10 +40,6 @@ macro_rules! make_dim {
                 }
                 self.clone()
             }
-
-//            pub fn dist(self) -> Dist {
-//                Dist::fnew(self.step.abs() as f64)
-//            }
         }
 
         impl Sub<$T> for $T {
@@ -111,13 +74,13 @@ macro_rules! make_dim {
             }
         }
 
-        impl Mul<$T> for $T {
-            type Output = Count;
-
-            fn mul(self, other: $T) -> Self::Output {
-                Count { value: self.value * other.value }
-            }
-        }
+//        impl Mul<$T> for $T {
+//            type Output = Dist;
+//
+//            fn mul(self, other: $T) -> Self::Output {
+//                Dist { value: self.value * other.value }
+//            }
+//        }
     }
 }
 
@@ -125,10 +88,10 @@ make_dim!(X, dX);
 make_dim!(Y, dY);
 
 impl Mul<Y> for X {
-    type Output = Count;
+    type Output = Dist;
 
     fn mul(self, other: Y) -> Self::Output {
-        Count { value: self.value * other.value }
+        Dist { value: self.value * other.value }
     }
 }
 
@@ -140,17 +103,17 @@ impl Mul<dY> for dX {
     }
 }
 
-impl Add<dY> for dX {
-    type Output = Count;
+//impl Add<dY> for dX {
+//    type Output = Dist;
+//
+//    fn add(self, other: dY) -> Self::Output {
+//        //TODO @mark: this is unsafe, could be negative
+//        Dist { value: (self.step + other.step) as f64 }
+//    }
+//}
 
-    fn add(self, other: dY) -> Self::Output {
-        //TODO @mark: this is unsafe, could be negative
-        Count { value: (self.step + other.step) as usize }
-    }
-}
-
-impl From<Count> for Dist {
-    fn from(count: Count) -> Self {
-        Dist { value: count.value as f64 }
+impl From<Dist> for Dist {
+    fn from(Dist: Dist) -> Self {
+        Dist { value: Dist.value as f64 }
     }
 }
