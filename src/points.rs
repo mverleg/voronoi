@@ -9,6 +9,8 @@ pub struct Point2D {
     y: Y,
 }
 
+impl Point for Point2D {}
+
 /// Collection of *unique* points.
 pub struct UPoints<P> where P: Point {
     points: Vec<P>,

@@ -17,7 +17,7 @@ pub mod distribute;
 pub mod points;
 
 fn make_grid(width: X, height: Y) -> Vec<Vec<usize>> {
-    vec![vec![0; width._expose()]; height._expose()]
+    vec![vec![0; width._expose() as usize]; height._expose() as usize]
 }
 
 fn main() {
@@ -27,9 +27,10 @@ fn main() {
     if let DynamicImage::ImageRgb8(img) = dyn_img {
         // Get a random seed
         let mut rng: StdRng = SeedableRng::from_seed([154, 209, 215, 146, 162, 81, 13, 78, 243, 132, 107, 232, 61, 157, 71, 142, 202, 167, 65, 141, 113, 250, 202, 52, 46, 221, 141, 139, 22, 29, 183, 135]);
-        let width = X::new(img.width() as usize);
-        let height = Y::new(img.width() as usize);
-        let mut points = generate_points(width, height, (width * height) / 50, rng);
+        let width = X::new(img.width() as i32);
+        let height = Y::new(img.width() as i32);
+        let node_count: usize = (img.width() * img.height()) as usize / 50;
+        let mut points = generate_points(width, height, node_count, rng);
         // Write the output image
         let mut outpth = env::temp_dir().join("voronoi_gen.png");
         img.save(outpth.clone()).unwrap();
