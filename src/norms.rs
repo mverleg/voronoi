@@ -2,6 +2,7 @@
 use dims::{dX, dY};
 use std::ops::Add;
 use points::Step2D;
+use dims::Dim;
 
 /// Trait for objects that have a length (norm). Specifically L1, L2 and L3.
 //noinspection RsMethodNaming
@@ -88,17 +89,34 @@ pub fn L3<N>(object: N) -> PseudoDist where N: Norm {
 
 impl Norm for Step2D {
     fn manhattan_pseudo(&self) -> PseudoDist {
-        unimplemented!()
+        PseudoDist { value: (self.dx.step.abs() + self.dy.step.abs()) as f64 }
     }
 
     fn euclidean_pseudo(&self) -> PseudoDist {
-        unimplemented!()
+        PseudoDist { value: (self.dx.step.pow(2) + self.dy.step.pow(2)) as f64 }
     }
 
+    //noinspection RsMethodNaming
     fn L3_pseudo(&self) -> PseudoDist {
-        unimplemented!()
+        PseudoDist { value: (self.dx.step.abs().pow(3) + self.dy.step.abs().pow(3)) as f64 }
     }
 }
+
+impl<D> Norm for D where D: Dim {
+    fn manhattan_pseudo(&self) -> PseudoDist {
+        PseudoDist { value: self._expose().abs() as f64 }
+    }
+
+    fn euclidean_pseudo(&self) -> PseudoDist {
+        PseudoDist { value: self._expose().pow(2) as f64 }
+    }
+
+    //noinspection RsMethodNaming
+    fn L3_pseudo(&self) -> PseudoDist {
+        PseudoDist { value: self._expose().pow(3) as f64 }
+    }
+}
+
 ///// Manhattan (L1) distance for horizontal/vertical edges.
 //pub fn manhattan(step: Step) -> Dist {
 //    let dx = dx.abs();

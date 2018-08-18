@@ -3,20 +3,26 @@ use std::ops::{Add, Sub, Mul};
 
 /// These X and Y are indices (unsigned integers), not physical distances.
 
+pub trait Dim {
+    /// Expose the internal usize. Should only be used when required for external code.
+    fn _expose(&self) -> i32;
+}
+
 macro_rules! make_dim {
     ( $T:ident, $dT:ident ) => {
         #[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
         pub struct $T {
-            value: i32,
+            pub value: i32,
         }
 
         impl $T {
             pub fn new(value: i32) -> Self {
-                $T { value }
+                $ T { value }
             }
+        }
 
-            /// Expose the internal usize. Should only be used when required for external code.
-            pub fn _expose(&self) -> i32 {
+        impl Dim for $T {
+            fn _expose(&self) -> i32 {
                 self.value
             }
         }
@@ -24,7 +30,7 @@ macro_rules! make_dim {
         //noinspection RsStructNaming
         #[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
         pub struct $dT {
-            step: i32,
+            pub step: i32,
         }
 
         impl $dT {

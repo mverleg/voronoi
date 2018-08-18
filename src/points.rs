@@ -1,12 +1,13 @@
 
 use dims::{X, Y, dX, dY};
 use std::ops::{Add, Sub};
+use std::hash::Hash;
 
-pub trait Point {
+pub trait Point: Sized + Eq + Hash {
     fn from(x: X, y: Y) -> Self;
 }
 
-#[derive(Debug, Hash, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Hash)]
 pub struct Point2D {
     x: X,
     y: Y,
@@ -23,10 +24,10 @@ pub trait Step {
     fn from(dx: dX, dy: dY) -> Self;
 }
 
-#[derive(Debug, Hash, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Hash)]
 pub struct Step2D {
-    dx: dX,
-    dy: dY,
+    pub dx: dX,
+    pub dy: dY,
 }
 
 impl Step for Step2D {

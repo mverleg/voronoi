@@ -3,7 +3,7 @@
 extern crate image;
 extern crate rand;
 
-use dims::{X, Y};
+use dims::{Dim, X, Y};
 use distribute::generate_points;
 use image::DynamicImage;
 use rand::{SeedableRng, StdRng};
