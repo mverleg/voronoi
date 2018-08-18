@@ -4,7 +4,7 @@ use std::ops::{Add, Sub};
 use std::hash::Hash;
 
 pub trait Point: Sized + Eq + Hash {
-    fn from(x: X, y: Y) -> Self;
+    fn new(x: X, y: Y) -> Self;
 }
 
 #[derive(Debug, PartialEq, Eq, Hash)]
@@ -14,14 +14,16 @@ pub struct Point2D {
 }
 
 impl Point for Point2D {
-    fn from(x: X, y: Y) -> Self {
+    fn new(x: X, y: Y) -> Self {
         Point2D { x, y }
     }
 }
 
 /// A Step is a vector that can e.g. point from one point to another.
 pub trait Step {
-    fn from(dx: dX, dy: dY) -> Self;
+    fn new(dx: dX, dy: dY) -> Self;
+    fn dx(&self) -> dX;
+    fn dy(&self) -> dY;
 }
 
 #[derive(Debug, PartialEq, Eq, Hash)]
@@ -31,8 +33,14 @@ pub struct Step2D {
 }
 
 impl Step for Step2D {
-    fn from(dx: dX, dy: dY) -> Self {
+    fn new(dx: dX, dy: dY) -> Self {
         Step2D { dx, dy }
+    }
+    fn dx(&self) -> dX {
+        self.dx
+    }
+    fn dy(&self) -> dY {
+        self.dy
     }
 }
 
@@ -41,7 +49,7 @@ impl Sub<Point2D> for Point2D {
     type Output = Step2D;
 
     fn sub(self, other: Point2D) -> Self::Output {
-        Step2D::from(self.x - other.x, self.y - other.y)
+        Step2D::new(self.x - other.x, self.y - other.y)
     }
 }
 
@@ -49,7 +57,7 @@ impl<S> Sub<S> for Point2D where S: Step {
     type Output = Point2D;
 
     fn sub(self, other: S) -> Self::Output {
-        Point2D::from(self.x - other.dx, self.y - other.dy)
+        Point2D::new(self.x - other.dx(), self.y - other.dy())
     }
 }
 
@@ -57,7 +65,7 @@ impl<S> Add<S> for Point2D where S: Step {
     type Output = Point2D;
 
     fn add(self, other: S) -> Self::Output {
-        Point2D::from(self.x + other.dx, self.y + other.dy)
+        Point2D::new(self.x + other.dx(), self.y + other.dy())
     }
 }
 

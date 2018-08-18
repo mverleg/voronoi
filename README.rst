@@ -34,4 +34,7 @@ There are several considerations:
 * Distances are not real numbers and do not care about direction.
 * For polymorphism reasons, different norms should return identical or compatible types, even though their physical units are different, since `sqrt`s are skipped.
 
+Difficulties:
 
+* It is necessary to expose the `usize` data for e.g. generating random numbers or building a `Vec`.
+* There is substantially more code to facilitate types and operations on them than there is 'business' logic.
