@@ -1,6 +1,5 @@
 
 use std::ops::{Add, Sub, Mul};
-use norms::Dist;
 
 /// These X and Y are indices (unsigned integers), not physical distances.
 
@@ -86,21 +85,23 @@ macro_rules! make_dim {
 make_dim!(X, dX);
 make_dim!(Y, dY);
 
-impl Mul<Y> for X {
-    type Output = Dist;
+//TODO @mark: re-enable
+//impl Mul<Y> for X {
+//    type Output = Dist;
+//
+//    fn mul(self, other: Y) -> Self::Output {
+//        Dist { value: (self.value * other.value) as f64 }
+//    }
+//}
 
-    fn mul(self, other: Y) -> Self::Output {
-        Dist { value: (self.value * other.value) as f64 }
-    }
-}
-
-impl Mul<dY> for dX {
-    type Output = Dist;
-
-    fn mul(self, other: dY) -> Self::Output {
-        Dist { value: (self.step + other.step) as f64 }
-    }
-}
+//TODO @mark: re-enable
+//impl Mul<dY> for dX {
+//    type Output = Dist;
+//
+//    fn mul(self, other: dY) -> Self::Output {
+//        Dist { value: (self.step + other.step) as f64 }
+//    }
+//}
 
 //impl Add<dY> for dX {
 //    type Output = Dist;
