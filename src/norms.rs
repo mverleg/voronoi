@@ -1,8 +1,7 @@
-
 use dims::{dX, dY};
-use std::ops::Add;
-use points::Step2D;
 use dims::Dim;
+use points::Step2D;
+use std::ops::Add;
 use std::ops::Mul;
 
 /// Trait for objects that have a length (norm). Specifically L1, L2 and L3.
@@ -81,18 +80,18 @@ impl Mul<Dist> for Dist {
 }
 
 /// Manhattan (L1) distance for horizontal/vertical edges.
-pub fn manhattan<N>(object: N) -> PseudoDist where N: Norm {
+pub fn manhattan<N>(object: &N) -> PseudoDist where N: Norm {
     object.manhattan_pseudo()
 }
 
 /// Euclidean (L2) distance squared for straight edges in any direction (standard Voronoi).
-pub fn euclidean<N>(object: N) -> PseudoDist where N: Norm {
+pub fn euclidean<N>(object: &N) -> PseudoDist where N: Norm {
     object.euclidean_pseudo()
 }
 
 #[allow(non_snake_case)]
 /// L3 distance cubed for curved edges.
-pub fn L3<N>(object: N) -> PseudoDist where N: Norm {
+pub fn L3<N>(object: &N) -> PseudoDist where N: Norm {
     object.L3_pseudo()
 }
 
@@ -151,26 +150,33 @@ impl<D> Norm for D where D: Dim {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use dims::{X, Y};
+    use points::Step2D;
 
-    fn get_norm_funcs() {
-        vec![manhattan, euclidean, L3];
+    //TODO @mark: use 'norm' type alias if possible
+    fn get_norm_funcs<N>() -> Vec<&'static Fn(N) -> PseudoDist> where N: Norm {
+        let mut funcs: Vec<&'static Fn(N) -> PseudoDist> = Vec::with_capacity(3);
+        funcs.push(&manhattan);
+        funcs.push(&euclidean);
+        funcs.push(&L3);
+        funcs
     }
 
     #[test]
     fn test_pure_axis() {
         for f in get_norm_funcs() {
-            assert_eq!(Dist::fnew(1), f(X(1) - X(0), Y(0) - Y(0)));
-            assert_eq!(Dist::fnew(5), f(X(5) - X(0), Y(0) - Y(0)));
-            assert_eq!(Dist::fnew(1), f(X(0) - X(0), Y(1) - Y(0)));
-            assert_eq!(Dist::fnew(5), f(X(0) - X(0), Y(5) - Y(0)));
+            assert_eq!(Dist::fnew(1f64), f(Step2D::new(1, 0)));
+            assert_eq!(Dist::fnew(5f64), f(X::new(5) - X::new(0), Y::new(0) - Y::new(0)));
+            assert_eq!(Dist::fnew(1f64), f(X::new(0) - X::new(0), Y::new(1) - Y::new(0)));
+            assert_eq!(Dist::fnew(5f64), f(X::new(0) - X::new(0), Y::new(5) - Y::new(0)));
         }
     }
 
     #[test]
     fn test_bounding_box() {
         for f in get_norm_funcs() {
-            assert_eq!(Dist::fnew(2), f(X(1) - X(0), Y(1) - Y(0)));
-            assert_eq!(Dist::fnew(10), f(X(5) - X(0), Y(5) - Y(0)));
+            assert_eq!(Dist::fnew(2), f(X::new(1) - X::new(0), Y::new(1) - Y::new(0)));
+            assert_eq!(Dist::fnew(10), f(X::new(5) - X::new(0), Y::new(5) - Y::new(0)));
         }
     }
 
@@ -179,7 +185,7 @@ mod tests {
         for f in get_norm_funcs() {
             for a in 0 .. 10 {
                 for b in 0 .. 10 {
-                    assert_eq!(f(X(a) - X(0), Y(b) - Y(0)), f(X(b) - X(0), Y(a) - Y(0)));
+                    assert_eq!(f(X::new(a) - X::new(0), Y::new(b) - Y::new(0)), f(X::new(b) - X::new(0), Y::new(a) - Y::new(0)));
                 }
             }
         }
@@ -190,7 +196,7 @@ mod tests {
         for f in get_norm_funcs() {
             for x in 0 .. 10 {
                 for y in 0 .. 10 {
-                    assert_eq!(f(X(x) - X(0), Y(y) - Y(0)), f(X(0) - X(x), Y() - Y(y)));
+                    assert_eq!(f(X::new(x) - X::new(0), Y::new(y) - Y::new(0)), f(X::new(0) - X::new(x), Y::new() - Y::new(y)));
                 }
             }
         }
@@ -198,17 +204,17 @@ mod tests {
 
     #[test]
     fn test_manhattan() {
-        assert_eq!(Dist::fnew(4), manhattan(X(2) - X(0), Y(2) - Y(0)));
+        assert_eq!(Dist::fnew(4f64), manhattan(X::new(2) - X::new(0), Y::new(2) - Y::new(0)));
     }
 
     #[test]
     fn test_euclidean() {
-        assert_eq!(Dist::fnew(4), euclidean(X(2) - X(0), Y(2) - Y(0)));
+        assert_eq!(Dist::fnew(4f64), euclidean(X::new(2) - X::new(0), Y::new(2) - Y::new(0)));
     }
 
     //noinspection RsFunctionNaming
     #[test]
     fn test_L3() {
-        assert_eq!(Dist::fnew(4), L3(X(2) - X(0), Y(2) - Y(0)));
+        assert_eq!(Dist::fnew(4f64), L3(X::new(2) - X::new(0), Y::new(2) - Y::new(0)));
     }
 }

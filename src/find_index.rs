@@ -1,6 +1,5 @@
 use std::cmp::Ordering;
 use std::ops::{Add, Sub, Div};
-use std::ops::Range;
 
 /// Find an index that is equal in an ORDERED range.
 /// If there are multiple matches, there is no guarantee about which of them is returned.
@@ -42,5 +41,23 @@ fn find_index<T, F>(mut min: T, mut max: T, f: F) -> Option<T>
                 max = mid
             },
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_find_index() {
+        let data: Vec<i32> = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        assert_eq!(Some(6), find_index(0, data.len() - 1, |x| data[x].cmp(&6)));
+        assert_eq!(Some(0), find_index(0, data.len() - 1, |x| data[x].cmp(&0)));
+        assert_eq!(Some(10), find_index(0, data.len() - 1, |x| data[x].cmp(&10)));
+        assert_eq!(None, find_index(0, data.len() - 1, |x| data[x].cmp(&-1)));
+        assert_eq!(None, find_index(0, data.len() - 1, |x| data[x].cmp(&11)));
+        let data = vec![1, 1, 1, 2, 2, 2, 3, 3, 3];
+        let needle = find_index(0, data.len() - 1, |x| data[x].cmp(&2)).unwrap();
+        assert!(needle >= 3 && needle <= 5, "match was {}", needle);
     }
 }
