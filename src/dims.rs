@@ -1,5 +1,5 @@
 
-use std::ops::{Add, Sub, Mul};
+use std::ops::{Add, Sub};
 
 /// These X and Y are indices (unsigned integers), not physical distances.
 
@@ -27,7 +27,7 @@ macro_rules! make_dim {
             }
         }
 
-        //noinspection RsStructNaming
+        #[allow(non_camel_case_types)]
         #[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
         pub struct $dT {
             pub step: i32,

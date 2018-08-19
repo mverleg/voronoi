@@ -74,8 +74,15 @@ pub struct UPoints<P> where P: Point {
     points: Vec<P>,
 }
 
+#[derive(Debug, Clone, Copy)]
 pub struct PointId {
-    val: usize,
+    value: usize,
+}
+
+impl PointId {
+    pub fn new(value: usize) -> Self {
+        PointId { value }
+    }
 }
 
 impl<P> UPoints<P> where P: Point {
@@ -84,11 +91,6 @@ impl<P> UPoints<P> where P: Point {
     }
 
     pub fn get(&self, id: PointId) -> &P {
-        &self.points[id.val]
-    }
-
-    pub fn within(&self, left: X, right: X, top: Y, bottom: Y) -> &Vec<P> {
-        //TODO @mark:
-        unimplemented!()
+        &self.points[id.value]
     }
 }

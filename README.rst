@@ -21,7 +21,12 @@ Not ready yet...
 Performance
 -------------------------------
 
-...
+* There are a lot of wrapper types for safety, but these shouldn't cost anything in Rust.
+* Try to avoid heap allocations. The image itself, the list of centers and the pixel mapping should be heap-allocated though, their size is large and unknown at compile-time.
+* Try to avoid dynamic dispatch completely.
+* Avoid unnecessary math, e.g. L1/L2/L3 norm values have the same total order without the square/cubic root.
+
+Todo: simd, cache locality, contiguous memory, parallelism
 
 Types
 -------------------------------
@@ -36,5 +41,6 @@ There are several considerations:
 
 Difficulties:
 
+* Some operations cannot be overloaded generically but have to be re-done for every concrete type because of orphan rules. Macros help a little here.
 * It is necessary to expose the `usize` data for e.g. generating random numbers or building a `Vec`.
 * There is substantially more code to facilitate types and operations on them than there is 'business' logic.

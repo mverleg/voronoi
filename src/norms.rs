@@ -6,7 +6,7 @@ use dims::Dim;
 use std::ops::Mul;
 
 /// Trait for objects that have a length (norm). Specifically L1, L2 and L3.
-//noinspection RsMethodNaming
+#[allow(non_snake_case)]
 pub trait Norm {
     // Default implementations assume that pseudo-norm is just |x|^n + |y|^n without any roots taken.
     fn manhattan_norm(&self) -> Dist {
@@ -23,7 +23,7 @@ pub trait Norm {
     fn L3_pseudo(&self) -> PseudoDist;
 }
 
-//noinspection RsTypeAliasNaming
+#[allow(non_camel_case_types)]
 pub type norm = Fn(&dX, &dY) -> Dist;
 
 #[derive(Debug, PartialEq, PartialOrd, Clone, Copy)]
@@ -90,7 +90,7 @@ pub fn euclidean<N>(object: N) -> PseudoDist where N: Norm {
     object.euclidean_pseudo()
 }
 
-//noinspection RsFunctionNaming
+#[allow(non_snake_case)]
 /// L3 distance cubed for curved edges.
 pub fn L3<N>(object: N) -> PseudoDist where N: Norm {
     object.L3_pseudo()
@@ -105,7 +105,7 @@ impl Norm for Step2D {
         PseudoDist { value: (self.dx.step.pow(2) + self.dy.step.pow(2)) as f64 }
     }
 
-    //noinspection RsMethodNaming
+    #[allow(non_snake_case)]
     fn L3_pseudo(&self) -> PseudoDist {
         PseudoDist { value: (self.dx.step.abs().pow(3) + self.dy.step.abs().pow(3)) as f64 }
     }
@@ -120,7 +120,7 @@ impl<D> Norm for D where D: Dim {
         PseudoDist { value: self._expose().pow(2) as f64 }
     }
 
-    //noinspection RsMethodNaming
+    #[allow(non_snake_case)]
     fn L3_pseudo(&self) -> PseudoDist {
         PseudoDist { value: self._expose().pow(3) as f64 }
     }
