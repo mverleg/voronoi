@@ -13,10 +13,12 @@ pub struct Point2D {
 }
 
 impl Point2D {
+    #[inline]
     pub fn x(&self) -> X {
         self.x
     }
 
+    #[inline]
     pub fn y(&self) -> Y {
         self.y
     }
@@ -45,9 +47,13 @@ impl Step for Step2D {
     fn new(dx: dX, dy: dY) -> Self {
         Step2D { dx, dy }
     }
+
+    #[inline]
     fn dx(&self) -> dX {
         self.dx
     }
+
+    #[inline]
     fn dy(&self) -> dY {
         self.dy
     }

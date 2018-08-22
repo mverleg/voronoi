@@ -6,7 +6,7 @@ use std::ops::{Add, Sub, Div};
 /// Order requirements for all x:
 /// * if f(x) is Equal, f(x+1) is Equal or Greater
 /// * if f(x) is Greater, f(x+1) is Greater
-fn find_index<T, F>(mut min: T, mut max: T, f: F) -> Option<T>
+pub fn find_index<T, F>(mut min: T, mut max: T, f: F) -> Option<T>
     where T: PartialOrd + Add<usize, Output=T> + Add<T, Output=T> + Sub<usize, Output=T> + Sub<T, Output=T> + Div<usize, Output=T> + Copy,
           F: Fn(T) -> Ordering
 {
