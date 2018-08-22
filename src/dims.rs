@@ -1,4 +1,4 @@
-use std::ops::{Add, Sub};
+use std::ops::{Add, Sub, Div};
 use norms::Dist;
 
 /// These X and Y are indices (unsigned integers), not physical distances.
@@ -29,6 +29,10 @@ macro_rules! make_dim {
 //                }
 //                $T { value: self.value - margin }
 //            }
+
+            pub fn as_index(&self) -> usize {
+                self.value as usize
+            }
         }
 
         impl Dim for $T {
@@ -100,8 +104,15 @@ macro_rules! make_dim {
             type Output = $T;
 
             fn sub(self, other: usize) -> Self::Output {
-                // TODO
                 $T { value: self.value - other as i32 }
+            }
+        }
+
+        impl Div<usize> for $T {
+            type Output = $T;
+
+            fn div(self, other: usize) -> Self::Output {
+                $T { value: self.value / other as i32 }
             }
         }
 
