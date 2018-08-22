@@ -20,15 +20,15 @@ macro_rules! make_dim {
                 $T { value }
             }
 
-            /// Returns the highest $T that is within Dist below `self`, but still positive.
-            pub fn margin_down(self, margin: Dist) -> Self {
-                let margin = margin._expose().floor() as i32;
-                // TODO: see issue #1
-                if margin >= self.value {
-                    return $T { value: 0 }
-                }
-                $T { value: self.value - margin }
-            }
+//            /// Returns the highest $T that is within Dist below `self`, but still positive.
+//            pub fn margin_down(self, margin: Dist) -> Self {
+//                let margin = margin._expose().floor() as i32;
+//                // TODO: see issue #1
+//                if margin >= self.value {
+//                    return $T { value: 0 }
+//                }
+//                $T { value: self.value - margin }
+//            }
         }
 
         impl Dim for $T {
@@ -88,6 +88,23 @@ macro_rules! make_dim {
             }
         }
 
+        impl Add<usize> for $T {
+            type Output = $T;
+
+            fn add(self, other: usize) -> Self::Output {
+                $T { value: self.value + other as i32 }
+            }
+        }
+
+        impl Sub<usize> for $T {
+            type Output = $T;
+
+            fn sub(self, other: usize) -> Self::Output {
+                // TODO
+                $T { value: self.value - other as i32 }
+            }
+        }
+
 //        impl Mul<$T> for $T {
 //            type Output = Dist;
 //
@@ -123,7 +140,6 @@ make_dim!(Y, dY);
 //    type Output = Dist;
 //
 //    fn add(self, other: dY) -> Self::Output {
-//        //TODO @mark: this is unsafe, could be negative
 //        Dist { value: (self.step + other.step) as f64 }
 //    }
 //}
