@@ -3,6 +3,7 @@ use dims::Dim;
 use points::Step2D;
 use std::ops::Add;
 use std::ops::Mul;
+use std::ops::Sub;
 
 /// Trait for objects that have a length (norm). Specifically L1, L2 and L3.
 #[allow(non_snake_case)]
@@ -61,6 +62,10 @@ impl Dist {
     pub fn fnew(value: f64) -> Self {
         Self::new(value).unwrap()
     }
+
+    pub fn abs(&self) -> Self {
+        *self
+    }
 }
 
 impl Add<Dist> for Dist {
@@ -70,6 +75,15 @@ impl Add<Dist> for Dist {
         Dist { value: self.value + other.value }
     }
 }
+
+impl Sub<Dist> for Dist {
+    type Output = Dist;
+
+    fn sub(self, other: Dist) -> Self::Output {
+        Dist { value: self.value - other.value }
+    }
+}
+
 
 impl Mul<Dist> for Dist {
     type Output = PseudoDist;
@@ -164,6 +178,7 @@ impl<D> Norm for D where D: Dim {
 mod tests {
     use points::{Step, Step2D};
     use super::*;
+    use std::f64::consts::PI;
 
     //TODO @mark: use 'norm' type alias if possible
     fn get_norm_funcs<N>() -> Vec<&'static Fn(&N) -> Dist> where N: Norm {
@@ -187,8 +202,8 @@ mod tests {
     #[test]
     fn test_bounding_box() {
         for f in get_norm_funcs() {
-            assert_eq!(Dist::fnew(2f64), f(&Step2D::new(dX::new(1), dY::new(1))));
-            assert_eq!(Dist::fnew(10f64), f(&Step2D::new(dX::new(5), dY::new(5))));
+            assert!(Dist::fnew(2f64) >= f(&Step2D::new(dX::new(1), dY::new(1))));
+            assert!(Dist::fnew(10f64) >= f(&Step2D::new(dX::new(5), dY::new(5))));
         }
     }
 
@@ -216,17 +231,17 @@ mod tests {
 
     #[test]
     fn test_manhattan() {
-        assert_eq!(Dist::fnew(4f64), manhattan(&Step2D::new(dX::new(2), dY::new(2))));
+        assert_approx_eq!(Dist::fnew(4f64), manhattan(&Step2D::new(dX::new(2), dY::new(2))), Dist::fnew(1e-10));
     }
 
     #[test]
     fn test_euclidean() {
-        assert_eq!(Dist::fnew(4f64), euclidean(&Step2D::new(dX::new(2), dY::new(2))));
+        assert_approx_eq!(Dist::fnew(4. * (PI / 4.).cos()), euclidean(&Step2D::new(dX::new(2), dY::new(2))), Dist::fnew(1e-10));
     }
 
     #[allow(non_snake_case)]
     #[test]
     fn test_L3() {
-        assert_eq!(Dist::fnew(4f64), L3(&Step2D::new(dX::new(2), dY::new(2))));
+        assert_approx_eq!(Dist::fnew(16f64.powf(1./3.)), L3(&Step2D::new(dX::new(2), dY::new(2))), Dist::fnew(1e-10));
     }
 }

@@ -2,6 +2,8 @@
 
 extern crate image;
 extern crate rand;
+#[macro_use]
+extern crate assert_approx_eq;
 
 use dims::{Dim, X, Y};
 use distribute::generate_points;
