@@ -80,18 +80,31 @@ impl Mul<Dist> for Dist {
 }
 
 /// Manhattan (L1) distance for horizontal/vertical edges.
-pub fn manhattan<N>(object: &N) -> PseudoDist where N: Norm {
-    object.manhattan_pseudo()
+pub fn manhattan<N>(object: &N) -> Dist where N: Norm {
+    object.manhattan_norm()
 }
 
 /// Euclidean (L2) distance squared for straight edges in any direction (standard Voronoi).
-pub fn euclidean<N>(object: &N) -> PseudoDist where N: Norm {
-    object.euclidean_pseudo()
+pub fn euclidean<N>(object: &N) -> Dist where N: Norm {
+    object.euclidean_norm()
 }
 
 #[allow(non_snake_case)]
 /// L3 distance cubed for curved edges.
-pub fn L3<N>(object: &N) -> PseudoDist where N: Norm {
+pub fn L3<N>(object: &N) -> Dist where N: Norm {
+    object.L3_norm()
+}
+
+pub fn pmanhattan<N>(object: &N) -> PseudoDist where N: Norm {
+    object.manhattan_pseudo()
+}
+
+pub fn peuclidean<N>(object: &N) -> PseudoDist where N: Norm {
+    object.euclidean_pseudo()
+}
+
+#[allow(non_snake_case)]
+pub fn pL3<N>(object: &N) -> PseudoDist where N: Norm {
     object.L3_pseudo()
 }
 
@@ -149,13 +162,12 @@ impl<D> Norm for D where D: Dim {
 
 #[cfg(test)]
 mod tests {
+    use points::{Step, Step2D};
     use super::*;
-    use dims::{X, Y};
-    use points::Step2D;
 
     //TODO @mark: use 'norm' type alias if possible
-    fn get_norm_funcs<N>() -> Vec<&'static Fn(N) -> PseudoDist> where N: Norm {
-        let mut funcs: Vec<&'static Fn(N) -> PseudoDist> = Vec::with_capacity(3);
+    fn get_norm_funcs<N>() -> Vec<&'static Fn(&N) -> Dist> where N: Norm {
+        let mut funcs: Vec<&'static Fn(&N) -> Dist> = Vec::with_capacity(3);
         funcs.push(&manhattan);
         funcs.push(&euclidean);
         funcs.push(&L3);
@@ -165,18 +177,18 @@ mod tests {
     #[test]
     fn test_pure_axis() {
         for f in get_norm_funcs() {
-            assert_eq!(Dist::fnew(1f64), f(Step2D::new(1, 0)));
-            assert_eq!(Dist::fnew(5f64), f(X::new(5) - X::new(0), Y::new(0) - Y::new(0)));
-            assert_eq!(Dist::fnew(1f64), f(X::new(0) - X::new(0), Y::new(1) - Y::new(0)));
-            assert_eq!(Dist::fnew(5f64), f(X::new(0) - X::new(0), Y::new(5) - Y::new(0)));
+            assert_eq!(Dist::fnew(1f64), f(&Step2D::new(dX::new(1), dY::new(0))));
+            assert_eq!(Dist::fnew(5f64), f(&Step2D::new(dX::new(5), dY::new(0))));
+            assert_eq!(Dist::fnew(1f64), f(&Step2D::new(dX::new(0), dY::new(1))));
+            assert_eq!(Dist::fnew(5f64), f(&Step2D::new(dX::new(0), dY::new(5))));
         }
     }
 
     #[test]
     fn test_bounding_box() {
         for f in get_norm_funcs() {
-            assert_eq!(Dist::fnew(2), f(X::new(1) - X::new(0), Y::new(1) - Y::new(0)));
-            assert_eq!(Dist::fnew(10), f(X::new(5) - X::new(0), Y::new(5) - Y::new(0)));
+            assert_eq!(Dist::fnew(2f64), f(&Step2D::new(dX::new(1), dY::new(1))));
+            assert_eq!(Dist::fnew(10f64), f(&Step2D::new(dX::new(5), dY::new(5))));
         }
     }
 
@@ -185,7 +197,7 @@ mod tests {
         for f in get_norm_funcs() {
             for a in 0 .. 10 {
                 for b in 0 .. 10 {
-                    assert_eq!(f(X::new(a) - X::new(0), Y::new(b) - Y::new(0)), f(X::new(b) - X::new(0), Y::new(a) - Y::new(0)));
+                    assert_eq!(f(&Step2D::new(dX::new(a), dY::new(b))), f(&Step2D::new(dX::new(b), dY::new(a))));
                 }
             }
         }
@@ -196,7 +208,7 @@ mod tests {
         for f in get_norm_funcs() {
             for x in 0 .. 10 {
                 for y in 0 .. 10 {
-                    assert_eq!(f(X::new(x) - X::new(0), Y::new(y) - Y::new(0)), f(X::new(0) - X::new(x), Y::new() - Y::new(y)));
+                    assert_eq!(f(&Step2D::new(dX::new(x), dY::new(y))), f(&Step2D::new(dX::new(-x), dY::new(-y))));
                 }
             }
         }
@@ -204,17 +216,17 @@ mod tests {
 
     #[test]
     fn test_manhattan() {
-        assert_eq!(Dist::fnew(4f64), manhattan(X::new(2) - X::new(0), Y::new(2) - Y::new(0)));
+        assert_eq!(Dist::fnew(4f64), manhattan(&Step2D::new(dX::new(2), dY::new(2))));
     }
 
     #[test]
     fn test_euclidean() {
-        assert_eq!(Dist::fnew(4f64), euclidean(X::new(2) - X::new(0), Y::new(2) - Y::new(0)));
+        assert_eq!(Dist::fnew(4f64), euclidean(&Step2D::new(dX::new(2), dY::new(2))));
     }
 
-    //noinspection RsFunctionNaming
+    #[allow(non_snake_case)]
     #[test]
     fn test_L3() {
-        assert_eq!(Dist::fnew(4f64), L3(X::new(2) - X::new(0), Y::new(2) - Y::new(0)));
+        assert_eq!(Dist::fnew(4f64), L3(&Step2D::new(dX::new(2), dY::new(2))));
     }
 }

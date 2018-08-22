@@ -9,6 +9,7 @@ use image::DynamicImage;
 use rand::{SeedableRng, StdRng};
 use std::env;
 use std::path::Path;
+#[allow(unused_imports)]
 use std::process::Command;
 use points::PointId;
 
