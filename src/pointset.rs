@@ -24,43 +24,45 @@ pub struct UPoints {
 
 impl UPoints {
     pub fn new(points: Vec<Point2D>) -> Self {
-        assert!(points.len() > 0);
+        let length = points.len();
+        assert!(length > 0);
         let mut points_by_x = points.clone();
         points_by_x.sort_by(|p1, p2| p1.x().cmp(&p2.x()));
         let mut points_by_y = points;
         points_by_y.sort_by(|p1, p2| p1.y().cmp(&p2.y()));
-        UPoints { points_by_x, points_by_y, _working_set: HashSet::with_capacity(points_by_x.len()) }
+        UPoints { points_by_x, points_by_y, _working_set: HashSet::with_capacity(length) }
     }
 
     //TODO @mark: this should center on the current pixel, not the reference point
     fn within_x_segment(&mut self, reference: Point2D, centers: &UPoints, range: Dist) {
         self._working_set.clear();
         // Find any point within the range
-        let reference_index = find_index(reference.x().margin_down(range), reference.x().margin_up(range), |p: Point2D| p.x().cmp(&reference.x()));
-        if let None = reference_index {
-            return
-        }
-        // Iterate backward from that point until range is exceeded (since points are ordered)
-        let mut xindex = reference_index;
-        let mut current = self.points_by_x[xindex];
-        let reference_x_min = reference.x() - range;
-        while current.x() >= reference_x_min {
-            self._working_set.insert(current);
-            xindex -= 1;
-            current = self.points_by_x[xindex];
-            println!("x forw {:?}: {:?}", xindex, current);
-        }
-        // Iterate forward the same way6
-        xindex = reference_index;
-        current = self.points_by_x[xindex + 1];
-        let reference_x_max = reference.x() + range;
-        while current.x() <= reference_x_max {
-            self._working_set.insert(current);
-            xindex += 1;
-            current = self.points_by_x[xindex];
-            println!("x back {:?}: {:?}", xindex, current);
-        }
-        // Result is that `_working_set` is filled.
+        unimplemented!();  //TODO @mark: THIS CODE IS TEMPORARY!
+//        let reference_index = find_index(reference.x().margin_down(range), reference.x().margin_up(range), |p: Point2D| p.x().cmp(&reference.x()));
+//        if let None = reference_index {
+//            return
+//        }
+//        // Iterate backward from that point until range is exceeded (since points are ordered)
+//        let mut xindex = reference_index;
+//        let mut current = self.points_by_x[xindex];
+//        let reference_x_min = reference.x() - range;
+//        while current.x() >= reference_x_min {
+//            self._working_set.insert(current);
+//            xindex -= 1;
+//            current = self.points_by_x[xindex];
+//            println!("x forw {:?}: {:?}", xindex, current);
+//        }
+//        // Iterate forward the same way6
+//        xindex = reference_index;
+//        current = self.points_by_x[xindex + 1];
+//        let reference_x_max = reference.x() + range;
+//        while current.x() <= reference_x_max {
+//            self._working_set.insert(current);
+//            xindex += 1;
+//            current = self.points_by_x[xindex];
+//            println!("x back {:?}: {:?}", xindex, current);
+//        }
+//        // Result is that `_working_set` is filled.
     }
 
     fn within_y_segment() {

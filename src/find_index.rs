@@ -7,13 +7,14 @@ use std::ops::{Add, Sub, Div};
 /// * if f(x) is Equal, f(x+1) is Equal or Greater
 /// * if f(x) is Greater, f(x+1) is Greater
 pub fn find_index<T, F>(mut min: T, mut max: T, f: F) -> Option<T>
-    where T: PartialOrd + Add<T, Output=T> + Sub<T, Output=T> + Copy,
+    where T: PartialOrd + Add<usize, Output=T> + Add<T, Output=T> + Sub<usize, Output=T> + Sub<T, Output=T> + Div<usize, Output=T> + Copy,
           F: Fn(T) -> Ordering
 {
     assert!(max >= min);
     // Test the order criterion if in debug mode
     let mut k = min;
-    while k < max - 1 {
+    let top = max - 1;
+    while k < top {
         if f(k) == Ordering::Equal {
             debug_assert!(f(k+1) == Ordering::Equal || f(k+1) == Ordering::Greater);
         }
