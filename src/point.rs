@@ -1,7 +1,6 @@
-
-use dims::{X, Y, dX, dY};
-use std::ops::{Add, Sub};
+use dims::{dX, dY, X, Y};
 use std::hash::Hash;
+use std::ops::{Add, Sub};
 
 pub trait Point: Sized + Eq + Hash {
     fn new(x: X, y: Y) -> Self;
@@ -66,31 +65,5 @@ impl<S> Add<S> for Point2D where S: Step {
 
     fn add(self, other: S) -> Self::Output {
         Point2D::new(self.x + other.dx(), self.y + other.dy())
-    }
-}
-
-/// Collection of *unique* points.
-pub struct UPoints<P> where P: Point {
-    points: Vec<P>,
-}
-
-#[derive(Debug, Clone, Copy)]
-pub struct PointId {
-    value: usize,
-}
-
-impl PointId {
-    pub fn new(value: usize) -> Self {
-        PointId { value }
-    }
-}
-
-impl<P> UPoints<P> where P: Point {
-    pub fn new(points: Vec<P>) -> Self {
-        UPoints { points }
-    }
-
-    pub fn get(&self, id: PointId) -> &P {
-        &self.points[id.value]
     }
 }

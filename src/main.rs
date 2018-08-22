@@ -13,12 +13,13 @@ use std::env;
 use std::path::Path;
 #[allow(unused_imports)]
 use std::process::Command;
-use points::PointId;
+use pointset::PointId;
 
 pub mod dims;
 pub mod norms;
 pub mod distribute;
-pub mod points;
+pub mod point;
+pub mod pointset;
 pub mod find_index;
 pub mod regions;
 
