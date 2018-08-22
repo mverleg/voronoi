@@ -1,19 +1,20 @@
 #![feature(extern_prelude)]
 
-extern crate image;
-extern crate rand;
 #[macro_use]
 extern crate assert_approx_eq;
+extern crate image;
+extern crate rand;
 
+use assign::assign_to_centers;
 use dims::{Dim, X, Y};
 use distribute::generate_points;
 use image::DynamicImage;
+use pointset::PointId;
 use rand::{SeedableRng, StdRng};
 use std::env;
 use std::path::Path;
 #[allow(unused_imports)]
 use std::process::Command;
-use pointset::PointId;
 
 pub mod dims;
 pub mod norms;
@@ -22,7 +23,9 @@ pub mod point;
 pub mod pointset;
 pub mod find_index;
 pub mod regions;
+pub mod assign;
 
+//TODO @mark: should this be a dedicated matrix structure rather than just Vec<Vec<.>> ?
 fn make_grid(width: X, height: Y) -> Vec<Vec<PointId>> {
     vec![vec![PointId::new(0); width._expose() as usize]; height._expose() as usize]
 }
@@ -40,7 +43,7 @@ fn main() {
         let mut points = generate_points(width, height, node_count, rng);
         // Assign all pixels to the nearest center.
         let pixel_group = make_grid(width, height);
-
+        assign_to_centers(pixel_group, points);
         // Write the output image
         let mut outpth = env::temp_dir().join("voronoi_gen.png");
         img.save(outpth.clone()).unwrap();

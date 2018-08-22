@@ -6,7 +6,7 @@ pub trait Point: Sized + Eq + Hash {
     fn new(x: X, y: Y) -> Self;
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct Point2D {
     x: X,
     y: Y,
