@@ -26,7 +26,7 @@ Performance
 * Try to avoid dynamic dispatch completely.
 * Avoid unnecessary math, e.g. L1/L2/L3 norm values have the same total order without the square/cubic root.
 
-Todo: simd, cache locality, contiguous memory, parallelism
+Todo: simd, cache locality, contiguous memory, parallelism, branch prediction, 
 
 Types
 -------------------------------

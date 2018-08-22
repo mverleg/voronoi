@@ -8,7 +8,7 @@ use pointset::UPoints;
 use rand::{Rng, StdRng};
 use std::collections::HashSet;
 
-pub fn generate_points(width: X, height: Y, count: usize, mut rng: StdRng) -> UPoints<Point2D> {
+pub fn generate_points(width: X, height: Y, count: usize, mut rng: StdRng) -> UPoints {
     assert!(width.euclidean_norm() * height.euclidean_norm() > Dist::fnew(2.0 * (count as f64)));
     let mut pointset = HashSet::<Point2D>::with_capacity(count);
     while pointset.len() < count {

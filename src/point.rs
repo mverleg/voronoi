@@ -6,10 +6,20 @@ pub trait Point: Sized + Eq + Hash {
     fn new(x: X, y: Y) -> Self;
 }
 
-#[derive(Debug, PartialEq, Eq, Hash)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct Point2D {
     x: X,
     y: Y,
+}
+
+impl Point2D {
+    pub fn x(&self) -> X {
+        self.x
+    }
+
+    pub fn y(&self) -> Y {
+        self.y
+    }
 }
 
 impl Point for Point2D {
