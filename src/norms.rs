@@ -1,4 +1,4 @@
-use dims::{dX, dY};
+use dims::{X, Y, dX, dY};
 use dims::Dim;
 use point::Step2D;
 use std::ops::Add;
@@ -46,7 +46,13 @@ macro_rules! make_dist {
 				Self::new(value).unwrap()
 			}
 
+			/// Expose the internal value. Careful with trying to use this to get around type safety.
+			pub fn _expose(&self) -> f64 {
+				self.value
+			}
+
 			pub fn abs(&self) -> Self {
+				// todo: what is the point? why does the code call abs() on a norm?
 				*self
 			}
 		}
@@ -74,6 +80,38 @@ macro_rules! make_dist {
 				$T { value: self.value * other.value }
 			}
 		}
+
+//		impl Add<$T> for X {
+//			type Output = $T;
+//
+//			fn add(self, other: $T) -> Self::Output {
+//				$T { value: self.value as f64 + other.value }
+//			}
+//		}
+
+//		impl Sub<$T> for X {
+//			type Output = $T;
+//
+//			fn sub(self, other: $T) -> Self::Output {
+//				$T { value: self.value as f64 - other.value }
+//			}
+//		}
+
+//		impl Add<$T> for Y {
+//			type Output = $T;
+//
+//			fn add(self, other: $T) -> Self::Output {
+//				$T { value: self.value as f64 + other.value }
+//			}
+//		}
+
+//		impl Sub<$T> for Y {
+//			type Output = $T;
+//
+//			fn sub(self, other: $T) -> Self::Output {
+//				$T { value: self.value as f64 - other.value }
+//			}
+//		}
 	}
 }
 

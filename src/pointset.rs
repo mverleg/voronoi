@@ -36,11 +36,11 @@ impl UPoints {
     fn within_x_segment(&mut self, reference: Point2D, centers: &UPoints, range: Dist) {
         self._working_set.clear();
         // Find any point within the range
-        let reference_index = find_index(reference.x() - range, reference.x() + range, |p| p.x().cmp(reference.x()));
+        let reference_index = find_index(reference.x().margin_down(range), reference.x().margin_up(range), |p: Point2D| p.x().cmp(&reference.x()));
         if let None = reference_index {
             return
         }
-        // Iterate backward from that point until range is exceeded (since points are ordered)\
+        // Iterate backward from that point until range is exceeded (since points are ordered)
         let mut xindex = reference_index;
         let mut current = self.points_by_x[xindex];
         let reference_x_min = reference.x() - range;
@@ -50,7 +50,7 @@ impl UPoints {
             current = self.points_by_x[xindex];
             println!("x forw {:?}: {:?}", xindex, current);
         }
-        // Iterate forward the same way
+        // Iterate forward the same way6
         xindex = reference_index;
         current = self.points_by_x[xindex + 1];
         let reference_x_max = reference.x() + range;
@@ -60,8 +60,6 @@ impl UPoints {
             current = self.points_by_x[xindex];
             println!("x back {:?}: {:?}", xindex, current);
         }
-
-
         // Result is that `_working_set` is filled.
     }
 
@@ -70,6 +68,7 @@ impl UPoints {
 
 
 
+        // Result is that `_working_set` has been filtered.
     }
 
     pub fn within_box(point: Point2D, range: Dist) {

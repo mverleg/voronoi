@@ -1,10 +1,10 @@
-
 use std::ops::{Add, Sub};
+use norms::Dist;
 
 /// These X and Y are indices (unsigned integers), not physical distances.
 
 pub trait Dim {
-    /// Expose the internal usize. Should only be used when required for external code.
+    /// Expose the internal value. Careful with trying to use this to get around type safety.
     fn _expose(&self) -> i32;
 }
 
@@ -17,7 +17,17 @@ macro_rules! make_dim {
 
         impl $T {
             pub fn new(value: i32) -> Self {
-                $ T { value }
+                $T { value }
+            }
+
+            /// Returns the highest $T that is within Dist below `self`, but still positive.
+            pub fn margin_down(self, margin: Dist) -> Self {
+                let margin = margin._expose().floor() as i32;
+                // TODO: see issue #1
+                if margin >= self.value {
+                    return $T { value: 0 }
+                }
+                $T { value: self.value - margin }
             }
         }
 
