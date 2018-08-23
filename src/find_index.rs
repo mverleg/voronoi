@@ -1,13 +1,23 @@
 use std::cmp::Ordering;
 use std::ops::{Add, Sub, Div};
 
+pub trait Mid {
+    fn midpoint(first: Self, second: Self) -> Self;
+}
+
+impl Mid for usize {
+    fn midpoint(first: Self, second: Self) -> Self {
+        (first + second) / 2
+    }
+}
+
 /// Find an index that is equal in an ORDERED range.
 /// If there are multiple matches, there is no guarantee about which of them is returned.
 /// Order requirements for all x:
 /// * if f(x) is Equal, f(x+1) is Equal or Greater
 /// * if f(x) is Greater, f(x+1) is Greater
 pub fn find_index<T, F>(mut min: T, mut max: T, f: F) -> Option<T>
-    where T: PartialOrd + Add<usize, Output=T> + Sub<usize, Output=T> + Div<usize, Output=T> + Copy,
+    where T: PartialOrd + Add<usize, Output=T> + Sub<usize, Output=T> + Mid + Copy,
           F: Fn(T) -> Ordering
 {
     assert!(max >= min);
@@ -26,7 +36,7 @@ pub fn find_index<T, F>(mut min: T, mut max: T, f: F) -> Option<T>
     max = max + 1;
     // Bisection
     loop {
-        let mid = (min + max) / 2;
+        let mid = T::midpoint(min, max);
         match f(mid) {
             Ordering::Less => {
                 if mid == min {

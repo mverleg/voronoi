@@ -39,27 +39,28 @@ impl UPoints {
     fn within_x_segment(&mut self, reference: Point2D, centers: &UPoints, range: Dist) {
         self._working_set.clear();
         // Find any point within the range
-        let reference_index: Option<X> = find_index(reference.x() - range.ufloor(), reference.x() + range.ufloor(), |x: X| x.cmp(&reference.x()));
+        let urange = range.ufloor();
+        let reference_index: Option<X> = find_index(reference.x() - urange, reference.x() + urange, |x: X| x.cmp(&reference.x()));
         if let Some(reference_index) = reference_index {
             // Iterate backward from that point until range is exceeded (since points are ordered)
-            let mut xindex = reference_index;
+            let mut xindex = reference_index.as_index();
             // TODO: https://github.com/mverleg/typed_index_vec
-            let mut current = self.points_by_x[xindex.as_index()];
-            let reference_x_min = reference.x() - range;
+            let mut current = self.points_by_x[xindex];
+            let reference_x_min = reference.x() - urange;
             while current.x() >= reference_x_min {
                 self._working_set.insert(current);
                 xindex -= 1;
-                current = self.points_by_x[xindex.as_index()];
+                current = self.points_by_x[xindex];
                 println!("x forw {:?}: {:?}", xindex, current);
             }
             // Iterate forward the same way6
-            xindex = reference_index + 1;
-            current = self.points_by_x[xindex.as_index()];
-            let reference_x_max = reference.x() + range;
+            xindex = (reference_index + 1).as_index();
+            current = self.points_by_x[xindex];
+            let reference_x_max = reference.x() + urange;
             while current.x() <= reference_x_max {
                 self._working_set.insert(current);
                 xindex += 1;
-                current = self.points_by_x[xindex.as_index()];
+                current = self.points_by_x[xindex];
                 println!("x back {:?}: {:?}", xindex, current);
             }
         } else {

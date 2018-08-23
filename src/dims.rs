@@ -1,5 +1,6 @@
-use std::ops::{Add, Sub, Div};
+use find_index::Mid;
 use norms::Dist;
+use std::ops::{Add, Div, Sub};
 
 /// These X and Y are indices (unsigned integers), not physical distances.
 
@@ -38,6 +39,12 @@ macro_rules! make_dim {
         impl Dim for $T {
             fn _expose(&self) -> i32 {
                 self.value
+            }
+        }
+
+        impl Mid for $T {
+            fn midpoint(first: $T, second: $T) -> $T {
+                $T { value: (first.value + second.value) / 2 }
             }
         }
 
@@ -108,13 +115,13 @@ macro_rules! make_dim {
             }
         }
 
-        impl Div<usize> for $T {
-            type Output = $T;
-
-            fn div(self, other: usize) -> Self::Output {
-                $T { value: self.value / other as i32 }
-            }
-        }
+//        impl Div<usize> for $T {
+//            type Output = $T;
+//
+//            fn div(self, other: usize) -> Self::Output {
+//                $T { value: self.value / other as i32 }
+//            }
+//        }
 
 //        impl Mul<$T> for $T {
 //            type Output = Dist;
@@ -123,6 +130,7 @@ macro_rules! make_dim {
 //                Dist { value: self.value * other.value }
 //            }
 //        }
+
     }
 }
 
