@@ -7,7 +7,7 @@ extern crate rand;
 
 use assign::assign_to_centers;
 use dims::{Dim, X, Y};
-use distribute::generate_points;
+use distribute::generate_random_points;
 use image::DynamicImage;
 use pointset::PointId;
 use rand::{SeedableRng, StdRng};
@@ -40,7 +40,7 @@ fn main() {
         let width = X::new(img.width() as i32);
         let height = Y::new(img.height() as i32);
         let node_count: usize = (img.width() * img.height()) as usize / 50;
-        let mut points = generate_points(width, height, node_count, rng);
+        let mut points = generate_random_points(width, height, node_count, rng);
         // Assign all pixels to the nearest center.
         let pixel_group = make_grid(width, height);
         assign_to_centers(pixel_group, points);
