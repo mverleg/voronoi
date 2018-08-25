@@ -44,8 +44,10 @@ impl UPoints {
         self.points_by_x.len()
     }
 
-    //TODO @mark: this should center on the current pixel, not the reference point
-    fn within_x_segment(&mut self, reference: Point2D, range: Dist) {
+    pub fn within_box(&mut self, reference: Point2D, range: Dist) -> &Vec<PointId> {
+        // For efficiency, this returns current_result. This would be completely unsafe in most language,
+        // but borrow rules will make sure it is not changed while in use in Rust.
+        self.current_result.clear();
         // Find any point within the range
         let urange = range.ufloor();
         let reference_index: Option<X> = find_index(
@@ -54,13 +56,17 @@ impl UPoints {
             |x: X| x.cmp(&reference.x()))
         ;
         if let Some(reference_index) = reference_index {
+            let y_min = reference.y() - urange;
+            let y_max = reference.y() + urange;
             // Iterate backward from that point until range is exceeded (since points are ordered)
             let mut index = reference_index.as_index();
             // TODO: https://github.com/mverleg/typed_index_vec
             let mut current = self.points_by_x[index];
-            let reference_x_min = reference.x() - urange;
-            while current.x() >= reference_x_min {
-                self.current_result.push(PointId::new(index));
+            let x_min = reference.x() - urange;
+            while current.x() >= x_min {
+                if (y_min <= current.y() && current.y() <= y_max) {
+                    self.current_result.push(PointId::new(index));
+                }
                 if (index == 0) {
                     break;
                 }
@@ -70,26 +76,18 @@ impl UPoints {
             // Iterate forward the same way
             index = (reference_index + 1).as_index();
             current = self.points_by_x[index];
-            let reference_x_max = reference.x() + urange;
-            while current.x() <= reference_x_max {
-                self.current_result.push(PointId::new(index));
+            let x_max = reference.x() + urange;
+            while current.x() <= x_max {
+                if (y_min <= current.y() && current.y() <= y_max) {
+                    self.current_result.push(PointId::new(index));
+                }
                 index += 1;
                 if (index == self.len()) {
                     break;
                 }
                 current = self.points_by_x[index];
             }
-        } else {
-            return;
         }
-        // Result is that `current_result` is filled.
-    }
-
-    pub fn within_box(&mut self, point: Point2D, range: Dist) -> &Vec<PointId> {
-        // For efficiency, this returns current_result. Borrow rules will make sure it is not changed.
-        self.current_result.clear();
-        //TODO @mark: THIS CODE IS TEMPORARY!
-        self.within_x_segment(point, range);
         &self.current_result
     }
 
