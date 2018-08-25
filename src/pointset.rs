@@ -53,6 +53,7 @@ impl UPoints {
         // Find any point within the range
         let urange = range.ufloor();
         let reference_index: Option<X> = find_index(reference.x() - urange, reference.x() + urange, |x: X| x.cmp(&reference.x()));
+        println!("reference_index: {:?}", reference_index);  //TODO: mark (temporary)
         if let Some(reference_index) = reference_index {
             // Iterate backward from that point until range is exceeded (since points are ordered)
             let mut xindex = reference_index.as_index();
@@ -60,27 +61,29 @@ impl UPoints {
             let mut current = self.points_by_x[xindex];
             let reference_x_min = reference.x() - urange;
             while current.x() >= reference_x_min {
+                println!("x back {:?}: {:?}", xindex, current);  // TODO
                 self._working_set.insert(current);
                 if (xindex == 0) {
                     break;
                 }
                 xindex -= 1;
                 current = self.points_by_x[xindex];
-                println!("x back {:?}: {:?}", xindex, current);  // TODO
             }
             // Iterate forward the same way
             xindex = (reference_index + 1).as_index();
             current = self.points_by_x[xindex];
             let reference_x_max = reference.x() + urange;
-            println!("reference_x_max: {:?}", reference_x_max);  // TODO
+            println!("reference_x_max: {:?}, c: {:?}, {}", reference_x_max, current.x(), current.x() <= reference_x_max);  // TODO
             while current.x() <= reference_x_max {
+                println!("x forw {:?}: {:?}", xindex, current);  // TODO
                 self._working_set.insert(current);
                 xindex += 1;
+                println!("xindex, len: {:?}, {:?}", xindex, self.len());  //TODO: mark (temporary)
                 if (xindex == self.len()) {
+                    println!("end: {:?}", xindex);  //TODO: mark (temporary)
                     break;
                 }
                 current = self.points_by_x[xindex];
-                println!("x forw {:?}: {:?}", xindex, current);  // TODO
             }
         } else {
             return;
@@ -131,7 +134,7 @@ mod tests {
     fn test_within() {
         let mut points = generate_fixed_points(X::new(15), Y::new(15), 9);
         //TODO @mark: test range2 for ==
-        let matches = points.within_box(Point2D::from_raw(3, 3), Dist::fnew(3.0));
+        let matches = points.within_box(Point2D::from_raw(4, 4), Dist::fnew(3.0));
         assert_eq!(4, matches.len());
         assert!(matches.contains(&Point2D::from_raw(2, 2)));
         assert!(matches.contains(&Point2D::from_raw(2, 7)));
