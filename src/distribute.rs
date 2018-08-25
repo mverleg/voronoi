@@ -7,6 +7,7 @@ use point::Point2D;
 use pointset::UPoints;
 use rand::{Rng, StdRng};
 use std::collections::HashSet;
+use std::iter::FromIterator;
 
 /// Distribute points randomly.
 pub fn generate_random_points(width: X, height: Y, count: usize, mut rng: StdRng) -> UPoints {
@@ -48,7 +49,15 @@ mod tests {
     fn test_equidistant() {
         let points = generate_fixed_points(X::new(15), Y::new(15), 9);
         assert_eq!(X::new(2), points.first_by_x().x());
-//        assert_eq!(Point2D::new(X::new(2), Y::new(2)), points.first_by_x().x());
-        println!("{:?}", points);
+        let lookup: HashSet<Point2D> = HashSet::from_iter(points.into_iter());
+        assert!(lookup.contains(&Point2D::from_raw(2, 2)));
+        assert!(lookup.contains(&Point2D::from_raw(2, 7)));
+        assert!(lookup.contains(&Point2D::from_raw(2, 12)));
+        assert!(lookup.contains(&Point2D::from_raw(7, 2)));
+        assert!(lookup.contains(&Point2D::from_raw(7, 7)));
+        assert!(lookup.contains(&Point2D::from_raw(7, 12)));
+        assert!(lookup.contains(&Point2D::from_raw(12, 2)));
+        assert!(lookup.contains(&Point2D::from_raw(12, 7)));
+        assert!(lookup.contains(&Point2D::from_raw(12, 12)));
     }
 }
