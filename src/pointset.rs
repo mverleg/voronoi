@@ -116,9 +116,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_within() {
+    fn test_within_one_eq() {
         let mut points: UPoints = generate_fixed_points(X::new(15), Y::new(15), 9);
-        //TODO @mark: test range=2 for ==
         let matches: &Vec<PointId> = points.within_box(Point2D::from_raw(4, 4), Dist::fnew(3.0));
         assert_eq!(4, matches.len());
         let lookup: HashSet<Point2D> = HashSet::from_iter(matches.clone().into_iter().map(|id| points.get(id)));
@@ -126,5 +125,15 @@ mod tests {
         assert!(lookup.contains(&Point2D::from_raw(2, 7)));
         assert!(lookup.contains(&Point2D::from_raw(7, 2)));
         assert!(lookup.contains(&Point2D::from_raw(7, 7)));
+    }
+
+    #[test]
+    fn test_within_one_lt() {
+        let mut points: UPoints = generate_fixed_points(X::new(15), Y::new(15), 9);
+        let matches: &Vec<PointId> = points.within_box(Point2D::from_raw(4, 4), Dist::fnew(2.0));
+        println!("matches: {:?}", matches);  //TODO: mark (temporary)
+        assert_eq!(1, matches.len());
+        let lookup: HashSet<Point2D> = HashSet::from_iter(matches.clone().into_iter().map(|id| points.get(id)));
+        assert!(lookup.contains(&Point2D::from_raw(2, 2)));
     }
 }
