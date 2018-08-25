@@ -5,6 +5,7 @@ use norms::Dist;
 use point::Point2D;
 use std::collections::HashSet;
 use std::iter::FromIterator;
+use std::cmp::max;
 
 #[derive(Debug, Clone, Copy)]
 pub struct PointId {
@@ -41,8 +42,13 @@ impl UPoints {
         UPoints { points_by_x, points_by_y, _working_set: HashSet::with_capacity(length) }
     }
 
+    #[inline]
+    pub fn len(&self) -> usize {
+        self.points_by_x.len()
+    }
+
     //TODO @mark: this should center on the current pixel, not the reference point
-    fn within_x_segment(&mut self, reference: Point2D, centers: &UPoints, range: Dist) {
+    fn within_x_segment(&mut self, reference: Point2D, range: Dist) {
         self._working_set.clear();
         // Find any point within the range
         let urange = range.ufloor();
@@ -55,19 +61,26 @@ impl UPoints {
             let reference_x_min = reference.x() - urange;
             while current.x() >= reference_x_min {
                 self._working_set.insert(current);
+                if (xindex == 0) {
+                    break;
+                }
                 xindex -= 1;
                 current = self.points_by_x[xindex];
-                println!("x forw {:?}: {:?}", xindex, current);
+                println!("x back {:?}: {:?}", xindex, current);  // TODO
             }
-            // Iterate forward the same way6
+            // Iterate forward the same way
             xindex = (reference_index + 1).as_index();
             current = self.points_by_x[xindex];
             let reference_x_max = reference.x() + urange;
+            println!("reference_x_max: {:?}", reference_x_max);  // TODO
             while current.x() <= reference_x_max {
                 self._working_set.insert(current);
                 xindex += 1;
+                if (xindex == self.len()) {
+                    break;
+                }
                 current = self.points_by_x[xindex];
-                println!("x back {:?}: {:?}", xindex, current);
+                println!("x forw {:?}: {:?}", xindex, current);  // TODO
             }
         } else {
             return;
@@ -86,6 +99,7 @@ impl UPoints {
     pub fn within_box(&mut self, point: Point2D, range: Dist) -> &HashSet<Point2D> {
         // For efficiency, this returns _working_set. Borrow rules will make sure it is not changed.
         //TODO @mark: THIS CODE IS TEMPORARY!
+        self.within_x_segment(point, range);
         &self._working_set
     }
 
