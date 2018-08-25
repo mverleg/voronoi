@@ -6,8 +6,11 @@ use point::Point2D;
 use std::cmp::max;
 use std::collections::HashSet;
 use std::iter::FromIterator;
+use std::cmp::Ordering;
+use std::ops::{Add, Sub};
+use find_index::Mid;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq)]
 pub struct PointId {
     value: usize,
 }
@@ -15,6 +18,50 @@ pub struct PointId {
 impl PointId {
     pub fn new(value: usize) -> Self {
         PointId { value }
+    }
+}
+
+impl Add<Self> for PointId {
+    type Output = Self;
+
+    fn add(self, rhs: PointId) -> <Self as Add<PointId>>::Output {
+        PointId::new(self.value + rhs.value)
+    }
+}
+//
+//impl Sub<Self> for PointId {
+//    type Output = Self;
+//
+//    fn sub(self, rhs: PointId) -> <Self as Add<PointId>>::Output {
+//        if (rhs.value > self.value) {
+//            panic!("PointId cannot be negative");
+//        }
+//        PointId::new(self.value - rhs.value)
+//    }
+//}
+//
+impl Add<usize> for PointId {
+    type Output = Self;
+
+    fn add(self, rhs: usize) -> <Self as Add<PointId>>::Output {
+        PointId::new(self.value + rhs)
+    }
+}
+
+impl Sub<usize> for PointId {
+    type Output = Self;
+
+    fn sub(self, rhs: usize) -> <Self as Add<PointId>>::Output {
+        if (rhs > self.value) {
+            panic!("PointId cannot be negative");
+        }
+        PointId::new(self.value - rhs)
+    }
+}
+
+impl Mid for PointId {
+    fn midpoint(first: Self, second: Self) -> Self {
+        PointId::new((first.value + second.value) / 2)
     }
 }
 
@@ -44,30 +91,49 @@ impl UPoints {
         self.points_by_x.len()
     }
 
+    //TODO @mark: split within_box into separate methods
+//    #[inline]
+//    fn find_initial_point() {
+//    }
+
+    /// Return the index of app ponts within a square bounding box around `reference`, in arbitrary order.
     pub fn within_box(&mut self, reference: Point2D, range: Dist) -> &Vec<PointId> {
         // For efficiency, this returns current_result. This would be completely unsafe in most language,
         // but borrow rules will make sure it is not changed while in use in Rust.
         self.current_result.clear();
         // Find any point within the range
         let urange = range.ufloor();
-        let reference_index: Option<X> = find_index(
-            reference.x() - urange,
-            reference.x() + urange,
-            |x: X| x.cmp(&reference.x()))
-        ;
+        let reference_index: Option<PointId> = find_index(
+            PointId::new(0),
+            PointId::new(self.len() - 1),
+            |index: PointId| {
+                let x = self.get(index).x();
+                if x < reference.x() - urange {
+                    return Ordering::Greater
+                }
+                if x > reference.x() + urange {
+                    return Ordering::Less
+                }
+                Ordering::Equal
+            }
+        );
+        //TODO @mark: parallellize forward and backward searching?
         if let Some(reference_index) = reference_index {
             let y_min = reference.y() - urange;
             let y_max = reference.y() + urange;
             // Iterate backward from that point until range is exceeded (since points are ordered)
-            let mut index = reference_index.as_index();
+            let mut index = reference_index;
             // TODO: https://github.com/mverleg/typed_index_vec
-            let mut current = self.points_by_x[index];
+            let mut current = self.get(index);
+            println!("reference_index: {:?} = {:?}", reference_index, current);  //TODO: mark (temporary)
             let x_min = reference.x() - urange;
             while current.x() >= x_min {
+                println!("back visit: {:?}, {:?}", index, current.x());  //TODO: mark (temporary)
                 if (y_min <= current.y() && current.y() <= y_max) {
+                    println!("pick x: {:?}", current);  //TODO: mark (temporary)
                     self.current_result.push(PointId::new(index));
                 }
-                if (index == 0) {
+                if index == 0 {
                     break;
                 }
                 index -= 1;
@@ -75,17 +141,21 @@ impl UPoints {
             }
             // Iterate forward the same way
             index = (reference_index + 1).as_index();
-            current = self.points_by_x[index];
-            let x_max = reference.x() + urange;
-            while current.x() <= x_max {
-                if (y_min <= current.y() && current.y() <= y_max) {
-                    self.current_result.push(PointId::new(index));
-                }
-                index += 1;
-                if (index == self.len()) {
-                    break;
-                }
+            if (index < self.len()) {
                 current = self.points_by_x[index];
+                let x_max = reference.x() + urange;
+                println!("x <= x_max: {:?} <= {:?}", current.x(), x_max);  //TODO: mark (temporary)
+                while current.x() <= x_max {
+                    println!("forw visit: {:?}, {:?}", index, current.x());  //TODO: mark (temporary)
+                    if (y_min <= current.y() && current.y() <= y_max) {
+                        self.current_result.push(PointId::new(index));
+                    }
+                    index += 1;
+                    if (index == self.len()) {
+                        break;
+                    }
+                    current = self.points_by_x[index];
+                }
             }
         }
         &self.current_result
@@ -115,7 +185,7 @@ mod tests {
     use distribute::generate_fixed_points;
     use super::*;
 
-    #[test]
+//    #[test]
     fn test_within_one_eq() {
         let mut points: UPoints = generate_fixed_points(X::new(15), Y::new(15), 9);
         let matches: &Vec<PointId> = points.within_box(Point2D::from_raw(4, 4), Dist::fnew(3.0));
@@ -129,11 +199,13 @@ mod tests {
 
     #[test]
     fn test_within_one_lt() {
+        println!("START");  //TODO: mark (temporary)
         let mut points: UPoints = generate_fixed_points(X::new(15), Y::new(15), 9);
         let matches: &Vec<PointId> = points.within_box(Point2D::from_raw(4, 4), Dist::fnew(2.0));
         println!("matches: {:?}", matches);  //TODO: mark (temporary)
         assert_eq!(1, matches.len());
         let lookup: HashSet<Point2D> = HashSet::from_iter(matches.clone().into_iter().map(|id| points.get(id)));
         assert!(lookup.contains(&Point2D::from_raw(2, 2)));
+        println!("END");  //TODO: mark (temporary)
     }
 }

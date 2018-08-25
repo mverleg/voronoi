@@ -6,4 +6,5 @@ authors = ["Mark <mverleg.noreply@gmail.com>"]
 [dependencies]
 image = "0.19.*"
 rand = "0.5.*"
-assert_approx_eq = "1.0.0"
+assert_approx_eq = "1.0.*"
+threadpool = "1.7.*"

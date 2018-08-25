@@ -5,6 +5,7 @@
 extern crate assert_approx_eq;
 extern crate image;
 extern crate rand;
+extern crate threadpool;
 
 use assign::assign_to_centers;
 use dims::{Dim, X, Y};
