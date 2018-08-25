@@ -13,6 +13,10 @@ pub struct Point2D {
 }
 
 impl Point2D {
+    pub fn from_raw(x: i32, y: i32) -> Self {
+        Self::new(X::new(x), Y::new(y))
+    }
+
     #[inline]
     pub fn x(&self) -> X {
         self.x

@@ -97,13 +97,25 @@ impl UPoints {
 //    }
 }
 
+impl IntoIterator for UPoints {
+    type Item = Point2D;
+    type IntoIter = ::std::vec::IntoIter<Point2D>;
+
+    fn into_iter(self) -> <Self as IntoIterator>::IntoIter {
+        self.points_by_x.into_iter()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use distribute::generate_fixed_points;
 
     #[test]
     fn test_within() {
-
-//        assert_eq!(, );
+        let points = generate_fixed_points(X::new(15), Y::new(15), 9);
+        //TODO @mark: I can't find out how to make a borrowing iterator... https://doc.rust-lang.org/core/iter/index.html
+        let lookup: HashSet<Point2D> = HashSet::from_iter(points.into_iter());
+        assert!(lookup.contains(&Point2D::from_raw(2, 2)));
     }
 }
