@@ -5,7 +5,7 @@ pub trait Mid {
     fn midpoint(first: Self, second: Self) -> Self;
 }
 
-impl<T> Mid for T where T: Add + Div {
+impl<T> Mid for T where T: Add<Output=T>, T: Div<usize, Output=T> {
     fn midpoint(first: Self, second: Self) -> Self {
         (first + second) / 2
     }

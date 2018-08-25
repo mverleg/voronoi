@@ -19,6 +19,17 @@ impl PointId {
     pub fn new(value: usize) -> Self {
         PointId { value }
     }
+
+    pub fn increment(&mut self) {
+        self.value += 1
+    }
+
+    pub fn decrement(&mut self) {
+        if self.value == 0 {
+            panic!("PointId cannot be decremented because it is 0")
+        }
+        self.value -= 1
+    }
 }
 
 impl Add<Self> for PointId {
@@ -121,6 +132,7 @@ impl UPoints {
         if let Some(reference_index) = reference_index {
             let y_min = reference.y() - urange;
             let y_max = reference.y() + urange;
+            let length = PointId::new(self.len());
             // Iterate backward from that point until range is exceeded (since points are ordered)
             let mut index = reference_index;
             // TODO: https://github.com/mverleg/typed_index_vec
@@ -131,30 +143,30 @@ impl UPoints {
                 println!("back visit: {:?}, {:?}", index, current.x());  //TODO: mark (temporary)
                 if (y_min <= current.y() && current.y() <= y_max) {
                     println!("pick x: {:?}", current);  //TODO: mark (temporary)
-                    self.current_result.push(PointId::new(index));
+                    self.current_result.push(index);
                 }
-                if index == 0 {
+                if index == PointId::new(0) {
                     break;
                 }
-                index -= 1;
-                current = self.points_by_x[index];
+                index.decrement();
+                current = self.get(index);
             }
             // Iterate forward the same way
-            index = (reference_index + 1).as_index();
-            if (index < self.len()) {
-                current = self.points_by_x[index];
+            index = reference_index + 1;
+            if index < length {
+                current = self.get(index);
                 let x_max = reference.x() + urange;
                 println!("x <= x_max: {:?} <= {:?}", current.x(), x_max);  //TODO: mark (temporary)
                 while current.x() <= x_max {
                     println!("forw visit: {:?}, {:?}", index, current.x());  //TODO: mark (temporary)
                     if (y_min <= current.y() && current.y() <= y_max) {
-                        self.current_result.push(PointId::new(index));
+                        self.current_result.push(index);
                     }
-                    index += 1;
-                    if (index == self.len()) {
+                    index.increment();
+                    if index == length {
                         break;
                     }
-                    current = self.points_by_x[index];
+                    current = self.get(index);
                 }
             }
         }
@@ -166,6 +178,7 @@ impl UPoints {
         self.points_by_x[0]
     }
 
+    #[inline]
     pub fn get(&self, id: PointId) -> Point2D {
         self.points_by_x[id.value]
     }
