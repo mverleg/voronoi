@@ -1,4 +1,5 @@
 #![feature(extern_prelude)]
+#![feature(nll)]
 
 #[macro_use]
 extern crate assert_approx_eq;
