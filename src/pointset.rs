@@ -75,7 +75,7 @@ impl UPoints {
         // Result is that `_working_set` is filled.
     }
 
-    fn within_y_segment() {
+    fn within_y_segment(&mut self) {
         // Assumes `_working_set` has been filled.
 
 
@@ -83,8 +83,10 @@ impl UPoints {
         // Result is that `_working_set` has been filtered.
     }
 
-    pub fn within_box(point: Point2D, range: Dist) {
-
+    pub fn within_box(&mut self, point: Point2D, range: Dist) -> &HashSet<Point2D> {
+        // For efficiency, this returns _working_set. Borrow rules will make sure it is not changed.
+        //TODO @mark: THIS CODE IS TEMPORARY!
+        &self._working_set
     }
 
     /// Get the first Point by X coordinate, or one of them if tied (somewhat arbitrary, which is acceptable)
@@ -113,9 +115,13 @@ mod tests {
 
     #[test]
     fn test_within() {
-        let points = generate_fixed_points(X::new(15), Y::new(15), 9);
-        //TODO @mark: I can't find out how to make a borrowing iterator... https://doc.rust-lang.org/core/iter/index.html
-        let lookup: HashSet<Point2D> = HashSet::from_iter(points.into_iter());
-        
+        let mut points = generate_fixed_points(X::new(15), Y::new(15), 9);
+        //TODO @mark: test range2 for ==
+        let matches = points.within_box(Point2D::from_raw(3, 3), Dist::fnew(3.0));
+        assert_eq!(4, matches.len());
+        assert!(matches.contains(&Point2D::from_raw(2, 2)));
+        assert!(matches.contains(&Point2D::from_raw(2, 7)));
+        assert!(matches.contains(&Point2D::from_raw(7, 2)));
+        assert!(matches.contains(&Point2D::from_raw(7, 7)));
     }
 }
