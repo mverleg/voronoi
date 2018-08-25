@@ -4,6 +4,7 @@ use find_index::find_index;
 use norms::Dist;
 use point::Point2D;
 use std::collections::HashSet;
+use std::iter::FromIterator;
 
 #[derive(Debug, Clone, Copy)]
 pub struct PointId {
@@ -28,9 +29,11 @@ impl UPoints {
     pub fn new(points: Vec<Point2D>) -> Self {
         let length = points.len();
         assert!(length > 0);
-        // Hopefully this next line gets optimized away in production mode
-        let unique_points = HashSet::from(points.clone());
-        debug_assert!(unique_points.len() == length);
+        {
+            // Hopefully this next line gets optimized away in production mode
+            let unique_points = HashSet::<&Point2D>::from_iter(points.iter());
+            debug_assert!(unique_points.len() == length);
+        }
         let mut points_by_x = points.clone();
         points_by_x.sort_by(|p1, p2| p1.x().cmp(&p2.x()));
         let mut points_by_y = points;

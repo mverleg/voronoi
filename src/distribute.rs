@@ -31,12 +31,12 @@ pub fn generate_fixed_points(width: X, height: Y, count: usize) -> UPoints {
     let mut points = HashSet::<Point2D>::with_capacity(count);
     let count_per_dim = (count as f64).sqrt().ceil() as usize;
     for xi in 0 .. count_per_dim {
-        let x = width * (2 * xi + 1) / (2 * count_per_dim);
+        let x = width.as_index() * (2 * xi + 1) / (2 * count_per_dim);
         for yi in 0 .. count_per_dim {
-            let y = height * (2 * yi + 1) / (2 * count_per_dim);
-            points.push(Point2D::new(
-                X::new(x),
-                Y::new(y),
+            let y = height.as_index() * (2 * yi + 1) / (2 * count_per_dim);
+            points.insert(Point2D::new(
+                X::new(x as i32),
+                Y::new(y as i32),
             ));
         }
     }
