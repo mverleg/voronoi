@@ -52,8 +52,11 @@ impl UPoints {
         self._working_set.clear();
         // Find any point within the range
         let urange = range.ufloor();
-        let reference_index: Option<X> = find_index(reference.x() - urange, reference.x() + urange, |x: X| x.cmp(&reference.x()));
-        println!("reference_index: {:?}", reference_index);  //TODO: mark (temporary)
+        let reference_index: Option<X> = find_index(
+            reference.x() - urange,
+            reference.x() + urange,
+            |x: X| x.cmp(&reference.x()))
+        ;
         if let Some(reference_index) = reference_index {
             // Iterate backward from that point until range is exceeded (since points are ordered)
             let mut xindex = reference_index.as_index();
@@ -61,7 +64,6 @@ impl UPoints {
             let mut current = self.points_by_x[xindex];
             let reference_x_min = reference.x() - urange;
             while current.x() >= reference_x_min {
-                println!("x back {:?}: {:?}", xindex, current);  // TODO
                 self._working_set.insert(current);
                 if (xindex == 0) {
                     break;
@@ -73,14 +75,10 @@ impl UPoints {
             xindex = (reference_index + 1).as_index();
             current = self.points_by_x[xindex];
             let reference_x_max = reference.x() + urange;
-            println!("reference_x_max: {:?}, c: {:?}, {}", reference_x_max, current.x(), current.x() <= reference_x_max);  // TODO
             while current.x() <= reference_x_max {
-                println!("x forw {:?}: {:?}", xindex, current);  // TODO
                 self._working_set.insert(current);
                 xindex += 1;
-                println!("xindex, len: {:?}, {:?}", xindex, self.len());  //TODO: mark (temporary)
                 if (xindex == self.len()) {
-                    println!("end: {:?}", xindex);  //TODO: mark (temporary)
                     break;
                 }
                 current = self.points_by_x[xindex];
@@ -91,11 +89,55 @@ impl UPoints {
         // Result is that `_working_set` is filled.
     }
 
-    fn within_y_segment(&mut self) {
+    //TODO @mark: is this really faster than just checking the points that are in X range?
+    fn within_y_segment(&mut self, reference: Point2D, range: Dist) {
         // Assumes `_working_set` has been filled.
-
-
-
+        if (self._working_set.len() == 0) {
+            println!("no items in worknig set");  //TODO: mark (temporary)
+            return;
+        }
+        // Find any point within the range
+        let urange = range.ufloor();
+        let reference_index: Option<Y> = find_index(
+            reference.y() - urange,
+            reference.y() + urange,
+            |y: Y| y.cmp(&reference.y()),
+        );
+        println!("y reference_index: {:?}", reference_index);  //TODO: mark (temporary)
+        if let Some(reference_index) = reference_index {
+            // Iterate backward from that point until range is exceeded (since points are ordered)
+            let mut yindex = reference_index.as_index();
+            // TODO: https://github.com/mverleg/typed_index_vec
+            let mut current = self.points_by_y[yindex];
+            let reference_y_min = reference.y() - urange;
+            while current.y() >= reference_y_min {
+                println!("y back {:?}: {:?}", yindex, current);  // TODO
+                self._working_set.insert(current);
+                if (yindex == 0) {
+                    break;
+                }
+                yindex -= 1;
+                current = self.points_by_x[yindex];
+            }
+            // Iterate forward the same way
+            yindex = (reference_index + 1).as_index();
+            current = self.points_by_x[yindex];
+            let reference_x_max = reference.x() + urange;
+            println!("reference_x_max: {:?}, c: {:?}, {}", reference_x_max, current.x(), current.x() <= reference_x_max);  // TODO
+            while current.x() <= reference_x_max {
+                println!("x forw {:?}: {:?}", yindex, current);  // TODO
+                self._working_set.insert(current);
+                yindex += 1;
+                println!("yindex, len: {:?}, {:?}", yindex, self.len());  //TODO: mark (temporary)
+                if (yindex == self.len()) {
+                    println!("end: {:?}", yindex);  //TODO: mark (temporary)
+                    break;
+                }
+                current = self.points_by_x[yindex];
+            }
+        } else {
+            return;
+        }
         // Result is that `_working_set` has been filtered.
     }
 
