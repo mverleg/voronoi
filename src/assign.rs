@@ -1,6 +1,7 @@
 use dims::{X, Y};
 use point::{Point, Point2D};
-use pointset::{PointId, UPoints};
+use pointset::UPoints;
+use pointid::PointId;
 
 //TODO @mark: is all this converting from usize to i32 expensive?
 

@@ -1,80 +1,15 @@
 use dims::{X, Y};
 use dims::Dim;
 use find_index::find_index;
+use find_index::Mid;
 use norms::Dist;
 use point::Point2D;
 use std::cmp::max;
+use std::cmp::Ordering;
 use std::collections::HashSet;
 use std::iter::FromIterator;
-use std::cmp::Ordering;
 use std::ops::{Add, Sub};
-use find_index::Mid;
-
-#[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq)]
-pub struct PointId {
-    value: usize,
-}
-
-impl PointId {
-    pub fn new(value: usize) -> Self {
-        PointId { value }
-    }
-
-    pub fn increment(&mut self) {
-        self.value += 1
-    }
-
-    pub fn decrement(&mut self) {
-        if self.value == 0 {
-            panic!("PointId cannot be decremented because it is 0")
-        }
-        self.value -= 1
-    }
-}
-
-impl Add<Self> for PointId {
-    type Output = Self;
-
-    fn add(self, rhs: PointId) -> <Self as Add<PointId>>::Output {
-        PointId::new(self.value + rhs.value)
-    }
-}
-//
-//impl Sub<Self> for PointId {
-//    type Output = Self;
-//
-//    fn sub(self, rhs: PointId) -> <Self as Add<PointId>>::Output {
-//        if (rhs.value > self.value) {
-//            panic!("PointId cannot be negative");
-//        }
-//        PointId::new(self.value - rhs.value)
-//    }
-//}
-//
-impl Add<usize> for PointId {
-    type Output = Self;
-
-    fn add(self, rhs: usize) -> <Self as Add<PointId>>::Output {
-        PointId::new(self.value + rhs)
-    }
-}
-
-impl Sub<usize> for PointId {
-    type Output = Self;
-
-    fn sub(self, rhs: usize) -> <Self as Add<PointId>>::Output {
-        if (rhs > self.value) {
-            panic!("PointId cannot be negative");
-        }
-        PointId::new(self.value - rhs)
-    }
-}
-
-impl Mid for PointId {
-    fn midpoint(first: Self, second: Self) -> Self {
-        PointId::new((first.value + second.value) / 2)
-    }
-}
+use pointid::PointId;
 
 /// Collection of *unique* points.
 #[derive(Debug)]
@@ -180,7 +115,7 @@ impl UPoints {
 
     #[inline]
     pub fn get(&self, id: PointId) -> Point2D {
-        self.points_by_x[id.value]
+        self.points_by_x[id._expose()]
     }
 }
 
@@ -198,7 +133,7 @@ mod tests {
     use distribute::generate_fixed_points;
     use super::*;
 
-//    #[test]
+    //    #[test]
     fn test_within_one_eq() {
         let mut points: UPoints = generate_fixed_points(X::new(15), Y::new(15), 9);
         let matches: &Vec<PointId> = points.within_box(Point2D::from_raw(4, 4), Dist::fnew(3.0));
