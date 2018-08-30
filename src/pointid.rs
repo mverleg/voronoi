@@ -37,18 +37,7 @@ impl Add<Self> for PointId {
         PointId::new(self.value + rhs.value)
     }
 }
-//
-//impl Sub<Self> for PointId {
-//    type Output = Self;
-//
-//    fn sub(self, rhs: PointId) -> <Self as Add<PointId>>::Output {
-//        if (rhs.value > self.value) {
-//            panic!("PointId cannot be negative");
-//        }
-//        PointId::new(self.value - rhs.value)
-//    }
-//}
-//
+
 impl Add<usize> for PointId {
     type Output = Self;
 

@@ -48,6 +48,8 @@ impl UPoints {
         // but borrow rules will make sure it is not changed while in use in Rust.
         self.current_result.clear();
         // Find any point within the range
+        //TODO @mark: THIS CODE IS TEMPORARY!
+        println!("points x: {:?}", self.points_by_x.map(|p| p.x()).collect());  //TODO: mark (temporary)
         let urange = range.ufloor();
         let reference_index: Option<PointId> = find_index(
             PointId::new(0),

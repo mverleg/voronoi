@@ -1,5 +1,6 @@
 use std::cmp::Ordering;
 use std::ops::{Add, Sub, Div};
+use std::fmt::Debug;
 
 pub trait Mid {
     fn midpoint(first: Self, second: Self) -> Self;
@@ -17,7 +18,7 @@ impl<T> Mid for T where T: Add<Output=T>, T: Div<usize, Output=T> {
 /// * if f(x) is Equal, f(x+1) is Equal or Greater
 /// * if f(x) is Greater, f(x+1) is Greater
 pub fn find_index<T, F>(mut min: T, mut max: T, f: F) -> Option<T>
-    where T: PartialOrd + Add<usize, Output=T> + Sub<usize, Output=T> + Mid + Copy,
+    where T: PartialOrd + Add<usize, Output=T> + Sub<usize, Output=T> + Mid + Copy + Debug,
           F: Fn(T) -> Ordering
 {
     assert!(max >= min);
@@ -25,11 +26,15 @@ pub fn find_index<T, F>(mut min: T, mut max: T, f: F) -> Option<T>
     let mut k = min;
     let top = max - 1;
     while k < top {
-        if f(k) == Ordering::Equal {
-            debug_assert!(f(k+1) == Ordering::Equal || f(k+1) == Ordering::Greater);
+        let orderCurrent = f(k);
+        let orderNext = f(k + 1);
+        println!("find index: {:?} {:?} {:?}", k, orderCurrent, orderNext);  //TODO: mark (temporary)
+        //TODO @mark: some are always less or always greater?
+        if orderCurrent == Ordering::Equal {
+            debug_assert!(orderNext == Ordering::Equal || orderNext == Ordering::Greater);
         }
-        if f(k) == Ordering::Greater {
-            debug_assert!(f(k+1) == Ordering::Greater);
+        if orderCurrent == Ordering::Greater {
+            debug_assert!(orderNext == Ordering::Greater);
         }
         k = k + 1;
     }
