@@ -11,17 +11,18 @@ use assign::assign_to_centers;
 use dims::{Dim, X, Y};
 use distribute::generate_random_points;
 use image::DynamicImage;
-use pointset::PointId;
 use rand::{SeedableRng, StdRng};
 use std::env;
 use std::path::Path;
 #[allow(unused_imports)]
 use std::process::Command;
+use pointid::PointId;
 
 pub mod dims;
 pub mod norms;
 pub mod distribute;
 pub mod point;
+pub mod pointid;
 pub mod pointset;
 pub mod find_index;
 pub mod regions;
