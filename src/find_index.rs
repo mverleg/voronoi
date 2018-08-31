@@ -14,6 +14,7 @@ impl<T> Mid for T where T: Add<Output=T>, T: Div<usize, Output=T> {
 
 /// Find an index that is equal in an ORDERED range.
 /// If there are multiple matches, there is no guarantee about which of them is returned.
+/// `f` should return what the order of argument *is*, not what it should be.
 /// Order requirements for all x:
 /// * if f(x) is Equal, f(x+1) is Equal or Greater
 /// * if f(x) is Greater, f(x+1) is Greater

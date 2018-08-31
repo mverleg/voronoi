@@ -49,19 +49,27 @@ impl UPoints {
         self.current_result.clear();
         // Find any point within the range
         //TODO @mark: THIS CODE IS TEMPORARY!
-        println!("points x: {:?}", self.points_by_x.map(|p| p.x()).collect());  //TODO: mark (temporary)
+        println!("points x: {:?}", self.points_by_x.iter().map(|p| p.x()._expose()).collect::<Vec<_>>());  //TODO: mark (temporary)
         let urange = range.ufloor();
+        let x_min = reference.x() - urange;
+        let x_max = reference.x() + urange;
+        println!("x_min: {:?}", x_min);  //TODO: mark (temporary)
+        println!("x_max: {:?}", x_max);  //TODO: mark (temporary)
         let reference_index: Option<PointId> = find_index(
             PointId::new(0),
             PointId::new(self.len() - 1),
             |index: PointId| {
                 let x = self.get(index).x();
-                if x < reference.x() - urange {
-                    return Ordering::Greater
-                }
-                if x > reference.x() + urange {
+                println!("get: {:?} {:?}", self.get(index), x._expose());  //TODO: mark (temporary)
+                if x < x_min {
+                    println!("needs to be greater");  //TODO: mark (temporary)
                     return Ordering::Less
                 }
+                if x > x_max {
+                    println!("needs to be less");  //TODO: mark (temporary)
+                    return Ordering::Greater
+                }
+                println!("is CORRECT!"); //TODO @mark:
                 Ordering::Equal
             }
         );
