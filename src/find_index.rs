@@ -29,8 +29,6 @@ pub fn find_index<T, F>(mut min: T, mut max: T, f: F) -> Option<T>
     while k < top {
         let orderCurrent = f(k);
         let orderNext = f(k + 1);
-        println!("find index: {:?} {:?} {:?}", k, orderCurrent, orderNext);  //TODO: mark (temporary)
-        //TODO @mark: some are always less or always greater?
         if orderCurrent == Ordering::Equal {
             debug_assert!(orderNext == Ordering::Equal || orderNext == Ordering::Greater);
         }

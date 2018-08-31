@@ -37,39 +37,26 @@ impl UPoints {
         self.points_by_x.len()
     }
 
-    //TODO @mark: split within_box into separate methods
-//    #[inline]
-//    fn find_initial_point() {
-//    }
-
     /// Return the index of app ponts within a square bounding box around `reference`, in arbitrary order.
     pub fn within_box(&mut self, reference: Point2D, range: Dist) -> &Vec<PointId> {
         // For efficiency, this returns current_result. This would be completely unsafe in most language,
         // but borrow rules will make sure it is not changed while in use in Rust.
         self.current_result.clear();
         // Find any point within the range
-        //TODO @mark: THIS CODE IS TEMPORARY!
-        println!("points x: {:?}", self.points_by_x.iter().map(|p| p.x()._expose()).collect::<Vec<_>>());  //TODO: mark (temporary)
         let urange = range.ufloor();
         let x_min = reference.x() - urange;
         let x_max = reference.x() + urange;
-        println!("x_min: {:?}", x_min);  //TODO: mark (temporary)
-        println!("x_max: {:?}", x_max);  //TODO: mark (temporary)
         let reference_index: Option<PointId> = find_index(
             PointId::new(0),
             PointId::new(self.len() - 1),
             |index: PointId| {
                 let x = self.get(index).x();
-                println!("get: {:?} {:?}", self.get(index), x._expose());  //TODO: mark (temporary)
                 if x < x_min {
-                    println!("needs to be greater");  //TODO: mark (temporary)
                     return Ordering::Less
                 }
                 if x > x_max {
-                    println!("needs to be less");  //TODO: mark (temporary)
                     return Ordering::Greater
                 }
-                println!("is CORRECT!"); //TODO @mark:
                 Ordering::Equal
             }
         );
@@ -82,12 +69,9 @@ impl UPoints {
             let mut index = reference_index;
             // TODO: https://github.com/mverleg/typed_index_vec
             let mut current = self.get(index);
-            println!("reference_index: {:?} = {:?}", reference_index, current);  //TODO: mark (temporary)
             let x_min = reference.x() - urange;
             while current.x() >= x_min {
-                println!("back visit: {:?}, {:?}", index, current.x());  //TODO: mark (temporary)
                 if (y_min <= current.y() && current.y() <= y_max) {
-                    println!("pick x: {:?}", current);  //TODO: mark (temporary)
                     self.current_result.push(index);
                 }
                 if index == PointId::new(0) {
@@ -101,9 +85,7 @@ impl UPoints {
             if index < length {
                 current = self.get(index);
                 let x_max = reference.x() + urange;
-                println!("x <= x_max: {:?} <= {:?}", current.x(), x_max);  //TODO: mark (temporary)
                 while current.x() <= x_max {
-                    println!("forw visit: {:?}, {:?}", index, current.x());  //TODO: mark (temporary)
                     if (y_min <= current.y() && current.y() <= y_max) {
                         self.current_result.push(index);
                     }
@@ -157,13 +139,10 @@ mod tests {
 
     #[test]
     fn test_within_one_lt() {
-        println!("START");  //TODO: mark (temporary)
         let mut points: UPoints = generate_fixed_points(X::new(15), Y::new(15), 9);
         let matches: &Vec<PointId> = points.within_box(Point2D::from_raw(4, 4), Dist::fnew(2.0));
-        println!("matches: {:?}", matches);  //TODO: mark (temporary)
         assert_eq!(1, matches.len());
         let lookup: HashSet<Point2D> = HashSet::from_iter(matches.clone().into_iter().map(|id| points.get(id)));
         assert!(lookup.contains(&Point2D::from_raw(2, 2)));
-        println!("END");  //TODO: mark (temporary)
     }
 }
