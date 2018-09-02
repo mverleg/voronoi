@@ -6,7 +6,6 @@ use point::Point2D;
 use pointset::UPoints;
 use rand::{Rng, StdRng};
 use std::collections::HashSet;
-use std::iter::FromIterator;
 
 /// Distribute points randomly.
 pub fn generate_random_points(width: X, height: Y, count: usize, mut rng: StdRng) -> UPoints {
@@ -43,6 +42,7 @@ pub fn generate_fixed_points(width: X, height: Y, count: usize) -> UPoints {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::iter::FromIterator;
 
     #[test]
     fn test_equidistant() {

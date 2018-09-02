@@ -51,16 +51,6 @@ macro_rules! make_dist {
                 Self::new(value).unwrap()
             }
 
-            //			/// Expose the internal value. Careful with trying to use this to get around type safety.
-            //			pub fn _expose(&self) -> f64 {
-            //				self.value
-            //			}
-
-            pub fn abs(&self) -> Self {
-                // todo: what is the point? why does the code call abs() on a norm?
-                *self
-            }
-
             pub fn ufloor(&self) -> usize {
                 self.value.floor().abs() as usize
             }

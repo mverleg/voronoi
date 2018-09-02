@@ -1,8 +1,6 @@
 #![feature(extern_prelude)]
 #![feature(nll)]
 
-#[macro_use]
-extern crate assert_approx_eq;
 extern crate image;
 extern crate rand;
 extern crate threadpool;
@@ -17,6 +15,9 @@ use std::env;
 use std::path::Path;
 #[allow(unused_imports)]
 use std::process::Command;
+
+#[macro_use]
+pub mod test_util;
 
 pub mod assign;
 pub mod dims;

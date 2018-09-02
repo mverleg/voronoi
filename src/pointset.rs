@@ -59,7 +59,7 @@ impl UPoints {
                 Ordering::Equal
             },
         );
-        //TODO @mark: parallellize forward and backward searching?
+        //TODO: parallellize forward and backward searching?
         if let Some(reference_index) = reference_index {
             let y_min = reference.y() - urange;
             let y_max = reference.y() + urange;
@@ -124,7 +124,7 @@ mod tests {
     use super::*;
     use distribute::generate_fixed_points;
 
-    //    #[test]
+    #[test]
     fn test_within_one_eq() {
         let mut points: UPoints = generate_fixed_points(X::new(15), Y::new(15), 9);
         let matches: &Vec<PointId> = points.within_box(Point2D::from_raw(4, 4), Dist::fnew(3.0));
