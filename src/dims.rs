@@ -1,6 +1,5 @@
 use find_index::Mid;
-use norms::Dist;
-use std::ops::{Add, Div, Sub};
+use std::ops::{Add, Sub};
 
 /// These X and Y are indices (unsigned integers), not physical distances.
 
@@ -21,15 +20,15 @@ macro_rules! make_dim {
                 $T { value }
             }
 
-//            /// Returns the highest $T that is within Dist below `self`, but still positive.
-//            pub fn margin_down(self, margin: Dist) -> Self {
-//                let margin = margin._expose().floor() as i32;
-//                // TODO: see issue #1
-//                if margin >= self.value {
-//                    return $T { value: 0 }
-//                }
-//                $T { value: self.value - margin }
-//            }
+            //            /// Returns the highest $T that is within Dist below `self`, but still positive.
+            //            pub fn margin_down(self, margin: Dist) -> Self {
+            //                let margin = margin._expose().floor() as i32;
+            //                // TODO: see issue #1
+            //                if margin >= self.value {
+            //                    return $T { value: 0 }
+            //                }
+            //                $T { value: self.value - margin }
+            //            }
 
             pub fn as_index(&self) -> usize {
                 self.value as usize
@@ -44,7 +43,9 @@ macro_rules! make_dim {
 
         impl Mid for $T {
             fn midpoint(first: $T, second: $T) -> $T {
-                $T { value: (first.value + second.value) / 2 }
+                $T {
+                    value: (first.value + second.value) / 2,
+                }
             }
         }
 
@@ -61,7 +62,7 @@ macro_rules! make_dim {
 
             pub fn abs(&self) -> Self {
                 if self.step < 0 {
-                    return $dT { step: self.step }
+                    return $dT { step: self.step };
                 }
                 self.clone()
             }
@@ -71,7 +72,9 @@ macro_rules! make_dim {
             type Output = $dT;
 
             fn sub(self, other: $T) -> Self::Output {
-                $dT { step: (self.value as i32) - (other.value as i32) }
+                $dT {
+                    step: (self.value as i32) - (other.value as i32),
+                }
             }
         }
 
@@ -82,7 +85,9 @@ macro_rules! make_dim {
                 if (self.value as i32) < other.step {
                     $T { value: 0 }
                 } else {
-                    $T { value: self.value - other.step }
+                    $T {
+                        value: self.value - other.step,
+                    }
                 }
             }
         }
@@ -94,7 +99,9 @@ macro_rules! make_dim {
                 if self.value < -other.step {
                     $T { value: 0 }
                 } else {
-                    $T { value: self.value + other.step }
+                    $T {
+                        value: self.value + other.step,
+                    }
                 }
             }
         }
@@ -103,7 +110,9 @@ macro_rules! make_dim {
             type Output = $T;
 
             fn add(self, other: usize) -> Self::Output {
-                $T { value: self.value + other as i32 }
+                $T {
+                    value: self.value + other as i32,
+                }
             }
         }
 
@@ -111,27 +120,28 @@ macro_rules! make_dim {
             type Output = $T;
 
             fn sub(self, other: usize) -> Self::Output {
-                $T { value: self.value - other as i32 }
+                $T {
+                    value: self.value - other as i32,
+                }
             }
         }
 
-//        impl Div<usize> for $T {
-//            type Output = $T;
-//
-//            fn div(self, other: usize) -> Self::Output {
-//                $T { value: self.value / other as i32 }
-//            }
-//        }
+        //        impl Div<usize> for $T {
+        //            type Output = $T;
+        //
+        //            fn div(self, other: usize) -> Self::Output {
+        //                $T { value: self.value / other as i32 }
+        //            }
+        //        }
 
-//        impl Mul<$T> for $T {
-//            type Output = Dist;
-//
-//            fn mul(self, other: $T) -> Self::Output {
-//                Dist { value: self.value * other.value }
-//            }
-//        }
-
-    }
+        //        impl Mul<$T> for $T {
+        //            type Output = Dist;
+        //
+        //            fn mul(self, other: $T) -> Self::Output {
+        //                Dist { value: self.value * other.value }
+        //            }
+        //        }
+    };
 }
 
 make_dim!(X, dX);

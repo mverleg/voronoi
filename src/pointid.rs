@@ -1,6 +1,4 @@
-use dims::{dX, dY, X, Y};
 use find_index::Mid;
-use std::hash::Hash;
 use std::ops::{Add, Sub};
 
 #[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq)]
@@ -50,7 +48,7 @@ impl Sub<usize> for PointId {
     type Output = Self;
 
     fn sub(self, rhs: usize) -> <Self as Add<PointId>>::Output {
-        if (rhs > self.value) {
+        if rhs > self.value {
             panic!("PointId cannot be negative");
         }
         PointId::new(self.value - rhs)

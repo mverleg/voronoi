@@ -72,7 +72,10 @@ impl Sub<Point2D> for Point2D {
     }
 }
 
-impl<S> Sub<S> for Point2D where S: Step {
+impl<S> Sub<S> for Point2D
+where
+    S: Step,
+{
     type Output = Point2D;
 
     fn sub(self, other: S) -> Self::Output {
@@ -80,7 +83,10 @@ impl<S> Sub<S> for Point2D where S: Step {
     }
 }
 
-impl<S> Add<S> for Point2D where S: Step {
+impl<S> Add<S> for Point2D
+where
+    S: Step,
+{
     type Output = Point2D;
 
     fn add(self, other: S) -> Self::Output {

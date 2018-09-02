@@ -1,15 +1,11 @@
 use dims::{X, Y};
-use dims::Dim;
 use find_index::find_index;
-use find_index::Mid;
 use norms::Dist;
 use point::Point2D;
-use std::cmp::max;
+use pointid::PointId;
 use std::cmp::Ordering;
 use std::collections::HashSet;
 use std::iter::FromIterator;
-use std::ops::{Add, Sub};
-use pointid::PointId;
 
 /// Collection of *unique* points.
 #[derive(Debug)]
@@ -29,7 +25,10 @@ impl UPoints {
         }
         let mut points_by_x = points;
         points_by_x.sort_by(|p1, p2| p1.x().cmp(&p2.x()));
-        UPoints { points_by_x, current_result: Vec::with_capacity(length) }
+        UPoints {
+            points_by_x,
+            current_result: Vec::with_capacity(length),
+        }
     }
 
     #[inline]
@@ -52,13 +51,13 @@ impl UPoints {
             |index: PointId| {
                 let x = self.get(index).x();
                 if x < x_min {
-                    return Ordering::Less
+                    return Ordering::Less;
                 }
                 if x > x_max {
-                    return Ordering::Greater
+                    return Ordering::Greater;
                 }
                 Ordering::Equal
-            }
+            },
         );
         //TODO @mark: parallellize forward and backward searching?
         if let Some(reference_index) = reference_index {
@@ -71,7 +70,7 @@ impl UPoints {
             let mut current = self.get(index);
             let x_min = reference.x() - urange;
             while current.x() >= x_min {
-                if (y_min <= current.y() && current.y() <= y_max) {
+                if y_min <= current.y() && current.y() <= y_max {
                     self.current_result.push(index);
                 }
                 if index == PointId::new(0) {
@@ -86,7 +85,7 @@ impl UPoints {
                 current = self.get(index);
                 let x_max = reference.x() + urange;
                 while current.x() <= x_max {
-                    if (y_min <= current.y() && current.y() <= y_max) {
+                    if y_min <= current.y() && current.y() <= y_max {
                         self.current_result.push(index);
                     }
                     index.increment();
@@ -122,15 +121,16 @@ impl IntoIterator for UPoints {
 
 #[cfg(test)]
 mod tests {
-    use distribute::generate_fixed_points;
     use super::*;
+    use distribute::generate_fixed_points;
 
     //    #[test]
     fn test_within_one_eq() {
         let mut points: UPoints = generate_fixed_points(X::new(15), Y::new(15), 9);
         let matches: &Vec<PointId> = points.within_box(Point2D::from_raw(4, 4), Dist::fnew(3.0));
         assert_eq!(4, matches.len());
-        let lookup: HashSet<Point2D> = HashSet::from_iter(matches.clone().into_iter().map(|id| points.get(id)));
+        let lookup: HashSet<Point2D> =
+            HashSet::from_iter(matches.clone().into_iter().map(|id| points.get(id)));
         assert!(lookup.contains(&Point2D::from_raw(2, 2)));
         assert!(lookup.contains(&Point2D::from_raw(2, 7)));
         assert!(lookup.contains(&Point2D::from_raw(7, 2)));
@@ -142,7 +142,8 @@ mod tests {
         let mut points: UPoints = generate_fixed_points(X::new(15), Y::new(15), 9);
         let matches: &Vec<PointId> = points.within_box(Point2D::from_raw(4, 4), Dist::fnew(2.0));
         assert_eq!(1, matches.len());
-        let lookup: HashSet<Point2D> = HashSet::from_iter(matches.clone().into_iter().map(|id| points.get(id)));
+        let lookup: HashSet<Point2D> =
+            HashSet::from_iter(matches.clone().into_iter().map(|id| points.get(id)));
         assert!(lookup.contains(&Point2D::from_raw(2, 2)));
     }
 }
