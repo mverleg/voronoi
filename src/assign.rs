@@ -1,4 +1,4 @@
-use norms::Norm;
+use norms::{Norm, Dist};
 use point::Point;
 use point::Point2D;
 use pointid::PointId;
@@ -13,37 +13,39 @@ pub fn assign_to_centers(groups: Vec<Vec<PointId>>, mut centers: UPoints) -> Vec
     assert!(centers.len() > 0);
     let mut x_i32: i32;
     for (x, row) in groups.iter().enumerate() {
-        assign_to_centers_for_row(x, centers);
+        assign_to_centers_for_row(x, row, &centers);
     }
     unimplemented!();
     groups
 }
 
 //TODO @mark: paralellize here
-fn assign_to_centers_for_row(x: usize, mut centers: UPoints) {
+#[inline]
+fn assign_to_centers_for_row(x: usize, row: &Vec<PointId>, centers: &UPoints) {
     let x_i32 = x as i32;
     let mut reference = centers.first_by_x();
     for (y, cell) in row.iter().enumerate() {
-        println!("{:?}", groups[x][y]);
+        println!("@xy: {:?}", row[y]);
         let current: Point2D = Point2D::from_raw(x_i32, y as i32);
-        let candidates: &Vec<PointId> = centers.within_box(current, (current - reference).manhattan_norm() + 1);
-        let nearest: PointId = find_nearest_to_reference(current, candidates);
+        let candidates: &Vec<PointId> = centers.within_box(
+            current, (current - reference).manhattan_norm() + Dist::fnew(1.));
+        let nearest: PointId = find_nearest_to_reference(current, candidates, &centers);
         let reference = nearest;
     }
 }
 
-fn find_nearest_to_reference(point: Point2D, candidates: &Vec<PointId>, centers: UPoints) -> PointId {
+#[inline]
+fn find_nearest_to_reference(point: Point2D, candidates: &Vec<PointId>, centers: &UPoints) -> PointId {
     assert!(centers.len() > 0, "There are no centers within the bounding box, which should never happen");
     //TODO @mark: this mutability thing is going to break the paralellism, maybe the cache can be stored thread-local?
     let mut nearest_center: PointId = candidates[0];
-    let mut current_dist = (centers[nearest_center] - point).euclidean_pseudo();
-    let mut smallest_dist = current_dist;
+    let mut smallest_dist = (centers.get(nearest_center) - point).euclidean_pseudo();
     // //TODO @mark: does this [1:] have a performance cost? is it slower than repeating an element?
-    for center in candidates[1..] {
-        current_dist = (centers[nearest_center] - point).euclidean_pseudo();
+    for center in candidates.iter().skip(1) {
+        let current_dist = (centers.get(nearest_center) - point).euclidean_pseudo();
         if current_dist < smallest_dist {
             smallest_dist = current_dist;
-            nearest_center = center;
+            nearest_center = *center;
         }
     }
     nearest_center
