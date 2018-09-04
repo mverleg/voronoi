@@ -1,9 +1,5 @@
 
 macro_rules! assert_approx_eq {
-//    ($expected: expr, $actual: expr) => {
-//        assert_approx_eq!($expected, $actual, 1e-10);
-//    };
-
     ($expected: expr, $actual: expr, $tolerance: expr) => {
         let ex = $expected;
         let act = $actual;

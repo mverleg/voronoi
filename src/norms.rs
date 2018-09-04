@@ -85,38 +85,6 @@ macro_rules! make_dist {
                 }
             }
         }
-
-        //		impl Add<$T> for X {
-        //			type Output = $T;
-        //
-        //			fn add(self, other: $T) -> Self::Output {
-        //				$T { value: self.value as f64 + other.value }
-        //			}
-        //		}
-
-        //		impl Sub<$T> for X {
-        //			type Output = $T;
-        //
-        //			fn sub(self, other: $T) -> Self::Output {
-        //				$T { value: self.value as f64 - other.value }
-        //			}
-        //		}
-
-        //		impl Add<$T> for Y {
-        //			type Output = $T;
-        //
-        //			fn add(self, other: $T) -> Self::Output {
-        //				$T { value: self.value as f64 + other.value }
-        //			}
-        //		}
-
-        //		impl Sub<$T> for Y {
-        //			type Output = $T;
-        //
-        //			fn sub(self, other: $T) -> Self::Output {
-        //				$T { value: self.value as f64 - other.value }
-        //			}
-        //		}
     };
 }
 
