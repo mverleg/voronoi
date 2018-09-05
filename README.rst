@@ -25,6 +25,7 @@ Performance
 * Try to avoid heap allocations. The image itself, the list of centers and the pixel mapping should be heap-allocated though, their size is large and unknown at compile-time.
 * Try to avoid dynamic dispatch completely.
 * Avoid unnecessary math, e.g. L1/L2/L3 norm values have the same total order without the square/cubic root.
+* Avoid unnecessary allocations, i.e. keep recycling one vector per thread to store nearest points.
 
 Todo: simd, cache locality, contiguous memory, parallelism, branch prediction, 
 

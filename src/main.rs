@@ -29,6 +29,8 @@ pub mod pointid;
 pub mod pointset;
 pub mod regions;
 
+//TODO @mark: find a way to turn of all asserts in optimized mode? => or just convert the hot-loop-ones to debug_assert and keep the rest
+
 //TODO @mark: should this be a dedicated matrix structure rather than just Vec<Vec<.>> ?
 fn make_grid(width: X, height: Y) -> Vec<Vec<PointId>> {
     vec![vec![PointId::new(0); width._expose() as usize]; height._expose() as usize]

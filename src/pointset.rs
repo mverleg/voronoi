@@ -11,7 +11,6 @@ use std::iter::FromIterator;
 #[derive(Debug)]
 pub struct UPoints {
     points_by_x: Vec<Point2D>,
-    current_result: Vec<PointId>,
 }
 
 impl UPoints {
@@ -27,7 +26,6 @@ impl UPoints {
         points_by_x.sort_by(|p1, p2| p1.x().cmp(&p2.x()));
         UPoints {
             points_by_x,
-            current_result: Vec::with_capacity(length),
         }
     }
 
@@ -37,10 +35,14 @@ impl UPoints {
     }
 
     /// Return the index of app ponts within a square bounding box around `reference`, in arbitrary order.
-    pub fn within_box(&mut self, reference: Point2D, range: Dist) -> &Vec<PointId> {
+    // Note that `output_vec` is used instead of return value to avoid allocating a vec for return value,
+    // like in the good old Fortran days (and probably later). Use [within_box] if allocation is okay.
+    #[inline]
+    pub fn within_box_noalloc(&self, reference: Point2D, range: Dist, output_vec: &mut Vec<PointId>) {
         // For efficiency, this returns current_result. This would be completely unsafe in most language,
         // but borrow rules will make sure it is not changed while in use in Rust.
-        self.current_result.clear();
+        assert!(output_vec.capacity() >= self.points_by_x.len());
+        output_vec.clear();
         // Find any point within the range
         let urange = range.ufloor();
         let x_min = reference.x() - urange;
@@ -71,7 +73,8 @@ impl UPoints {
             let x_min = reference.x() - urange;
             while current.x() >= x_min {
                 if y_min <= current.y() && current.y() <= y_max {
-                    self.current_result.push(index);
+                    debug_assert!(output_vec.len() <= self.points_by_x.len());
+                    output_vec.push(index);
                 }
                 if index == PointId::new(0) {
                     break;
@@ -86,7 +89,8 @@ impl UPoints {
                 let x_max = reference.x() + urange;
                 while current.x() <= x_max {
                     if y_min <= current.y() && current.y() <= y_max {
-                        self.current_result.push(index);
+                        debug_assert!(output_vec.len() <= self.points_by_x.len());
+                        output_vec.push(index);
                     }
                     index.increment();
                     if index == length {
@@ -96,7 +100,13 @@ impl UPoints {
                 }
             }
         }
-        &self.current_result
+    }
+
+    /// Version of [within_box_noalloc] that does it's own allocation.
+    pub fn within_box(&self, reference: Point2D, range: Dist) -> &Vec<PointId> {
+        let mut output_vec = Vec::with_capacity(self.len() / 8);
+        self.within_box_noalloc(reference, range, &mut output_vec);
+        &output_vec
     }
 
     /// Get the first Point by X coordinate, or one of them if tied (somewhat arbitrary, which is acceptable)

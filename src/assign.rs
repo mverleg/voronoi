@@ -12,8 +12,10 @@ use pointset::UPoints;
 pub fn assign_to_centers(groups: Vec<Vec<PointId>>, mut centers: UPoints) -> Vec<Vec<PointId>> {
     assert!(centers.len() > 0);
     let mut x_i32: i32;
+    //TODO @mark: output_vec line once per thread:
+    let mut output_vec: Vec<PointId> = Vec::with_capacity(centers.len());
     for (x, row) in groups.iter().enumerate() {
-        assign_to_centers_for_row(x, row, &centers);
+        assign_to_centers_for_row(x, row, &centers, &mut output_vec);
     }
     unimplemented!();
     groups
@@ -21,15 +23,19 @@ pub fn assign_to_centers(groups: Vec<Vec<PointId>>, mut centers: UPoints) -> Vec
 
 //TODO @mark: paralellize here
 #[inline]
-fn assign_to_centers_for_row(x: usize, row: &Vec<PointId>, centers: &UPoints) {
+fn assign_to_centers_for_row(x: usize, row: &Vec<PointId>, centers: &UPoints, output_vec: &mut Vec<PointId>) {
     let x_i32 = x as i32;
     let mut reference = centers.first_by_x();
     for (y, cell) in row.iter().enumerate() {
         println!("@xy: {:?}", row[y]);
         let current: Point2D = Point2D::from_raw(x_i32, y as i32);
-        let candidates: &Vec<PointId> = centers.within_box(
-            current, (current - reference).manhattan_norm() + Dist::fnew(1.));
-        let nearest: PointId = find_nearest_to_reference(current, candidates, &centers);
+        centers.within_box_noalloc(
+            current,
+            (current - reference).manhattan_norm() + Dist::fnew(1.),
+            output_vec
+        );
+        // `output_vec` will contain the result of `within_box_noalloc`
+        let nearest: PointId = find_nearest_to_reference(current, output_vec, &centers);
         let reference = nearest;
     }
 }
