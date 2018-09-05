@@ -26,7 +26,10 @@ pub fn assign_to_centers(groups: Vec<Vec<PointId>>, mut centers: UPoints) -> Vec
 fn assign_to_centers_for_row(x: usize, row: &Vec<PointId>, centers: &UPoints, output_vec: &mut Vec<PointId>) {
     let x_i32 = x as i32;
     let mut reference = centers.first_by_x();
-    for (y, cell) in row.iter().enumerate() {
+    //TODO @mark: next line can probably be simplified
+    //TODO @mark: AM I ONLY ASSIGNING CENTERS TO CENTERS? INSTEAD OF ALL POINTS?
+    unimplemented!("^");
+    for (y, _) in row.iter().enumerate() {
         println!("@xy: {:?}", row[y]);
         let current: Point2D = Point2D::from_raw(x_i32, y as i32);
         centers.within_box_noalloc(

@@ -34,14 +34,8 @@ impl UPoints {
         self.points_by_x.len()
     }
 
-    /// Return the index of app ponts within a square bounding box around `reference`, in arbitrary order.
-    // Note that `output_vec` is used instead of return value to avoid allocating a vec for return value,
-    // like in the good old Fortran days (and probably later). Use [within_box] if allocation is okay.
     #[inline]
-    pub fn within_box_noalloc(&self, reference: Point2D, range: Dist, output_vec: &mut Vec<PointId>) {
-        // For efficiency, this returns current_result. This would be completely unsafe in most language,
-        // but borrow rules will make sure it is not changed while in use in Rust.
-        assert!(output_vec.capacity() >= self.points_by_x.len());
+    fn within_box_internal(&self, reference: Point2D, range: Dist, output_vec: &mut Vec<PointId>) {
         output_vec.clear();
         // Find any point within the range
         let urange = range.ufloor();
@@ -102,11 +96,20 @@ impl UPoints {
         }
     }
 
+    /// Return the index of app ponts within a square bounding box around `reference`, in arbitrary order.
+    // Note that `output_vec` is used instead of return value to avoid allocating a vec for return value,
+    // like in the good old Fortran days (and probably later). Use [within_box] if allocation is okay.
+    #[inline]
+    pub fn within_box_noalloc(&self, reference: Point2D, range: Dist, output_vec: &mut Vec<PointId>) {
+        assert!(output_vec.capacity() >= self.points_by_x.len());
+        self.within_box_internal(reference, range, output_vec);
+    }
+
     /// Version of [within_box_noalloc] that does it's own allocation.
-    pub fn within_box(&self, reference: Point2D, range: Dist) -> &Vec<PointId> {
+    pub fn within_box(&self, reference: Point2D, range: Dist) -> Vec<PointId> {
         let mut output_vec = Vec::with_capacity(self.len() / 8);
-        self.within_box_noalloc(reference, range, &mut output_vec);
-        &output_vec
+        self.within_box_internal(reference, range, &mut output_vec);
+        output_vec
     }
 
     /// Get the first Point by X coordinate, or one of them if tied (somewhat arbitrary, which is acceptable)
@@ -137,7 +140,7 @@ mod tests {
     #[test]
     fn test_within_one_eq() {
         let mut points: UPoints = generate_fixed_points(X::new(15), Y::new(15), 9);
-        let matches: &Vec<PointId> = points.within_box(Point2D::from_raw(4, 4), Dist::fnew(3.0));
+        let matches = points.within_box(Point2D::from_raw(4, 4), Dist::fnew(3.0));
         assert_eq!(4, matches.len());
         let lookup: HashSet<Point2D> =
             HashSet::from_iter(matches.clone().into_iter().map(|id| points.get(id)));
@@ -150,7 +153,7 @@ mod tests {
     #[test]
     fn test_within_one_lt() {
         let mut points: UPoints = generate_fixed_points(X::new(15), Y::new(15), 9);
-        let matches: &Vec<PointId> = points.within_box(Point2D::from_raw(4, 4), Dist::fnew(2.0));
+        let matches = points.within_box(Point2D::from_raw(4, 4), Dist::fnew(2.0));
         assert_eq!(1, matches.len());
         let lookup: HashSet<Point2D> =
             HashSet::from_iter(matches.clone().into_iter().map(|id| points.get(id)));
