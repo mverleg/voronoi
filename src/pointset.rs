@@ -139,7 +139,7 @@ mod tests {
 
     #[test]
     fn test_within_one_eq() {
-        let mut points: UPoints = generate_fixed_points(X::new(15), Y::new(15), 9);
+        let points: UPoints = generate_fixed_points(X::new(15), Y::new(15), 9);
         let matches = points.within_box(Point2D::from_raw(4, 4), Dist::fnew(3.0));
         assert_eq!(4, matches.len());
         let lookup: HashSet<Point2D> =
@@ -152,7 +152,7 @@ mod tests {
 
     #[test]
     fn test_within_one_lt() {
-        let mut points: UPoints = generate_fixed_points(X::new(15), Y::new(15), 9);
+        let points: UPoints = generate_fixed_points(X::new(15), Y::new(15), 9);
         let matches = points.within_box(Point2D::from_raw(4, 4), Dist::fnew(2.0));
         assert_eq!(1, matches.len());
         let lookup: HashSet<Point2D> =
