@@ -135,6 +135,7 @@ impl IntoIterator for UPoints {
 mod tests {
     use super::*;
     use distribute::generate_fixed_points;
+    use dims::{X, Y};
 
     #[test]
     fn test_within_one_eq() {
