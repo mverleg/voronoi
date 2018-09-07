@@ -14,17 +14,17 @@ pub fn assign_to_centers(mut groups: Vec<Vec<PointId>>, centers: UPoints) -> Vec
     for (x, row) in groups.iter_mut().enumerate() {
         assign_to_centers_for_row(x, row, &centers, &mut output_vec);
     }
-    unimplemented!();
     groups
 }
 
 //TODO @mark: paralellize here
 #[inline]
 fn assign_to_centers_for_row(x: usize, row: &mut Vec<PointId>, centers: &UPoints, output_vec: &mut Vec<PointId>) {
-    let reference = centers.first_by_x();
+    let mut reference = centers.first_by_x();
     let x_i32 = x as i32;
     for y in 0 .. row.len() {
         let current: Point2D = Point2D::from_raw(x_i32, y as i32);
+//        println!("distance: {:?}", (current - reference).manhattan_norm() + Dist::fnew(1.));  //TODO: mark (temporary)
         centers.within_box_noalloc(
             current,
             (current - reference).manhattan_norm() + Dist::fnew(1.),
@@ -33,8 +33,7 @@ fn assign_to_centers_for_row(x: usize, row: &mut Vec<PointId>, centers: &UPoints
         // `output_vec` will contain the result of `within_box_noalloc`
         let nearest: PointId = find_nearest_to_reference(current, output_vec, &centers);
         row[y] = nearest;
-        println!("{:?}, {:?} => {:?}", x, y, nearest);
-        let reference = nearest;
+        reference = centers.get(nearest);
     }
 }
 
@@ -44,8 +43,9 @@ fn find_nearest_to_reference(point: Point2D, candidates: &Vec<PointId>, centers:
     let mut nearest_center: PointId = candidates[0];
     let mut smallest_dist = (centers.get(nearest_center) - point).euclidean_pseudo();
     //TODO @mark: is this 'skip' faster than just repeating an element?
+    //TODO @mark: want to not use *, iterate over copies...
     for center in candidates.iter().skip(1) {
-        let current_dist = (centers.get(nearest_center) - point).euclidean_pseudo();
+        let current_dist = (centers.get(*center) - point).euclidean_pseudo();
         if current_dist < smallest_dist {
             smallest_dist = current_dist;
             nearest_center = *center;

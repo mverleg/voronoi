@@ -1,4 +1,3 @@
-use dims::{X, Y};
 use find_index::find_index;
 use norms::Dist;
 use point::Point2D;

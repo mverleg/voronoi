@@ -28,6 +28,7 @@ pub mod point;
 pub mod pointid;
 pub mod pointset;
 pub mod regions;
+pub mod color;
 
 //TODO @mark: find a way to turn of all asserts in optimized mode? => or just convert the hot-loop-ones to debug_assert and keep the rest
 
