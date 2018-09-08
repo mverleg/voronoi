@@ -57,7 +57,7 @@ fn main() {
         let voronoi = pixel_to_group_colors(groups, centers, img);
         // Write the output image
         let outpth = env::temp_dir().join("voronoi_gen.png");
-        img.save(outpth.clone()).unwrap();
+        voronoi.save(outpth.clone()).unwrap();
     //TODO @mark: turn on again:
     //        Command::new("eog").arg(outpth).spawn().unwrap();
     } else {

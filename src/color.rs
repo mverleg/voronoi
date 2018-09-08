@@ -1,6 +1,9 @@
 use image::Rgb;
 use std::ops::Add;
 use std::ops::AddAssign;
+use image::ImageBuffer;
+
+type Img = ImageBuffer<Rgb<u8>, Vec<u8>>;
 
 /// Add colors to compute average.
 /// This works un to about 4000x4000 all white.
