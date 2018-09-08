@@ -2,12 +2,13 @@ use norms::{Norm, Dist};
 use point::Point2D;
 use pointid::PointId;
 use pointset::UPoints;
+use grouping::Grouping;
 
 //TODO @mark: is all this converting from usize to i32 expensive?
 //TODO @mark: inline every function used in inner loop
 
 /// This assigns the correct PointId to every single cell in `groups`.
-pub fn assign_to_centers(mut groups: Vec<Vec<PointId>>, centers: UPoints) -> Vec<Vec<PointId>> {
+pub fn assign_to_centers(mut groups: Grouping, centers: UPoints) -> Grouping {
     assert!(centers.len() > 0);
     //TODO @mark: output_vec line once per thread:
     let mut output_vec: Vec<PointId> = Vec::with_capacity(centers.len());
