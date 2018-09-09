@@ -3,7 +3,10 @@ use std::ops::Add;
 use std::ops::AddAssign;
 use image::ImageBuffer;
 
-type Img = ImageBuffer<Rgb<u8>, Vec<u8>>;
+pub type Color = Rgb<u8>;
+
+pub type Img = ImageBuffer<Color, Vec<u8>>;
+
 
 /// Add colors to compute average.
 /// This works un to about 4000x4000 all white.
@@ -20,7 +23,7 @@ impl RgbColorAverage {
         RgbColorAverage { c0: 0, c1: 0, c2: 0, count: 0 }
     }
 
-    pub fn calc_avg(&self) -> Rgb<u8> {
+    pub fn calc_avg(&self) -> Color {
         assert!(self.count > 0);
         Rgb([
             (self.c0 / self.count) as u8,
@@ -30,8 +33,8 @@ impl RgbColorAverage {
     }
 }
 
-impl AddAssign<Rgb<u8>> for RgbColorAverage {
-    fn add_assign(&mut self, color: Rgb<u8>) {
+impl AddAssign<Color> for RgbColorAverage {
+    fn add_assign(&mut self, color: Color) {
         self.c0 += color.data[0] as u32;
         self.c1 += color.data[1] as u32;
         self.c2 += color.data[2] as u32;
@@ -39,10 +42,10 @@ impl AddAssign<Rgb<u8>> for RgbColorAverage {
     }
 }
 
-impl Add<Rgb<u8>> for RgbColorAverage {
+impl Add<Color> for RgbColorAverage {
     type Output = Self;
 
-    fn add(mut self, color: Rgb<u8>) -> Self::Output {
+    fn add(mut self, color: Color) -> Self::Output {
         self += color;
         self
     }

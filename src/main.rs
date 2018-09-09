@@ -31,6 +31,7 @@ pub mod pointid;
 pub mod pointset;
 pub mod regions;
 pub mod color;
+pub mod colorset;
 pub mod paint;
 
 //TODO @mark: find a way to turn of all asserts in optimized mode? => or just convert the hot-loop-ones to debug_assert and keep the rest
@@ -43,18 +44,19 @@ fn main() {
     let dyn_img = image::open(pth).unwrap();
     if let DynamicImage::ImageRgb8(img) = dyn_img {
         // Get a random seed and generate points.
-        let mut rng: StdRng = SeedableRng::from_seed([
+        let rng: StdRng = SeedableRng::from_seed([
             154, 209, 215, 146, 162, 81, 13, 78, 243, 132, 107, 232, 61, 157, 71, 142, 202, 167,
             65, 141, 113, 250, 202, 52, 46, 221, 141, 139, 22, 29, 183, 135,
         ]);
         let width = X::new(img.width() as i32);
         let height = Y::new(img.height() as i32);
         let node_count: usize = (img.width() * img.height()) as usize / 50;
-        let centers = generate_random_points(width, height, node_count, rng);
+        let center_points = generate_random_points(width, height, node_count, rng);
+        let center_colors = center_points.new_color_averager();
         // Assign all pixels to the nearest center.
         let pixel_group = Grouping::new(width, height);
-        let groups = assign_to_centers(pixel_group, centers);
-        let voronoi = pixel_to_group_colors(groups, centers, img);
+        let groups = assign_to_centers(pixel_group, center_points);
+        let voronoi = pixel_to_group_colors(groups, center_colors, img);
         // Write the output image
         let outpth = env::temp_dir().join("voronoi_gen.png");
         voronoi.save(outpth.clone()).unwrap();

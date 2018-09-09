@@ -5,6 +5,8 @@ use pointid::PointId;
 use std::cmp::Ordering;
 use std::collections::HashSet;
 use std::iter::FromIterator;
+use colorset::PointColors;
+use colorset::PointColorAverages;
 
 /// Collection of *unique* points.
 #[derive(Debug)]
@@ -31,6 +33,10 @@ impl UPoints {
     #[inline]
     pub fn len(&self) -> usize {
         self.points_by_x.len()
+    }
+
+    pub fn new_color_averager(&self) -> PointColorAverages {
+        PointColorAverages::new(self.len())
     }
 
     #[inline]

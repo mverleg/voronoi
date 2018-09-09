@@ -1,5 +1,6 @@
 use pointid::PointId;
-use dims::{X, Y};
+use dims::{Dim, X, Y};
+use std::slice::IterMut;
 
 #[derive(Debug)]
 pub struct Grouping {
@@ -15,5 +16,9 @@ impl Grouping {
                 ]; height._expose() as usize
             ]
         }
+    }
+
+    pub fn iter_mut(&mut self) -> IterMut<Vec<PointId>> {
+        self.center_links.iter_mut()
     }
 }
