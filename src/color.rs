@@ -8,6 +8,11 @@ pub type Color = Rgb<u8>;
 pub type Img = ImageBuffer<Color, Vec<u8>>;
 
 
+pub fn new_color(c0: u8, c1: u8, c2: u8) -> Color {
+    Rgb([c0, c1, c2])
+}
+
+
 /// Add colors to compute average.
 /// This works un to about 4000x4000 all white.
 #[derive(Debug)]
@@ -24,12 +29,12 @@ impl RgbColorAverage {
     }
 
     pub fn calc_avg(&self) -> Color {
-        assert!(self.count > 0);
-        Rgb([
+        assert!(self.count > 0, "No colors have been added for this average; this should not happen if all points are unique");
+        new_color(
             (self.c0 / self.count) as u8,
             (self.c1 / self.count) as u8,
             (self.c2 / self.count) as u8,
-        ])
+        )
     }
 }
 
@@ -57,19 +62,20 @@ mod tests {
 
     #[test]
     fn test_color_avg_same() {
+        // Also tests u8 overflow
         let mut avg = RgbColorAverage::new();
-        avg += Rgb([127u8, 127u8, 127u8]);
-        avg += Rgb([127u8, 127u8, 127u8]);
-        avg += Rgb([127u8, 127u8, 127u8]);
-        assert_eq!(Rgb([127u8, 127u8, 127u8]), avg.calc_avg());
+        avg += new_color(127u8, 127u8, 127u8);
+        avg += new_color(127u8, 127u8, 127u8);
+        avg += new_color(127u8, 127u8, 127u8);
+        assert_eq!(new_color(127u8, 127u8, 127u8), avg.calc_avg());
     }
 
     #[test]
     fn test_color_avg_minmax() {
         let mut avg = RgbColorAverage::new();
-        avg += Rgb([0u8, 0u8, 0u8]);
-        avg += Rgb([255u8, 255u8, 255u8]);
-        avg += Rgb([255u8, 255u8, 255u8]);
-        assert_eq!(Rgb([170u8, 170u8, 170u8]), avg.calc_avg());
+        avg += new_color(0u8, 0u8, 0u8);
+        avg += new_color(255u8, 255u8, 255u8);
+        avg += new_color(255u8, 255u8, 255u8);
+        assert_eq!(new_color(170u8, 170u8, 170u8), avg.calc_avg());
     }
 }

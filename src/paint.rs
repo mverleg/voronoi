@@ -1,7 +1,6 @@
 use color::Img;
 use colorset::PointColorAverages;
 use grouping::Grouping;
-use pointset::UPoints;
 
 /// Set the color of each pixel to the average of the group.
 pub fn pixel_to_group_colors(groups: Grouping, centers: PointColorAverages, img: Img) -> Img {

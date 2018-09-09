@@ -17,6 +17,15 @@ impl PointColorAverages {
         PointColorAverages { averages: colors }
     }
 
+    //TODO @mark: is there some way to recycle PointColorAverages memory for PointColors
+    pub fn compute(self) -> PointColors {
+        let mut colors: Vec<Color> = Vec::with_capacity(self.len());
+        for avg in self.averages.into_iter() {
+            colors.push(avg.calc_avg())
+        }
+        PointColors::new( colors)
+    }
+
     #[inline]
     pub fn len(&self) -> usize {
         self.averages.len()
@@ -48,5 +57,22 @@ impl PointColors {
     pub fn get(&self, id: PointId) -> Color {
         //TODO @mark: is this indeed a copy type?
         self.colors[id._expose()]
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use color::new_color;
+
+    #[test]
+    fn test_averages_to_colors() {
+        let mut avgs = PointColorAverages::new(2);
+        avgs.get(PointId::new(0)) += new_color(255u8, 255u8, 255u8);
+        avgs.get(PointId::new(0)) += new_color(0u8, 0u8, 0u8);
+        avgs.get(PointId::new(1)) += new_color(255u8, 255u8, 255u8);
+        let colors = avgs.compute();
+        assert_eq!(new_color(127u8, 127u8, 127u8), colors.get(PointId::new(0)));
+        assert_eq!(new_color(255u8, 255u8, 255u8), colors.get(PointId::new(1)));
     }
 }

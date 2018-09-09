@@ -5,7 +5,6 @@ use pointid::PointId;
 use std::cmp::Ordering;
 use std::collections::HashSet;
 use std::iter::FromIterator;
-use colorset::PointColors;
 use colorset::PointColorAverages;
 
 /// Collection of *unique* points.
