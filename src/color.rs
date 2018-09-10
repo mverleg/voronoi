@@ -36,14 +36,24 @@ impl RgbColorAverage {
             (self.c2 / self.count) as u8,
         )
     }
-}
 
-impl AddAssign<Color> for RgbColorAverage {
-    fn add_assign(&mut self, color: Color) {
+    fn add(&mut self, color: Color) {
         self.c0 += color.data[0] as u32;
         self.c1 += color.data[1] as u32;
         self.c2 += color.data[2] as u32;
         self.count += 1;
+    }
+}
+
+impl AddAssign<Color> for RgbColorAverage {
+    fn add_assign(&mut self, color: Color) {
+       self.add(color);
+    }
+}
+
+impl<'a> AddAssign<Color> for &'a mut RgbColorAverage {
+    fn add_assign(&mut self, color: Color) {
+        self.add(color);
     }
 }
 

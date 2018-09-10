@@ -68,9 +68,11 @@ mod tests {
     #[test]
     fn test_averages_to_colors() {
         let mut avgs = PointColorAverages::new(2);
-        avgs.get(PointId::new(0)) += new_color(255u8, 255u8, 255u8);
-        avgs.get(PointId::new(0)) += new_color(0u8, 0u8, 0u8);
-        avgs.get(PointId::new(1)) += new_color(255u8, 255u8, 255u8);
+        let mut avg0 = avgs.get(PointId::new(0));
+        avg0 += new_color(255u8, 255u8, 255u8);
+        avg0 += new_color(0u8, 0u8, 0u8);
+        let mut avg1 = avgs.get(PointId::new(1));
+        avg1 += new_color(255u8, 255u8, 255u8);
         let colors = avgs.compute();
         assert_eq!(new_color(127u8, 127u8, 127u8), colors.get(PointId::new(0)));
         assert_eq!(new_color(255u8, 255u8, 255u8), colors.get(PointId::new(1)));
