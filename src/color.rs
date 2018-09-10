@@ -8,6 +8,12 @@ pub type Color = Rgb<u8>;
 pub type Img = ImageBuffer<Color, Vec<u8>>;
 
 
+//TODO @mark: unused?
+pub fn empty_img(width: u32, height: u32) -> Img {
+    ImageBuffer::new(width, height)
+}
+
+
 pub fn new_color(c0: u8, c1: u8, c2: u8) -> Color {
     Rgb([c0, c1, c2])
 }
