@@ -1,8 +1,8 @@
-use color::empty_img;
 use color::Img;
 use colorset::PointColorAverages;
 use colorset::PointColors;
 use grouping::Grouping;
+use dims::{X, Y};
 
 //TODO @mark: make a version that changes the image in-place (and one that makes a new one)
 /// Set the color of each pixel to the average of the group.
@@ -22,4 +22,25 @@ pub fn group_colors_from_pixels(groups: &Grouping, centers: PointColorAverages, 
 /// Apply the center's average color to each pixel that belongs to it.
 pub fn paint_pixels_to_group_color(groups: &Grouping, centers: PointColors, img: Img) -> Img {
     unimplemented!() // TODO: mark
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_group_colors_from_pixels() {
+        let groups = Grouping::new(X::new(2), Y::new(1));
+
+        panic!(); //TODO @mark:
+//        assert_eq!(, );
+    }
+
+    #[test]
+    fn test_paint_pixels_to_group_color() {
+
+        panic!(); //TODO @mark:
+//        assert_eq!(, );
+    }
 }
