@@ -1,3 +1,4 @@
+use colorset::PointColorAverages;
 use find_index::find_index;
 use norms::Dist;
 use point::Point2D;
@@ -5,7 +6,6 @@ use pointid::PointId;
 use std::cmp::Ordering;
 use std::collections::HashSet;
 use std::iter::FromIterator;
-use colorset::PointColorAverages;
 
 /// Collection of *unique* points.
 #[derive(Debug)]
@@ -24,9 +24,7 @@ impl UPoints {
         }
         let mut points_by_x = points;
         points_by_x.sort_by(|p1, p2| p1.x().cmp(&p2.x()));
-        UPoints {
-            points_by_x,
-        }
+        UPoints { points_by_x }
     }
 
     #[inline]
@@ -104,7 +102,12 @@ impl UPoints {
     // Note that `output_vec` is used instead of return value to avoid allocating a vec for return value,
     // like in the good old Fortran days (and probably later). Use [within_box] if allocation is okay.
     #[inline]
-    pub fn within_box_noalloc(&self, reference: Point2D, range: Dist, output_vec: &mut Vec<PointId>) {
+    pub fn within_box_noalloc(
+        &self,
+        reference: Point2D,
+        range: Dist,
+        output_vec: &mut Vec<PointId>,
+    ) {
         assert!(output_vec.capacity() >= self.points_by_x.len());
         self.within_box_internal(reference, range, output_vec);
     }
@@ -139,8 +142,8 @@ impl IntoIterator for UPoints {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use distribute::generate_fixed_points;
     use dims::{X, Y};
+    use distribute::generate_fixed_points;
 
     #[test]
     fn test_within_one_eq() {

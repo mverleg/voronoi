@@ -1,23 +1,20 @@
+use image::ImageBuffer;
 use image::Rgb;
 use std::ops::Add;
 use std::ops::AddAssign;
-use image::ImageBuffer;
 
 pub type Color = Rgb<u8>;
 
 pub type Img = ImageBuffer<Color, Vec<u8>>;
-
 
 //TODO @mark: unused?
 pub fn empty_img(width: u32, height: u32) -> Img {
     ImageBuffer::new(width, height)
 }
 
-
 pub fn new_color(c0: u8, c1: u8, c2: u8) -> Color {
     Rgb([c0, c1, c2])
 }
-
 
 /// Add colors to compute average.
 /// This works un to about 4000x4000 all white.
@@ -31,7 +28,12 @@ pub struct RgbColorAverage {
 
 impl RgbColorAverage {
     pub fn new() -> Self {
-        RgbColorAverage { c0: 0, c1: 0, c2: 0, count: 0 }
+        RgbColorAverage {
+            c0: 0,
+            c1: 0,
+            c2: 0,
+            count: 0,
+        }
     }
 
     pub fn calc_avg(&self) -> Color {
@@ -53,7 +55,7 @@ impl RgbColorAverage {
 
 impl AddAssign<Color> for RgbColorAverage {
     fn add_assign(&mut self, color: Color) {
-       self.add(color);
+        self.add(color);
     }
 }
 

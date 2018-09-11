@@ -1,8 +1,8 @@
-use norms::{Norm, Dist};
+use grouping::Grouping;
+use norms::{Dist, Norm};
 use point::Point2D;
 use pointid::PointId;
 use pointset::UPoints;
-use grouping::Grouping;
 
 //TODO @mark: is all this converting from usize to i32 expensive?
 //TODO @mark: inline every function used in inner loop
@@ -20,16 +20,21 @@ pub fn assign_to_centers(mut groups: Grouping, centers: UPoints) -> Grouping {
 
 //TODO @mark: paralellize here
 #[inline]
-fn assign_to_centers_for_row(x: usize, row: &mut Vec<PointId>, centers: &UPoints, output_vec: &mut Vec<PointId>) {
+fn assign_to_centers_for_row(
+    x: usize,
+    row: &mut Vec<PointId>,
+    centers: &UPoints,
+    output_vec: &mut Vec<PointId>,
+) {
     let mut reference = centers.first_by_x();
     let x_i32 = x as i32;
-    for y in 0 .. row.len() {
+    for y in 0..row.len() {
         let current: Point2D = Point2D::from_raw(x_i32, y as i32);
-//        println!("distance: {:?}", (current - reference).manhattan_norm() + Dist::fnew(1.));  //TODO: mark (temporary)
+        //        println!("distance: {:?}", (current - reference).manhattan_norm() + Dist::fnew(1.));  //TODO: mark (temporary)
         centers.within_box_noalloc(
             current,
             (current - reference).manhattan_norm() + Dist::fnew(1.),
-            output_vec
+            output_vec,
         );
         // `output_vec` will contain the result of `within_box_noalloc`
         let nearest: PointId = find_nearest_to_reference(current, output_vec, &centers);
@@ -39,8 +44,15 @@ fn assign_to_centers_for_row(x: usize, row: &mut Vec<PointId>, centers: &UPoints
 }
 
 #[inline]
-fn find_nearest_to_reference(point: Point2D, candidates: &Vec<PointId>, centers: &UPoints) -> PointId {
-    assert!(centers.len() > 0, "There are no centers within the bounding box, which should never happen");
+fn find_nearest_to_reference(
+    point: Point2D,
+    candidates: &Vec<PointId>,
+    centers: &UPoints,
+) -> PointId {
+    assert!(
+        centers.len() > 0,
+        "There are no centers within the bounding box, which should never happen"
+    );
     let mut nearest_center: PointId = candidates[0];
     let mut smallest_dist = (centers.get(nearest_center) - point).euclidean_pseudo();
     //TODO @mark: is this 'skip' faster than just repeating an element?

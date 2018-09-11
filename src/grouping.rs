@@ -1,5 +1,5 @@
-use pointid::PointId;
 use dims::{Dim, X, Y};
+use pointid::PointId;
 use std::slice::IterMut;
 
 #[derive(Debug)]
@@ -11,10 +11,9 @@ impl Grouping {
     pub fn new(width: X, height: Y) -> Self {
         Grouping {
             center_links: vec![
-                vec![
-                    PointId::empty(); width._expose() as usize
-                ]; height._expose() as usize
-            ]
+                vec![PointId::empty(); width._expose() as usize];
+                height._expose() as usize
+            ],
         }
     }
 

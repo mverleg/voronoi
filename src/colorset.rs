@@ -1,6 +1,6 @@
+use color::Color;
 use color::RgbColorAverage;
 use pointid::PointId;
-use color::Color;
 
 /// A color-averaging object per point.
 #[derive(Debug)]
@@ -11,7 +11,7 @@ pub struct PointColorAverages {
 impl PointColorAverages {
     pub fn new(count: usize) -> Self {
         let mut colors = Vec::with_capacity(count);
-        for _ in 0 .. count {
+        for _ in 0..count {
             colors.push(RgbColorAverage::new());
         }
         PointColorAverages { averages: colors }
@@ -23,7 +23,7 @@ impl PointColorAverages {
         for avg in self.averages.into_iter() {
             colors.push(avg.calc_avg())
         }
-        PointColors::new( colors)
+        PointColors::new(colors)
     }
 
     #[inline]

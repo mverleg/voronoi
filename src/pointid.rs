@@ -13,7 +13,9 @@ impl PointId {
     }
 
     pub fn empty() -> Self {
-        PointId { value: usize::max_value() }
+        PointId {
+            value: usize::max_value(),
+        }
     }
 
     pub fn increment(&mut self) {
