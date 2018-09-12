@@ -11,8 +11,8 @@ impl Grouping {
     pub fn new(width: X, height: Y) -> Self {
         Grouping {
             center_links: vec![
-                vec![PointId::empty(); width._expose() as usize];
-                height._expose() as usize
+                vec![PointId::empty(); height._expose() as usize];
+                width._expose() as usize
             ],
         }
     }
@@ -23,6 +23,10 @@ impl Grouping {
 
     #[inline]
     pub fn set(&mut self, x: X, y: Y, point_id: PointId) {
+        let width = self.center_links.len() as i32;
+        let height = self.center_links[0].len() as i32;
+        debug_assert!(x._expose() < width, format!("Expectation violated: X {} < X-dim {}\n", x._expose(), width));
+        debug_assert!(y._expose() < height, format!("Expectation violated: Y {} < y-dim {}\n", y._expose(), height));
         self.center_links[x._expose() as usize][y._expose() as usize] = point_id;
     }
 
