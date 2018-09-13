@@ -24,7 +24,8 @@ pub fn group_colors_from_pixels(
     centers: PointColorAverages,
     img: &Img,
 ) -> PointColorAverages {
-    unimplemented!() // TODO: mark
+
+    unimplemented!()  //TODO @mark: THIS CODE IS TEMPORARY!
 }
 
 /// Apply the center's average color to each pixel that belongs to it.
@@ -35,18 +36,23 @@ pub fn paint_pixels_to_group_color(groups: &Grouping, centers: PointColors, img:
 #[cfg(test)]
 mod tests {
     use super::*;
+    use color::empty_img;
 
     #[test]
     fn test_group_colors_from_pixels() {
-        let groups = Grouping::new(X::new(2), Y::new(1));
+        let groups = Grouping::new(X::new(3), Y::new(2));
+        let centers = PointColorAverages::new(2);
+        let img = empty_img(3, 2);
+        let avgs = group_colors_from_pixels(&groups, centers, &img);
+        println!("avgs: {:?}", avgs);
+
+
 
         panic!(); //TODO @mark:
-                  //        assert_eq!(, );
     }
 
     #[test]
     fn test_paint_pixels_to_group_color() {
         panic!(); //TODO @mark:
-                  //        assert_eq!(, );
     }
 }

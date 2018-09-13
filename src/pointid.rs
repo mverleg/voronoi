@@ -2,7 +2,7 @@ use find_index::Mid;
 use std::ops::{Add, Sub};
 
 #[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq)]
-// usize.max_value() should be interpreted as empty and should not be requested
+// TODO: usize.max_value() should be interpreted as empty and should not be requested
 pub struct PointId {
     value: usize,
 }
