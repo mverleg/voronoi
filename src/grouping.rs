@@ -1,6 +1,7 @@
 use dims::{Dim, X, Y};
 use pointid::PointId;
 use std::slice::IterMut;
+use std::ops::Index;
 
 #[derive(Debug)]
 pub struct Grouping {
@@ -28,6 +29,7 @@ impl Grouping {
         Y::new(self.center_links[0].len() as i32)
     }
 
+    //TODO @mark: still used?
     pub fn iter_mut(&mut self) -> IterMut<Vec<PointId>> {
         self.center_links.iter_mut()
     }
@@ -47,6 +49,14 @@ impl Grouping {
     pub fn get(&self, x: X, y: Y) -> PointId {
         //TODO @mark: from over here, it looks like X and Y should be usize
         self.center_links[x._expose() as usize][y._expose() as usize]
+    }
+}
+
+impl Index<(X, Y)> for Grouping {
+    type Output = PointId;
+
+    fn index(&self, index: (X, Y)) -> &Self::Output {
+        &self.center_links[(index.0)._expose() as usize][(index.1)._expose() as usize]
     }
 }
 
@@ -70,14 +80,14 @@ impl<'a> Iterator for GroupIndexIterator<'a> {
 
     fn next(&mut self) -> Option<Self::Item> {
         self.x = self.x + 1;
-        if (self.x == self.grouping.width() ) {
+        if self.x == self.grouping.width() {
             self.x = X::new(0);
             self.y = self.y + 1;
         }
-        if (self.y >= self.grouping.height()) {
+        if self.y >= self.grouping.height() {
             return Option::None;
         }
-        return Option::Some((self.x, self.y, self.grouping[self.x][self.y]))
+        return Option::Some((self.x, self.y, self.grouping[(self.x, self.y)]))
     }
 }
 
@@ -92,5 +102,17 @@ mod tests {
         groups.set(X::new(0), Y::new(0), PointId::new(0));
         assert_eq!(PointId::new(0), groups.get(X::new(0), Y::new(0)));
         assert_eq!(PointId::new(1), groups.get(X::new(1), Y::new(0)));
+    }
+
+    #[test]
+    fn test_iter() {
+        let mut groups = Grouping::new(X::new(2), Y::new(1));
+        groups.set(X::new(1), Y::new(0), PointId::new(1));
+        groups.set(X::new(0), Y::new(0), PointId::new(0));
+        let mut iter = groups.iter_indexed();
+        assert_eq!(Option::Some((X::new(0), Y::new(0), PointId::new(1))), iter.next());
+        assert_eq!(Option::Some((X::new(1), Y::new(0), PointId::new(0))), iter.next());
+        assert_eq!(Option::None, iter.next());
+        assert_eq!(Option::None, iter.next());
     }
 }
