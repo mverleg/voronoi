@@ -69,18 +69,18 @@ pub struct GroupIndexIterator<'a> {
 
 impl<'a> GroupIndexIterator<'a> {
     pub fn new(grouping: &'a mut Grouping) -> Self {
-        GroupIndexIterator { grouping, x: X::new(0), y: Y::new(0) }
+        //TODO @mark: change -1 if unsized
+        GroupIndexIterator { grouping, x: X::new(-1), y: Y::new(0) }
     }
 }
 
-//TODO @mark: test
 impl<'a> Iterator for GroupIndexIterator<'a> {
     type Item = (X, Y, PointId);
 
 
     fn next(&mut self) -> Option<Self::Item> {
         self.x = self.x + 1;
-        if self.x == self.grouping.width() {
+        if self.x >= self.grouping.width() {
             self.x = X::new(0);
             self.y = self.y + 1;
         }
@@ -110,8 +110,8 @@ mod tests {
         groups.set(X::new(1), Y::new(0), PointId::new(1));
         groups.set(X::new(0), Y::new(0), PointId::new(0));
         let mut iter = groups.iter_indexed();
-        assert_eq!(Option::Some((X::new(0), Y::new(0), PointId::new(1))), iter.next());
-        assert_eq!(Option::Some((X::new(1), Y::new(0), PointId::new(0))), iter.next());
+        assert_eq!(Option::Some((X::new(0), Y::new(0), PointId::new(0))), iter.next());
+        assert_eq!(Option::Some((X::new(1), Y::new(0), PointId::new(1))), iter.next());
         assert_eq!(Option::None, iter.next());
         assert_eq!(Option::None, iter.next());
     }
