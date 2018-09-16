@@ -9,3 +9,11 @@ rand = "0.5.*"
 threadpool = "1.7.*"
 clap = "2.32.*"
 byteorder = "1.2.*"
+
+[profile.release]
+lto = true
+# TODO remove panic to make smaller
+# panic = 'abort'  # causes compile error
+
+# TODO compile for native architecture
+

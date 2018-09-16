@@ -45,3 +45,11 @@ Difficulties:
 * Some operations cannot be overloaded generically but have to be re-done for every concrete type because of orphan rules. Macros help a little here.
 * It is necessary to expose the `usize` data for e.g. generating random numbers or building a `Vec`.
 * There is substantially more code to facilitate types and operations on them than there is 'business' logic.
+
+How to use
+-------------------------------
+
+* Comppile: `cargo build --release`
+* Decrease size: `strip target/release/voronoi`
+* Run: `target/release/voronoi resources/imgs/parrots.png --show`
+

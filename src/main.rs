@@ -2,6 +2,11 @@
 #![feature(nll)]
 #![feature(test)]
 
+/// alloc_system avoids using the default bundled allocator, to save space
+/// todo: could not get this to work, no space saved at all
+// #![feature(alloc_system)]
+// extern crate alloc_system;
+
 extern crate byteorder;
 extern crate clap;
 extern crate image;
@@ -19,9 +24,6 @@ use rand::{SeedableRng, StdRng};
 #[allow(unused_imports)]
 use std::process::Command;
 use pointset::UPoints;
-
-#[macro_use]
-pub mod test_util;
 
 pub mod argparse;
 pub mod assign;
