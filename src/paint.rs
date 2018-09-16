@@ -41,8 +41,7 @@ mod tests {
     use super::*;
     use color::RgbColorAverage;
 
-    #[test]
-    fn test_group_colors_from_pixels() {
+    fn make_groups() -> (PointId, PointId, Grouping) {
         let p0 = PointId::new(0);
         let p1 = PointId::new(1);
         let mut groups = Grouping::new(X::new(3), Y::new(2));
@@ -50,8 +49,14 @@ mod tests {
         groups.set(X::new(1), Y::new(0), p0);
         groups.set(X::new(2), Y::new(0), p1);
         groups.set(X::new(0), Y::new(1), p0);
+        groups.set(X::new(1), Y::new(1), p1);
         groups.set(X::new(2), Y::new(1), p1);
-        groups.set(X::new(3), Y::new(1), p1);
+        (p0, p1, groups)
+    }
+
+    #[test]
+    fn test_group_colors_from_pixels() {
+        let (p0, p1, mut groups) = make_groups();
         let centers = PointColorAverages::new(2);
         let mut img = empty_img(3, 2);
         img[(0, 0)] = new_color(0, 0, 0);
@@ -64,12 +69,22 @@ mod tests {
         let colors = avgs.compute();
         assert_eq!(colors[p0], new_color(85, 85, 85));
         assert_eq!(colors[p1], new_color(170, 170, 170));
-
-        panic!(); //TODO @mark:
     }
 
     #[test]
     fn test_paint_pixels_to_group_color() {
-        panic!(); //TODO @mark:
+        let (p0, p1, mut groups) = make_groups();
+        let mut img = empty_img(3, 2);
+        let colors = PointColors::new(vec![
+            new_color(85, 85, 85),
+            new_color(170, 170, 170),
+        ]);
+        let voronoi = paint_pixels_to_group_color(&groups, colors, img);
+        assert_eq!(new_color(85, 85, 85), voronoi[(0, 0)]);
+        assert_eq!(new_color(85, 85, 85), voronoi[(1, 0)]);
+        assert_eq!(new_color(85, 85, 85), voronoi[(0, 1)]);
+        assert_eq!(new_color(170, 170, 170), voronoi[(2, 0)]);
+        assert_eq!(new_color(170, 170, 170), voronoi[(1, 1)]);
+        assert_eq!(new_color(170, 170, 170), voronoi[(2, 1)]);
     }
 }
