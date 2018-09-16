@@ -35,18 +35,35 @@ pub fn paint_pixels_to_group_color(groups: &Grouping, centers: PointColors, img:
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use color::empty_img;
+    use color::new_color;
+    use pointid::PointId;
+    use super::*;
+    use color::RgbColorAverage;
 
     #[test]
     fn test_group_colors_from_pixels() {
-        let groups = Grouping::new(X::new(3), Y::new(2));
+        let p0 = PointId::new(0);
+        let p1 = PointId::new(1);
+        let mut groups = Grouping::new(X::new(3), Y::new(2));
+        groups.set(X::new(0), Y::new(0), p0);
+        groups.set(X::new(1), Y::new(0), p0);
+        groups.set(X::new(2), Y::new(0), p1);
+        groups.set(X::new(0), Y::new(1), p0);
+        groups.set(X::new(2), Y::new(1), p1);
+        groups.set(X::new(3), Y::new(1), p1);
         let centers = PointColorAverages::new(2);
-        let img = empty_img(3, 2);
+        let mut img = empty_img(3, 2);
+        img[(0, 0)] = new_color(0, 0, 0);
+        img[(1, 0)] = new_color(0, 0, 0);
+        img[(2, 0)] = new_color(255, 255, 255);
+        img[(0, 1)] = new_color(255, 255, 255);
+        img[(2, 1)] = new_color(255, 255, 0);
+        img[(3, 1)] = new_color(255, 0, 0);
         let avgs = group_colors_from_pixels(&groups, centers, &img);
-        println!("avgs: {:?}", avgs);
-
-
+        let colors = avgs.compute();
+        assert_eq!(colors[p0], new_color(85, 85, 85));
+        assert_eq!(colors[p1], new_color(170, 170, 170));
 
         panic!(); //TODO @mark:
     }

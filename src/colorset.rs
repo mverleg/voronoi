@@ -1,6 +1,8 @@
 use color::Color;
 use color::RgbColorAverage;
 use pointid::PointId;
+use std::ops::Index;
+use std::ops::IndexMut;
 
 /// A color-averaging object per point.
 #[derive(Debug)]
@@ -37,6 +39,20 @@ impl PointColorAverages {
     }
 }
 
+impl Index<PointId> for PointColorAverages {
+    type Output = RgbColorAverage;
+
+    fn index(&self, index: PointId) -> &Self::Output {
+        &self.averages[index._expose() as usize]
+    }
+}
+
+impl IndexMut<PointId> for PointColorAverages {
+    fn index_mut<'a>(&'a mut self, index: PointId) -> &'a mut Self::Output {
+        self.get(index)
+    }
+}
+
 /// A c computed average color per point.
 #[derive(Debug)]
 pub struct PointColors {
@@ -57,6 +73,14 @@ impl PointColors {
     pub fn get(&self, id: PointId) -> Color {
         //TODO @mark: is this indeed a copy type?
         self.colors[id._expose()]
+    }
+}
+
+impl Index<PointId> for PointColors {
+    type Output = Color;
+
+    fn index(&self, index: PointId) -> &Self::Output {
+        &self.colors[index._expose()]
     }
 }
 
