@@ -24,19 +24,19 @@ impl Img {
     }
 
     pub fn empty(width: X, height: Y) -> Self {
-        Img::wrap(ImageBuffer::new(width._expose(), height._expose()))
+        Img::wrap(ImageBuffer::new(width._expose() as u32, height._expose() as u32))
     }
 
     pub fn width(&self) -> X {
-        X::new(self.data.width())
+        X::new(self.data.width() as i32)
     }
 
     pub fn height(&self) -> Y {
-        Y::new(self.data.width())
+        Y::new(self.data.width() as i32)
     }
 
     pub fn pixel_cnt(&self) -> usize {
-        self.width()._expose() * self.height()._expose()
+        (self.width()._expose() * self.height()._expose()) as usize
     }
 
     pub fn save<Q>(&self, path: Q) -> io::Result<()> where Q: AsRef<Path> {
@@ -48,13 +48,21 @@ impl Index<(X, Y)> for Img {
     type Output = Color;
 
     fn index(&self, index: (X, Y)) -> &Self::Output {
-        &self.data[(index.0, index.1)]
+        let (x, y) = index;
+        &self.data[(x._expose() as u32, y._expose() as u32)]
     }
 }
 
 impl IndexMut<(X, Y)> for Img {
     fn index_mut(&mut self, index: (X, Y)) -> &mut Self::Output {
-        &mut self.data[(index.0, index.1)]
+        let (x, y) = index;
+        &mut self.data[(x._expose() as u32, y._expose() as u32)]
+    }
+}
+
+impl Clone for Img {
+    fn clone(&self) -> Self {
+        Img::wrap(self.data.clone())
     }
 }
 
