@@ -64,7 +64,6 @@ impl UPoints {
             let length = PointId::new(self.len());
             // Iterate backward from that point until range is exceeded (since points are ordered)
             let mut index = reference_index;
-            // TODO: https://github.com/mverleg/typed_index_vec
             let mut current = self.get(index);
             let x_min = reference.x() - urange;
             while current.x() >= x_min {

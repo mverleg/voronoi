@@ -1,19 +1,61 @@
+use dims::{X, Y, Dim};
 use image::ImageBuffer;
 use image::Rgb;
 use std::ops::Add;
 use std::ops::AddAssign;
+use std::ops::Index;
+use std::ops::IndexMut;
+use std::path::Path;
+use std::io;
 
 pub type Color = Rgb<u8>;
 
-pub type Img = ImageBuffer<Color, Vec<u8>>;
-
-//TODO @mark: unused?
-pub fn empty_img(width: u32, height: u32) -> Img {
-    ImageBuffer::new(width, height)
-}
-
 pub fn new_color(c0: u8, c1: u8, c2: u8) -> Color {
     Rgb([c0, c1, c2])
+}
+
+pub struct Img {
+    data: ImageBuffer<Color, Vec<u8>>
+}
+
+impl Img {
+    pub fn wrap(data: ImageBuffer<Color, Vec<u8>>) -> Self {
+        Img { data }
+    }
+
+    pub fn empty(width: X, height: Y) -> Self {
+        Img::wrap(ImageBuffer::new(width._expose(), height._expose()))
+    }
+
+    pub fn width(&self) -> X {
+        X::new(self.data.width())
+    }
+
+    pub fn height(&self) -> Y {
+        Y::new(self.data.width())
+    }
+
+    pub fn pixel_cnt(&self) -> usize {
+        self.width()._expose() * self.height()._expose()
+    }
+
+    pub fn save<Q>(&self, path: Q) -> io::Result<()> where Q: AsRef<Path> {
+        self.data.save(path)
+    }
+}
+
+impl Index<(X, Y)> for Img {
+    type Output = Color;
+
+    fn index(&self, index: (X, Y)) -> &Self::Output {
+        &self.data[(index.0, index.1)]
+    }
+}
+
+impl IndexMut<(X, Y)> for Img {
+    fn index_mut(&mut self, index: (X, Y)) -> &mut Self::Output {
+        &mut self.data[(index.0, index.1)]
+    }
 }
 
 /// Add colors to compute average.

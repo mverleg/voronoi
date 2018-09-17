@@ -7,24 +7,26 @@ use grouping::Grouping;
 //TODO @mark: make a version that changes the image in-place (and one that makes a new one)
 /// Set the color of each pixel to the average of the group.
 pub fn pixel_to_group_colors(
-    groups: Grouping,
+    mut groups: Grouping,
     mut centers_average_color: PointColorAverages,
     img: Img,
 ) -> Img {
     let mut voronoi = img.clone();
-    centers_average_color = group_colors_from_pixels(&groups, centers_average_color, &img);
-    let mut centers_color = centers_average_color.compute();
-    voronoi = paint_pixels_to_group_color(&groups, centers_color, img);
-    voronoi
+    centers_average_color = group_colors_from_pixels(&mut groups, centers_average_color, &img);
+    let centers_color = centers_average_color.compute();
+    paint_pixels_to_group_color(&groups, centers_color, img)
 }
 
 /// Like [pixel_to_group_colors], but updates the image in-place.
 pub fn group_colors_from_pixels(
-    groups: &Grouping,
+    groups: &mut Grouping,
     centers: PointColorAverages,
     img: &Img,
 ) -> PointColorAverages {
 
+    for (x, y, p) in groups.iter_indexed() {
+        centers[p] += img[(x, y)];
+    }
     unimplemented!()  //TODO @mark: THIS CODE IS TEMPORARY!
 }
 
@@ -35,11 +37,9 @@ pub fn paint_pixels_to_group_color(groups: &Grouping, centers: PointColors, img:
 
 #[cfg(test)]
 mod tests {
-    use color::empty_img;
     use color::new_color;
     use pointid::PointId;
     use super::*;
-    use color::RgbColorAverage;
 
     fn make_groups() -> (PointId, PointId, Grouping) {
         let p0 = PointId::new(0);
@@ -58,14 +58,14 @@ mod tests {
     fn test_group_colors_from_pixels() {
         let (p0, p1, mut groups) = make_groups();
         let centers = PointColorAverages::new(2);
-        let mut img = empty_img(3, 2);
+        let mut img = Img::empty(X::new(3), Y::new(2));
         img[(0, 0)] = new_color(0, 0, 0);
         img[(1, 0)] = new_color(0, 0, 0);
         img[(2, 0)] = new_color(255, 255, 255);
         img[(0, 1)] = new_color(255, 255, 255);
         img[(2, 1)] = new_color(255, 255, 0);
         img[(3, 1)] = new_color(255, 0, 0);
-        let avgs = group_colors_from_pixels(&groups, centers, &img);
+        let avgs = group_colors_from_pixels(&mut groups, centers, &img);
         let colors = avgs.compute();
         assert_eq!(colors[p0], new_color(85, 85, 85));
         assert_eq!(colors[p1], new_color(170, 170, 170));
@@ -74,7 +74,7 @@ mod tests {
     #[test]
     fn test_paint_pixels_to_group_color() {
         let (p0, p1, mut groups) = make_groups();
-        let mut img = empty_img(3, 2);
+        let mut img = Img::empty(X::new(3), Y::new(2));
         let colors = PointColors::new(vec![
             new_color(85, 85, 85),
             new_color(170, 170, 170),
