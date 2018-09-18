@@ -15,26 +15,33 @@ pub fn new_color(c0: u8, c1: u8, c2: u8) -> Color {
 }
 
 pub struct Img {
-    data: ImageBuffer<Color, Vec<u8>>
+    data: ImageBuffer<Color, Vec<u8>>,
+    width: X,
+    height: Y,
 }
 
 impl Img {
     pub fn wrap(data: ImageBuffer<Color, Vec<u8>>) -> Self {
-        Img { data }
+        let width = X::new(data.width() as usize);
+        let height = Y::new(data.height() as usize);
+        Img { data, width, height }
     }
 
     pub fn empty(width: X, height: Y) -> Self {
         Img::wrap(ImageBuffer::new(width._expose() as u32, height._expose() as u32))
     }
 
+    #[inline]
     pub fn width(&self) -> X {
-        X::new(self.data.width() as i32)
+        self.width
     }
 
+    #[inline]
     pub fn height(&self) -> Y {
-        Y::new(self.data.width() as i32)
+        self.height
     }
 
+    #[inline]
     pub fn pixel_cnt(&self) -> usize {
         (self.width()._expose() * self.height()._expose()) as usize
     }

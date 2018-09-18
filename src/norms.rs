@@ -167,7 +167,7 @@ where
 {
     fn manhattan_pseudo(&self) -> PseudoDist {
         PseudoDist {
-            value: self._expose().abs() as f64,
+            value: self._expose() as f64,
         }
     }
 

@@ -21,12 +21,12 @@ impl Grouping {
     #[inline]
     pub fn width(&self) -> X {
         //TODO @mark: consider just storing these fields
-        X::new(self.center_links.len() as i32)
+        X::new(self.center_links.len() as usize)
     }
 
     #[inline]
     pub fn height(&self) -> Y {
-        Y::new(self.center_links[0].len() as i32)
+        Y::new(self.center_links[0].len() as usize)
     }
 
     //TODO @mark: still used?
@@ -70,7 +70,7 @@ pub struct GroupIndexIterator<'a> {
 impl<'a> GroupIndexIterator<'a> {
     pub fn new(grouping: &'a mut Grouping) -> Self {
         //TODO @mark: change -1 if unsized
-        GroupIndexIterator { grouping, x: X::new(-1), y: Y::new(0) }
+        GroupIndexIterator { grouping, x: X::new(0), y: Y::new(0) }
     }
 }
 
@@ -79,7 +79,6 @@ impl<'a> Iterator for GroupIndexIterator<'a> {
 
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.x = self.x + 1;
         if self.x >= self.grouping.width() {
             self.x = X::new(0);
             self.y = self.y + 1;
@@ -87,6 +86,7 @@ impl<'a> Iterator for GroupIndexIterator<'a> {
         if self.y >= self.grouping.height() {
             return Option::None;
         }
+        self.x = self.x + 1;
         return Option::Some((self.x, self.y, self.grouping[(self.x, self.y)]))
     }
 }

@@ -4,7 +4,6 @@ use point::Point2D;
 use pointid::PointId;
 use pointset::UPoints;
 
-//TODO @mark: is all this converting from usize to i32 expensive?
 //TODO @mark: inline every function used in inner loop
 
 /// This assigns the correct PointId to every single cell in `groups`.
@@ -18,7 +17,7 @@ pub fn assign_to_centers(mut groups: Grouping, centers: UPoints) -> Grouping {
     groups
 }
 
-//TODO @mark: paralellize here
+//TODO @mark: paralellize here?
 #[inline]
 fn assign_to_centers_for_row(
     x: usize,
@@ -27,9 +26,8 @@ fn assign_to_centers_for_row(
     output_vec: &mut Vec<PointId>,
 ) {
     let mut reference = centers.first_by_x();
-    let x_i32 = x as i32;
     for y in 0..row.len() {
-        let current: Point2D = Point2D::from_raw(x_i32, y as i32);
+        let current: Point2D = Point2D::from_raw(x, y);
         //        println!("distance: {:?}", (current - reference).manhattan_norm() + Dist::fnew(1.));  //TODO: mark (temporary)
         centers.within_box_noalloc(
             current,

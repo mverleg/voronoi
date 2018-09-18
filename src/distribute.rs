@@ -33,7 +33,7 @@ pub fn generate_fixed_points(width: X, height: Y, count: usize) -> UPoints {
         let x = width.as_index() * (2 * xi + 1) / (2 * count_per_dim);
         for yi in 0..count_per_dim {
             let y = height.as_index() * (2 * yi + 1) / (2 * count_per_dim);
-            points.insert(Point2D::from_raw(x as i32, y as i32));
+            points.insert(Point2D::from_raw(x as usize, y as usize));
         }
     }
     UPoints::new(points.into_iter().collect())

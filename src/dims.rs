@@ -5,24 +5,24 @@ use std::ops::{Add, Sub};
 
 pub trait Dim {
     /// Expose the internal value. Careful with trying to use this to get around type safety.
-    fn _expose(&self) -> i32;
+    fn _expose(&self) -> usize;
 }
 
 macro_rules! make_dim {
     ( $T:ident, $dT:ident ) => {
         #[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
         pub struct $T {
-            pub value: i32,
+            pub value: usize,
         }
 
         impl $T {
-            pub fn new(value: i32) -> Self {
+            pub fn new(value: usize) -> Self {
                 $T { value }
             }
 
             //            /// Returns the highest $T that is within Dist below `self`, but still positive.
             //            pub fn margin_down(self, margin: Dist) -> Self {
-            //                let margin = margin._expose().floor() as i32;
+            //                let margin = margin._expose().floor() as usize;
             //                // TODO: see issue #1
             //                if margin >= self.value {
             //                    return $T { value: 0 }
@@ -36,7 +36,7 @@ macro_rules! make_dim {
         }
 
         impl Dim for $T {
-            fn _expose(&self) -> i32 {
+            fn _expose(&self) -> usize {
                 self.value
             }
         }
@@ -85,9 +85,7 @@ macro_rules! make_dim {
                 if (self.value as i32) < other.step {
                     $T { value: 0 }
                 } else {
-                    $T {
-                        value: self.value - other.step,
-                    }
+                    $T { value: ((self.value as i32) - other.step) as usize }
                 }
             }
         }
@@ -95,13 +93,12 @@ macro_rules! make_dim {
         impl Add<$dT> for $T {
             type Output = $T;
 
+            //TODO @mark: test e.g. 2 + -3
             fn add(self, other: $dT) -> Self::Output {
-                if self.value < -other.step {
+                if (self.value as i32) < -other.step {
                     $T { value: 0 }
                 } else {
-                    $T {
-                        value: self.value + other.step,
-                    }
+                    $T { value: self.value + other.step as usize }
                 }
             }
         }
@@ -111,7 +108,7 @@ macro_rules! make_dim {
 
             fn add(self, other: usize) -> Self::Output {
                 $T {
-                    value: self.value + other as i32,
+                    value: self.value + other,
                 }
             }
         }
@@ -121,7 +118,7 @@ macro_rules! make_dim {
 
             fn sub(self, other: usize) -> Self::Output {
                 $T {
-                    value: self.value - other as i32,
+                    value: self.value - other,
                 }
             }
         }
@@ -130,7 +127,7 @@ macro_rules! make_dim {
         //            type Output = $T;
         //
         //            fn div(self, other: usize) -> Self::Output {
-        //                $T { value: self.value / other as i32 }
+        //                $T { value: self.value / other as usize }
         //            }
         //        }
 
