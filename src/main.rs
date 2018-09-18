@@ -6,6 +6,7 @@ extern crate rand;
 extern crate threadpool;
 
 use assign::assign_to_centers;
+use color::Img;
 use distribute::generate_random_points;
 use grouping::Grouping;
 use image::DynamicImage;
@@ -15,7 +16,6 @@ use std::env;
 use std::path::Path;
 #[allow(unused_imports)]
 use std::process::Command;
-use color::Img;
 
 #[macro_use]
 pub mod test_util;
@@ -32,7 +32,6 @@ pub mod paint;
 pub mod point;
 pub mod pointid;
 pub mod pointset;
-pub mod regions;
 
 //TODO @mark: find a way to turn of all asserts in optimized mode? => or just convert the hot-loop-ones to debug_assert and keep the rest
 

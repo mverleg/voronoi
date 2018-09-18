@@ -122,50 +122,8 @@ macro_rules! make_dim {
                 }
             }
         }
-
-        //        impl Div<usize> for $T {
-        //            type Output = $T;
-        //
-        //            fn div(self, other: usize) -> Self::Output {
-        //                $T { value: self.value / other as usize }
-        //            }
-        //        }
-
-        //        impl Mul<$T> for $T {
-        //            type Output = Dist;
-        //
-        //            fn mul(self, other: $T) -> Self::Output {
-        //                Dist { value: self.value * other.value }
-        //            }
-        //        }
     };
 }
 
 make_dim!(X, dX);
 make_dim!(Y, dY);
-
-//TODO @mark: re-enable
-//impl Mul<Y> for X {
-//    type Output = Dist;
-//
-//    fn mul(self, other: Y) -> Self::Output {
-//        Dist { value: (self.value * other.value) as f64 }
-//    }
-//}
-
-//TODO @mark: re-enable
-//impl Mul<dY> for dX {
-//    type Output = Dist;
-//
-//    fn mul(self, other: dY) -> Self::Output {
-//        Dist { value: (self.step + other.step) as f64 }
-//    }
-//}
-
-//impl Add<dY> for dX {
-//    type Output = Dist;
-//
-//    fn add(self, other: dY) -> Self::Output {
-//        Dist { value: (self.step + other.step) as f64 }
-//    }
-//}

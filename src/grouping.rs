@@ -1,7 +1,7 @@
 use dims::{Dim, X, Y};
 use pointid::PointId;
-use std::slice::IterMut;
 use std::ops::Index;
+use std::slice::IterMut;
 
 #[derive(Debug)]
 pub struct Grouping {
@@ -40,8 +40,22 @@ impl Grouping {
 
     #[inline]
     pub fn set(&mut self, x: X, y: Y, point_id: PointId) {
-        debug_assert!(x._expose() < self.width()._expose(), format!("Expectation violated: X {} < X-dim {}\n", x._expose(), self.width()._expose()));
-        debug_assert!(y._expose() < self.height()._expose(), format!("Expectation violated: Y {} < y-dim {}\n", y._expose(), self.height()._expose()));
+        debug_assert!(
+            x._expose() < self.width()._expose(),
+            format!(
+                "Expectation violated: X {} < X-dim {}\n",
+                x._expose(),
+                self.width()._expose()
+            )
+        );
+        debug_assert!(
+            y._expose() < self.height()._expose(),
+            format!(
+                "Expectation violated: Y {} < y-dim {}\n",
+                y._expose(),
+                self.height()._expose()
+            )
+        );
         self.center_links[x._expose() as usize][y._expose() as usize] = point_id;
     }
 
@@ -70,13 +84,16 @@ pub struct GroupIndexIterator<'a> {
 impl<'a> GroupIndexIterator<'a> {
     pub fn new(grouping: &'a mut Grouping) -> Self {
         //TODO @mark: change -1 if unsized
-        GroupIndexIterator { grouping, x: X::new(0), y: Y::new(0) }
+        GroupIndexIterator {
+            grouping,
+            x: X::new(0),
+            y: Y::new(0),
+        }
     }
 }
 
 impl<'a> Iterator for GroupIndexIterator<'a> {
     type Item = (X, Y, PointId);
-
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.x >= self.grouping.width() {
@@ -87,7 +104,7 @@ impl<'a> Iterator for GroupIndexIterator<'a> {
             return Option::None;
         }
         self.x = self.x + 1;
-        return Option::Some((self.x, self.y, self.grouping[(self.x, self.y)]))
+        return Option::Some((self.x, self.y, self.grouping[(self.x, self.y)]));
     }
 }
 
@@ -110,8 +127,14 @@ mod tests {
         groups.set(X::new(1), Y::new(0), PointId::new(1));
         groups.set(X::new(0), Y::new(0), PointId::new(0));
         let mut iter = groups.iter_indexed();
-        assert_eq!(Option::Some((X::new(0), Y::new(0), PointId::new(0))), iter.next());
-        assert_eq!(Option::Some((X::new(1), Y::new(0), PointId::new(1))), iter.next());
+        assert_eq!(
+            Option::Some((X::new(0), Y::new(0), PointId::new(0))),
+            iter.next()
+        );
+        assert_eq!(
+            Option::Some((X::new(1), Y::new(0), PointId::new(1))),
+            iter.next()
+        );
         assert_eq!(Option::None, iter.next());
         assert_eq!(Option::None, iter.next());
     }

@@ -23,11 +23,10 @@ pub fn group_colors_from_pixels(
     mut centers: PointColorAverages,
     img: &Img,
 ) -> PointColorAverages {
-
     for (x, y, p) in groups.iter_indexed() {
         centers[p] += img[(x, y)];
     }
-    unimplemented!()  //TODO @mark: THIS CODE IS TEMPORARY!
+    unimplemented!() //TODO @mark: THIS CODE IS TEMPORARY!
 }
 
 /// Apply the center's average color to each pixel that belongs to it.
@@ -37,15 +36,15 @@ pub fn paint_pixels_to_group_color(groups: &Grouping, centers: PointColors, img:
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use color::new_color;
     use pointid::PointId;
-    use super::*;
 
     fn make_groups() -> (PointId, PointId, Grouping) {
         let p0 = PointId::new(0);
         let p1 = PointId::new(1);
         let mut groups = Grouping::new(X::new(3), Y::new(2));
-        let (x0, x1,x2, y0, y1) = (X::new(0), X::new(1), X::new(2), Y::new(0), Y::new(1));
+        let (x0, x1, x2, y0, y1) = (X::new(0), X::new(1), X::new(2), Y::new(0), Y::new(1));
         groups.set(x0, y0, p0);
         groups.set(x1, y0, p0);
         groups.set(x2, y0, p1);
@@ -60,7 +59,7 @@ mod tests {
         let (p0, p1, mut groups) = make_groups();
         let centers = PointColorAverages::new(2);
         let mut img = Img::empty(X::new(3), Y::new(2));
-        let (x0, x1,x2, y0, y1) = (X::new(0), X::new(1), X::new(2), Y::new(0), Y::new(1));
+        let (x0, x1, x2, y0, y1) = (X::new(0), X::new(1), X::new(2), Y::new(0), Y::new(1));
         img[(x0, y0)] = new_color(0, 0, 0);
         img[(x1, y0)] = new_color(0, 0, 0);
         img[(x2, y0)] = new_color(255, 255, 255);
@@ -77,12 +76,9 @@ mod tests {
     fn test_paint_pixels_to_group_color() {
         let (p0, p1, mut groups) = make_groups();
         let mut img = Img::empty(X::new(3), Y::new(2));
-        let colors = PointColors::new(vec![
-            new_color(85, 85, 85),
-            new_color(170, 170, 170),
-        ]);
+        let colors = PointColors::new(vec![new_color(85, 85, 85), new_color(170, 170, 170)]);
         let voronoi = paint_pixels_to_group_color(&groups, colors, img);
-        let (x0, x1,x2, y0, y1) = (X::new(0), X::new(1), X::new(2), Y::new(0), Y::new(1));
+        let (x0, x1, x2, y0, y1) = (X::new(0), X::new(1), X::new(2), Y::new(0), Y::new(1));
         assert_eq!(new_color(85, 85, 85), voronoi[(x0, y0)]);
         assert_eq!(new_color(85, 85, 85), voronoi[(x1, y0)]);
         assert_eq!(new_color(85, 85, 85), voronoi[(x0, y1)]);

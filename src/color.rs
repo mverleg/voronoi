@@ -1,12 +1,12 @@
-use dims::{X, Y, Dim};
+use dims::{Dim, X, Y};
 use image::ImageBuffer;
 use image::Rgb;
+use std::io;
 use std::ops::Add;
 use std::ops::AddAssign;
 use std::ops::Index;
 use std::ops::IndexMut;
 use std::path::Path;
-use std::io;
 
 pub type Color = Rgb<u8>;
 
@@ -24,11 +24,18 @@ impl Img {
     pub fn wrap(data: ImageBuffer<Color, Vec<u8>>) -> Self {
         let width = X::new(data.width() as usize);
         let height = Y::new(data.height() as usize);
-        Img { data, width, height }
+        Img {
+            data,
+            width,
+            height,
+        }
     }
 
     pub fn empty(width: X, height: Y) -> Self {
-        Img::wrap(ImageBuffer::new(width._expose() as u32, height._expose() as u32))
+        Img::wrap(ImageBuffer::new(
+            width._expose() as u32,
+            height._expose() as u32,
+        ))
     }
 
     #[inline]
@@ -46,7 +53,10 @@ impl Img {
         (self.width()._expose() * self.height()._expose()) as usize
     }
 
-    pub fn save<Q>(&self, path: Q) -> io::Result<()> where Q: AsRef<Path> {
+    pub fn save<Q>(&self, path: Q) -> io::Result<()>
+    where
+        Q: AsRef<Path>,
+    {
         self.data.save(path)
     }
 }
