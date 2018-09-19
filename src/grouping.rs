@@ -103,8 +103,9 @@ impl<'a> Iterator for GroupIndexIterator<'a> {
         if self.y >= self.grouping.height() {
             return Option::None;
         }
+        let res = Option::Some((self.x, self.y, self.grouping[(self.x, self.y)]));
         self.x = self.x + 1;
-        return Option::Some((self.x, self.y, self.grouping[(self.x, self.y)]));
+        res
     }
 }
 
