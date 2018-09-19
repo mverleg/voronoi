@@ -1,4 +1,4 @@
-use color::Img;
+use img::Img;
 use colorset::PointColorAverages;
 use colorset::PointColors;
 use dims::{X, Y};
