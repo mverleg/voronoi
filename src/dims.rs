@@ -20,16 +20,6 @@ macro_rules! make_dim {
                 $T { value }
             }
 
-            //            /// Returns the highest $T that is within Dist below `self`, but still positive.
-            //            pub fn margin_down(self, margin: Dist) -> Self {
-            //                let margin = margin._expose().floor() as usize;
-            //                // TODO: see issue #1
-            //                if margin >= self.value {
-            //                    return $T { value: 0 }
-            //                }
-            //                $T { value: self.value - margin }
-            //            }
-
             pub fn as_index(&self) -> usize {
                 self.value as usize
             }
@@ -93,12 +83,11 @@ macro_rules! make_dim {
         impl Add<$dT> for $T {
             type Output = $T;
 
-            //TODO @mark: test e.g. 2 + -3
             fn add(self, other: $dT) -> Self::Output {
                 if (self.value as i32) < -other.step {
                     $T { value: 0 }
                 } else {
-                    $T { value: self.value + other.step as usize }
+                    $T { value: (self.value as i32 + other.step) as usize }
                 }
             }
         }
@@ -127,3 +116,19 @@ macro_rules! make_dim {
 
 make_dim!(X, dX);
 make_dim!(Y, dY);
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_dim_ops() {
+        let x0 = X::new(0);
+        let x1 = X::new(1);
+        let x2 = X::new(2);
+        let dx1 = dX::new(-1);
+        let dx3 = dX::new(-3);
+        assert_eq!(x1, x2 + dx1);
+        assert_eq!(x0, x2 + dx3);
+    }
+}

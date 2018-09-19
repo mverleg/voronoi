@@ -12,9 +12,9 @@ pub fn pixel_to_group_colors(
     img: Img,
 ) -> Img {
     let voronoi = img.clone();
-    centers_average_color = group_colors_from_pixels(&mut groups, centers_average_color, &img);
+    centers_average_color = group_colors_from_pixels(&mut groups, centers_average_color, &voronoi);
     let centers_color = centers_average_color.compute();
-    paint_pixels_to_group_color(&mut groups, centers_color, img)
+    paint_pixels_to_group_color(&mut groups, centers_color, voronoi)
 }
 
 /// Like [pixel_to_group_colors], but updates the image in-place.
@@ -43,7 +43,7 @@ mod tests {
     use color::new_color;
     use pointid::PointId;
 
-    fn make_groups() -> (PointId, PointId, Grouping) {
+    fn make_groups() -> Grouping {
         let p0 = PointId::new(0);
         let p1 = PointId::new(1);
         let mut groups = Grouping::new(X::new(3), Y::new(2));
@@ -54,12 +54,14 @@ mod tests {
         groups.set(x0, y1, p0);
         groups.set(x1, y1, p1);
         groups.set(x2, y1, p1);
-        (p0, p1, groups)
+        groups
     }
 
     #[test]
     fn test_group_colors_from_pixels() {
-        let (p0, p1, mut groups) = make_groups();
+        let p0 = PointId::new(0);
+        let p1 = PointId::new(1);
+        let mut groups = make_groups();
         let centers = PointColorAverages::new(2);
         let mut img = Img::empty(X::new(3), Y::new(2));
         let (x0, x1, x2, y0, y1) = (X::new(0), X::new(1), X::new(2), Y::new(0), Y::new(1));
@@ -77,8 +79,8 @@ mod tests {
 
     #[test]
     fn test_paint_pixels_to_group_color() {
-        let (p0, p1, mut groups) = make_groups();
-        let mut img = Img::empty(X::new(3), Y::new(2));
+        let mut groups = make_groups();
+        let img = Img::empty(X::new(3), Y::new(2));
         let colors = PointColors::new(vec![
             new_color(255, 170, 85),
             new_color(170, 170, 170)
