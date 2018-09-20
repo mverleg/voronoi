@@ -1,7 +1,7 @@
-use img::Img;
 use colorset::PointColorAverages;
 use colorset::PointColors;
 use grouping::Grouping;
+use img::Img;
 
 //TODO @mark: make a version that changes the image in-place (and one that makes a new one)
 /// Set the color of each pixel to the average of the group.
@@ -29,7 +29,11 @@ pub fn group_colors_from_pixels(
 }
 
 /// Apply the center's average color to each pixel that belongs to it.
-pub fn paint_pixels_to_group_color(groups: &mut Grouping, centers: PointColors, mut img: Img) -> Img {
+pub fn paint_pixels_to_group_color(
+    groups: &mut Grouping,
+    centers: PointColors,
+    mut img: Img,
+) -> Img {
     for (x, y, p) in groups.iter_indexed() {
         img[(x, y)] = centers[p];
     }
@@ -80,10 +84,7 @@ mod tests {
     fn test_paint_pixels_to_group_color() {
         let mut groups = make_groups();
         let img = Img::empty(X::new(3), Y::new(2));
-        let colors = PointColors::new(vec![
-            new_color(255, 170, 85),
-            new_color(170, 170, 170)
-        ]);
+        let colors = PointColors::new(vec![new_color(255, 170, 85), new_color(170, 170, 170)]);
         let voronoi = paint_pixels_to_group_color(&mut groups, colors, img);
         let (x0, x1, x2, y0, y1) = (X::new(0), X::new(1), X::new(2), Y::new(0), Y::new(1));
         assert_eq!(new_color(255, 170, 85), voronoi[(x0, y0)]);

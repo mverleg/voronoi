@@ -75,7 +75,9 @@ macro_rules! make_dim {
                 if (self.value as i32) < other.step {
                     $T { value: 0 }
                 } else {
-                    $T { value: ((self.value as i32) - other.step) as usize }
+                    $T {
+                        value: ((self.value as i32) - other.step) as usize,
+                    }
                 }
             }
         }
@@ -88,7 +90,9 @@ macro_rules! make_dim {
                     $T { value: 0 }
                 } else {
                     //TODO @mark: is this expensive? common?
-                    $T { value: (self.value as i32 + other.step) as usize }
+                    $T {
+                        value: (self.value as i32 + other.step) as usize,
+                    }
                 }
             }
         }
@@ -111,7 +115,9 @@ macro_rules! make_dim {
                     $T { value: 0 }
                 } else {
                     //TODO @mark: is this expensive? common?
-                    $T { value: (self.value - other) as usize }
+                    $T {
+                        value: (self.value - other) as usize,
+                    }
                 }
             }
         }

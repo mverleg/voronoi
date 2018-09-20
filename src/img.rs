@@ -36,7 +36,6 @@ impl Img {
         if let DynamicImage::ImageRgb8(img) = dyn_img {
             // Get a random seed and generate points.
             Img::wrap(img)
-
         } else {
             panic!("Wrong image type (maybe there is an alpha channel?)");
         }
