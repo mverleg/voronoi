@@ -18,6 +18,7 @@ use paint::pixel_to_group_colors;
 use rand::{SeedableRng, StdRng};
 #[allow(unused_imports)]
 use std::process::Command;
+use pointset::UPoints;
 
 #[macro_use]
 pub mod test_util;
@@ -38,12 +39,15 @@ pub mod pointid;
 pub mod pointset;
 
 //TODO @mark: find a way to turn of all asserts in optimized mode? => or just convert the hot-loop-ones to debug_assert and keep the rest
+//TODO @mark: get rid of expose()
 
 fn main() {
     let (input, output, size, show, seed) = parse_args();
     println!("starting voronoi on image from {}", input.display());
     let rng: StdRng = SeedableRng::from_seed(seed);
-    let voronoi = voronoiify_image(Img::load(&input), size, rng);
+    let img = Img::load(&input);
+    let centers = generate_random_points(&img, size, rng);
+    let voronoi = voronoiify_image(img, centers);
     println!("saving generated image to {}", output.display());
     voronoi.save(output.as_path()).unwrap();
     if show {
@@ -52,9 +56,7 @@ fn main() {
     }
 }
 
-pub fn voronoiify_image(img: Img, avg_patch_size: usize, rng: StdRng) -> Img {
-    let node_count: usize = img.pixel_cnt() / avg_patch_size;
-    let center_points = generate_random_points(img.width(), img.height(), node_count, rng);
+pub fn voronoiify_image(img: Img, center_points: UPoints) -> Img {
     let center_colors = center_points.new_color_averager();
     // Assign all pixels to the nearest center.
     let pixel_group = Grouping::new(img.width(), img.height());
@@ -72,9 +74,17 @@ mod tests {
 
     #[bench]
     fn test_full_flow_performance(bench: &mut Bencher) {
+        // Create inputs
         let pth = Path::new("resources").join("imgs").join("parrots.png");
         let rng = SeedableRng::from_seed(default_seed());
         let img = Img::load(pth.as_path());
-        bench.iter(|| voronoiify_image(img, 100, rng));
+        // Warmup
+        let centers = generate_random_points(img, 100, rng);
+        let voronoi = voronoiify_image(img, centers);
+        // Benchmark
+        for _ in 0 .. 100 {
+            let centers = generate_random_points(img, 100, rng);
+            bench.iter(|| voronoiify_image(img, centers));
+        }
     }
 }

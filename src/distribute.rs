@@ -1,5 +1,5 @@
-use dims::Dim;
-use dims::{X, Y};
+use dims::{Dim, X, Y};
+use img::Img;
 use norms::Dist;
 use norms::Norm;
 use point::Point2D;
@@ -8,8 +8,9 @@ use rand::{Rng, StdRng};
 use std::collections::HashSet;
 
 /// Distribute points randomly.
-pub fn generate_random_points(width: X, height: Y, count: usize, mut rng: StdRng) -> UPoints {
-    assert!(width.euclidean_norm() * height.euclidean_norm() > Dist::fnew(2.0 * (count as f64)));
+pub fn generate_random_points(img: &Img, avg_patch_size: usize, mut rng: StdRng) -> UPoints {
+    assert!(avg_patch_size > 0);
+    let (width, height, count) = (img.width(), img.height(), img.pixel_cnt() / avg_patch_size);
     let mut points = HashSet::<Point2D>::with_capacity(count);
     while points.len() < count {
         let point = Point2D::from_raw(
@@ -41,8 +42,8 @@ pub fn generate_fixed_points(width: X, height: Y, count: usize) -> UPoints {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use std::iter::FromIterator;
+    use super::*;
 
     #[test]
     fn test_equidistant() {
