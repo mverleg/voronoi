@@ -7,3 +7,4 @@ authors = ["Mark <mverleg.noreply@gmail.com>"]
 image = "0.19.*"
 rand = "0.5.*"
 threadpool = "1.7.*"
+clap = "2.32.*"
