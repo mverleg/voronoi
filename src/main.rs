@@ -7,18 +7,14 @@ extern crate rand;
 extern crate threadpool;
 
 use assign::assign_to_centers;
-use clap::App;
-use clap::Arg;
 use distribute::generate_random_points;
 use grouping::Grouping;
 use img::Img;
 use paint::pixel_to_group_colors;
 use rand::{SeedableRng, StdRng};
 use std::env;
-use std::path::Path;
 #[allow(unused_imports)]
 use std::process::Command;
-use std::process::exit;
 use argparse::parse_args;
 
 #[macro_use]
@@ -44,7 +40,7 @@ pub mod argparse;
 fn main() {
     let (input, output, count, show, seed) = parse_args();
 
-    let voronoi = voronoiify_image(Img::load(input));
+    let voronoi = voronoiify_image(Img::load(&input));
     let outpth = env::temp_dir().join("voronoi_gen.png");
     voronoi.save(outpth.clone()).unwrap();
     Command::new("eog").arg(outpth).spawn().unwrap();

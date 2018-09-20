@@ -1,19 +1,11 @@
 
-use assign::assign_to_centers;
-use clap::App;
-use clap::Arg;
-use distribute::generate_random_points;
-use grouping::Grouping;
-use img::Img;
-use paint::pixel_to_group_colors;
-use rand::{SeedableRng, StdRng};
-use std::env;
-use std::path::Path;
+use clap::{App, Arg};
+use std::path::{Path, PathBuf};
 #[allow(unused_imports)]
 use std::process::Command;
 use std::process::exit;
 
-pub fn parse_args() -> (&Path, &Path, usize, bool, u32) {
+pub fn parse_args() -> (PathBuf, PathBuf, usize, bool, u32) {
     let args = App::new("Voronoiify")
         .version("1.0")
         .about("Group image into voronoi-based patches and assign the average color to each patch")
@@ -28,11 +20,11 @@ pub fn parse_args() -> (&Path, &Path, usize, bool, u32) {
             .long("output")
             .value_name("OUT_PTH")
             .takes_value(true))
-        .arg(Arg::with_name("count")
-            .help("Number of color patches to divide the image into")
+        .arg(Arg::with_name("size")
+            .help("Average number of pixels per group")
             .short("c")
-            .long("center_count")
-            .value_name("CENTERS")
+            .long("patch_size")
+            .value_name("PATCH_SIZE")
             .takes_value(true))
         .arg(Arg::with_name("show")
             .help("Show the generated image using EOG")
@@ -46,27 +38,34 @@ pub fn parse_args() -> (&Path, &Path, usize, bool, u32) {
             .takes_value(true))
         .get_matches();
 
-    println!("{:?}", args);
-
     // Input
-    let input = args.value_of("input");
+    let input = Path::new(args.value_of("input")
+        .unwrap()).to_path_buf();
     if !input.exists() {
-        eprintln!("File {} does not exist", input.display());
+        eprintln!("Input file {} does not exist", input.display());
         exit(1);
     }
-    let input = Path::new(input.unwrap());
 
     // Output
-    let output = args.value_of("output");
-    if !output.exists() {
-        eprintln!("File {} does not exist", output.display());
-        exit(1);
-    }
-    let output = Path::new(output.unwrap());
+    //TODO @mark: better default?
+    let output = Path::new(args.value_of("output")
+        .unwrap_or("/tmp/generated.png")).to_path_buf();
 
     // Center count
-    let count = 10;
-    unimplemented!();  //TODO @mark: THIS CODE IS TEMPORARY!
+    let size = if let Some(sizetxt) = args.value_of("size") {
+        if let Ok(sizeint) = sizetxt.parse::<i32>() {
+            if sizeint < 2 {
+                eprintln!("Argument to -c/--patch_size be at least 1 (got integer {})", sizeint);
+                exit(3);
+            }
+            sizeint as usize
+        } else {
+            eprintln!("Argument to -c/--patch_size should be positive integer (got non-integer '{}')", sizetxt);
+            exit(4);
+        }
+    } else {
+        50
+    };
 
     // Show
     let show = true;
@@ -76,5 +75,5 @@ pub fn parse_args() -> (&Path, &Path, usize, bool, u32) {
     let seed = 123456789;
     unimplemented!();  //TODO @mark: THIS CODE IS TEMPORARY!
 
-    (input, output, count, show, seed)
+    (input, output, size, show, seed)
 }
