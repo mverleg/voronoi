@@ -87,6 +87,7 @@ macro_rules! make_dim {
                 if (self.value as i32) < -other.step {
                     $T { value: 0 }
                 } else {
+                    //TODO @mark: is this expensive? common?
                     $T { value: (self.value as i32 + other.step) as usize }
                 }
             }
@@ -106,8 +107,11 @@ macro_rules! make_dim {
             type Output = $T;
 
             fn sub(self, other: usize) -> Self::Output {
-                $T {
-                    value: self.value - other,
+                if self.value < other {
+                    $T { value: 0 }
+                } else {
+                    //TODO @mark: is this expensive? common?
+                    $T { value: (self.value - other) as usize }
                 }
             }
         }

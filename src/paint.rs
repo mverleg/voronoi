@@ -1,7 +1,6 @@
 use img::Img;
 use colorset::PointColorAverages;
 use colorset::PointColors;
-use dims::{X, Y};
 use grouping::Grouping;
 
 //TODO @mark: make a version that changes the image in-place (and one that makes a new one)
