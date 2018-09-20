@@ -5,6 +5,7 @@ extern crate clap;
 extern crate image;
 extern crate rand;
 extern crate threadpool;
+extern crate byteorder;
 
 use assign::assign_to_centers;
 use distribute::generate_random_points;

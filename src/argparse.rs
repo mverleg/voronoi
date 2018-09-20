@@ -1,11 +1,12 @@
-
+use byteorder::WriteBytesExt;
+use byteorder::LittleEndian;
 use clap::{App, Arg};
 use std::path::{Path, PathBuf};
 #[allow(unused_imports)]
 use std::process::Command;
 use std::process::exit;
 
-pub fn parse_args() -> (PathBuf, PathBuf, usize, bool, u32) {
+pub fn parse_args() -> (PathBuf, PathBuf, usize, bool, [u8; 32]) {
     let args = App::new("Voronoiify")
         .version("1.0")
         .about("Group image into voronoi-based patches and assign the average color to each patch")
@@ -31,7 +32,7 @@ pub fn parse_args() -> (PathBuf, PathBuf, usize, bool, u32) {
             .short("s")
             .long("show"))
         .arg(Arg::with_name("seed")
-            .help("Use the given random seed")
+            .help("Random seed between 0 and 2^64 (exclusive)")
             .short("r")
             .long("seed")
             .value_name("SEED")
@@ -68,12 +69,28 @@ pub fn parse_args() -> (PathBuf, PathBuf, usize, bool, u32) {
     };
 
     // Show
-    let show = true;
-    unimplemented!();  //TODO @mark: THIS CODE IS TEMPORARY!
+    let show = args.is_present("show");
 
     // Seed
-    let seed = 123456789;
-    unimplemented!();  //TODO @mark: THIS CODE IS TEMPORARY!
+    let seed = if let Some(seedtxt) = args.value_of("seed") {
+        if let Ok(seedint) = seedtxt.parse::<u64>() {
+            let mut b = vec![];
+            b.write_u64::<LittleEndian>(seedint).unwrap();
+            [ b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
+              b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
+              b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
+              b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7] ]
+        } else {
+            eprintln!("Argument to -r/--seed should be positive integer (got '{}')", seedtxt);
+            exit(5);
+        }
+    } else {
+        [ 154, 209, 215, 146, 162,  81,  13,  78,
+          243, 132, 107, 232,  61, 157,  71, 142,
+          202, 167,  65, 141, 113, 250, 202,  52,
+           46, 221, 141, 139,  22,  29, 183, 135, ]
+    };
+
 
     (input, output, size, show, seed)
 }
