@@ -22,11 +22,12 @@ where
 /// Order requirements for all x:
 /// * if f(x) is Equal, f(x+1) is Equal or Greater
 /// * if f(x) is Greater, f(x+1) is Greater
-pub fn find_index<T, F>(mut min: T, mut max: T, f: F) -> Option<T>
+pub fn find_index<T, F>(min: T, max: T, f: F) -> Option<T>
 where
     T: PartialOrd + Add<usize, Output = T> + Sub<usize, Output = T> + Mid + Copy + Debug,
     F: Fn(T) -> Ordering,
 {
+    //TODO @mark: this is 86.7% of the CPU time!
     assert!(max >= min);
     // Test the order criterion if in debug mode
     let mut k = min;
@@ -42,6 +43,18 @@ where
         }
         k = k + 1;
     }
+    find_index_nocheck(min, max, f)
+}
+
+/// Version of [find_index] without the debug checks.
+pub fn find_index_nocheck<T, F>(mut min: T, mut max: T, f: F) -> Option<T>
+    where
+        T: PartialOrd + Add<usize, Output = T> + Sub<usize, Output = T> + Mid + Copy + Debug,
+        F: Fn(T) -> Ordering,
+{
+    //TODO @mark: this is 86.7% of the CPU time!
+    assert!(max >= min);
+    // Test the order criterion if in debug mode
     max = max + 1;
     // Bisection
     loop {
@@ -71,16 +84,16 @@ mod tests {
     #[test]
     fn test_find_index() {
         let data: Vec<i32> = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-        assert_eq!(Some(6), find_index(0, data.len() - 1, |x| data[x].cmp(&6)));
-        assert_eq!(Some(0), find_index(0, data.len() - 1, |x| data[x].cmp(&0)));
+        assert_eq!(Some(6), find_index_nocheck(0, data.len() - 1, |x| data[x].cmp(&6)));
+        assert_eq!(Some(0), find_index_nocheck(0, data.len() - 1, |x| data[x].cmp(&0)));
         assert_eq!(
             Some(10),
-            find_index(0, data.len() - 1, |x| data[x].cmp(&10))
+            find_index_nocheck(0, data.len() - 1, |x| data[x].cmp(&10))
         );
-        assert_eq!(None, find_index(0, data.len() - 1, |x| data[x].cmp(&-1)));
-        assert_eq!(None, find_index(0, data.len() - 1, |x| data[x].cmp(&11)));
+        assert_eq!(None, find_index_nocheck(0, data.len() - 1, |x| data[x].cmp(&-1)));
+        assert_eq!(None, find_index_nocheck(0, data.len() - 1, |x| data[x].cmp(&11)));
         let data = vec![1, 1, 1, 2, 2, 2, 3, 3, 3];
-        let needle = find_index(0, data.len() - 1, |x| data[x].cmp(&2)).unwrap();
+        let needle = find_index_nocheck(0, data.len() - 1, |x| data[x].cmp(&2)).unwrap();
         assert!(needle >= 3 && needle <= 5, "match was {}", needle);
     }
 }

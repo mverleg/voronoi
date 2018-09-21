@@ -1,5 +1,5 @@
 use colorset::PointColorAverages;
-use find_index::find_index;
+use find_index::find_index_nocheck;
 use norms::Dist;
 use point::Point2D;
 use pointid::PointId;
@@ -43,7 +43,7 @@ impl UPoints {
         let urange = range.ufloor();
         let x_min = reference.x() - urange;
         let x_max = reference.x() + urange;
-        let reference_index: Option<PointId> = find_index(
+        let reference_index: Option<PointId> = find_index_nocheck(
             PointId::new(0),
             PointId::new(self.len() - 1),
             |index: PointId| {

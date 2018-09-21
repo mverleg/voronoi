@@ -74,6 +74,7 @@ mod tests {
 
     #[bench]
     fn test_full_flow_performance(bench: &mut Bencher) {
+        //TODO @mark: compile error
         // Create inputs
         let pth = Path::new("resources").join("imgs").join("parrots.png");
         let rng = SeedableRng::from_seed(default_seed());

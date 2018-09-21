@@ -83,7 +83,6 @@ pub struct GroupIndexIterator<'a> {
 
 impl<'a> GroupIndexIterator<'a> {
     pub fn new(grouping: &'a mut Grouping) -> Self {
-        //TODO @mark: change -1 if unsized
         GroupIndexIterator {
             grouping,
             x: X::new(0),
