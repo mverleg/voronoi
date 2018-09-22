@@ -5,6 +5,7 @@ use std::path::{Path, PathBuf};
 use std::process::exit;
 #[allow(unused_imports)]
 use std::process::Command;
+use std::env::temp_dir;
 
 pub fn parse_args() -> (PathBuf, PathBuf, usize, bool, [u8; 32]) {
     let args = App::new("Voronoiify")
@@ -52,8 +53,10 @@ pub fn parse_args() -> (PathBuf, PathBuf, usize, bool, [u8; 32]) {
     }
 
     // Output
-    //TODO @mark: better default?
-    let output = Path::new(args.value_of("output").unwrap_or("/tmp/generated.png")).to_path_buf();
+    let output = match args.value_of("output") {
+        Some(arg) => Path::new(arg).to_path_buf(),
+        None => temp_dir().join(format!("voronoi-{}", input.file_name().unwrap().to_str().unwrap())),
+    };
 
     // Center count
     let size = if let Some(sizetxt) = args.value_of("size") {

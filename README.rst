@@ -49,7 +49,7 @@ Difficulties:
 How to use
 -------------------------------
 
-* Comppile: `cargo build --release`
+* Compile: `RUSTFLAGS="-C target-cpu=native" cargo build --release`
 * Decrease size: `strip target/release/voronoi`
 * Run: `target/release/voronoi resources/imgs/parrots.png --show`
 
