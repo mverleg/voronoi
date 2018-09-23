@@ -26,6 +26,7 @@ use std::process::Command;
 use pointset::UPoints;
 
 #[macro_use]
+#[cfg(test)]
 pub mod test_util;
 
 pub mod argparse;
@@ -76,20 +77,22 @@ mod tests {
     use argparse::default_seed;
     use std::path::Path;
     use test::Bencher;
+    use rand::{StdRng, SeedableRng};  //TODO @mark: THIS CODE IS TEMPORARY!
 
     #[bench]
     fn test_full_flow_performance(bench: &mut Bencher) {
         // Create inputs
         let pth = Path::new("resources").join("imgs").join("parrots.png");
-        let mut rng = SeedableRng::from_seed(default_seed());
-        let mut original_img = Img::load(pth.as_path());
+        let mut rng: StdRng = SeedableRng::from_seed(default_seed());
+        let original_img = Img::load(pth.as_path());
         // Warmup
-        let mut centers = generate_random_points(&original_img, 100, &mut rng);
-        let voronoi = voronoiify_image(&mut original_img, &mut centers);
+        let mut img = original_img.clone();
+        let mut centers = generate_random_points(&img, 100, &mut rng);
+        test::black_box(voronoiify_image(&mut img, &mut centers));
         // Benchmark
         for _ in 0 .. 10 {
-            let mut centers = generate_random_points(&original_img, 100, &mut rng);
             let mut img = original_img.clone();
+            let mut centers = generate_random_points(&img, 100, &mut rng);
             bench.iter(|| voronoiify_image(&mut img, &mut centers));
         }
     }
