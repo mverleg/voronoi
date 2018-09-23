@@ -8,7 +8,7 @@ use img::Img;
 pub fn pixel_to_group_colors(
     mut groups: Grouping,
     mut centers_average_color: PointColorAverages,
-    img: Img,
+    img: &mut Img,
 ) -> Img {
     let voronoi = img.clone();
     centers_average_color = group_colors_from_pixels(&mut groups, centers_average_color, &voronoi);

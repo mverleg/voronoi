@@ -7,7 +7,7 @@ use pointset::UPoints;
 //TODO @mark: inline every function used in inner loop
 
 /// This assigns the correct PointId to every single cell in `groups`.
-pub fn assign_to_centers(mut groups: Grouping, centers: UPoints) -> Grouping {
+pub fn assign_to_centers(mut groups: Grouping, centers: &mut UPoints) -> Grouping {
     assert!(centers.len() > 0);
     //TODO @mark: output_vec line once per thread:
     let mut output_vec: Vec<PointId> = Vec::with_capacity(centers.len());

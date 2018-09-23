@@ -190,8 +190,6 @@ mod tests {
     use super::*;
     use point::{Step, Step2D};
     use std::f64::consts::PI;
-    #[macro_use]
-    use test_util;
 
     //TODO @mark: use 'norm' type alias if possible
     fn get_norm_funcs<N>() -> Vec<&'static Fn(&N) -> Dist>

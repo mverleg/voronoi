@@ -8,7 +8,7 @@ use rand::{Rng, StdRng};
 use std::collections::HashSet;
 
 /// Distribute points randomly.
-pub fn generate_random_points(img: &Img, avg_patch_size: usize, mut rng: StdRng) -> UPoints {
+pub fn generate_random_points(img: &Img, avg_patch_size: usize, rng: &mut StdRng) -> UPoints {
     assert!(avg_patch_size > 0);
     let (width, height, count) = (img.width(), img.height(), img.pixel_cnt() / avg_patch_size);
     let mut points = HashSet::<Point2D>::with_capacity(count);

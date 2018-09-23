@@ -50,10 +50,10 @@ pub mod pointset;
 fn main() {
     let (input, output, size, show, seed) = parse_args();
     println!("starting voronoi on image from {}", input.display());
-    let rng: StdRng = SeedableRng::from_seed(seed);
-    let img = Img::load(&input);
-    let centers = generate_random_points(&img, size, rng);
-    let voronoi = voronoiify_image(img, centers);
+    let mut rng: StdRng = SeedableRng::from_seed(seed);
+    let mut img = Img::load(&input);
+    let mut centers = generate_random_points(&img, size, &mut rng);
+    let voronoi = voronoiify_image(&mut img, &mut centers);
     println!("saving generated image to {}", output.display());
     voronoi.save(output.as_path()).unwrap();
     if show {
@@ -62,7 +62,7 @@ fn main() {
     }
 }
 
-pub fn voronoiify_image(img: Img, center_points: UPoints) -> Img {
+pub fn voronoiify_image(img: &mut Img, center_points: &mut UPoints) -> Img {
     let center_colors = center_points.new_color_averager();
     // Assign all pixels to the nearest center.
     let pixel_group = Grouping::new(img.width(), img.height());
@@ -80,19 +80,18 @@ mod tests {
 
     #[bench]
     fn test_full_flow_performance(bench: &mut Bencher) {
-        //TODO @mark: compile error
         // Create inputs
         let pth = Path::new("resources").join("imgs").join("parrots.png");
-        let rng = SeedableRng::from_seed(default_seed());
-        let original_img = Img::load(pth.as_path());
+        let mut rng = SeedableRng::from_seed(default_seed());
+        let mut original_img = Img::load(pth.as_path());
         // Warmup
-        let centers = generate_random_points(&original_img, 100, rng);
-        let voronoi = voronoiify_image(original_img, centers);
+        let mut centers = generate_random_points(&original_img, 100, &mut rng);
+        let voronoi = voronoiify_image(&mut original_img, &mut centers);
         // Benchmark
         for _ in 0 .. 100 {
-            let centers = generate_random_points(&original_img, 100, rng);
-            let img = original_img.clone();
-            bench.iter(|| voronoiify_image(original_img, centers));
+            let mut centers = generate_random_points(&original_img, 100, &mut rng);
+            let mut img = original_img.clone();
+            bench.iter(|| voronoiify_image(&mut img, &mut centers));
         }
     }
 }
