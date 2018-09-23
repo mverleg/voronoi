@@ -29,7 +29,7 @@ impl RgbColorAverage {
     }
 
     pub fn calc_avg(&self) -> Color {
-        assert!(self.count > 0, "No colors have been added for this average; this should not happen if all points are unique");
+        debug_assert!(self.count > 0, "No colors have been added for this average; this should not happen if all points are unique");
         new_color(
             (self.c0 / self.count) as u8,
             (self.c1 / self.count) as u8,

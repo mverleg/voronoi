@@ -53,7 +53,7 @@ pub fn find_index_nocheck<T, F>(mut min: T, mut max: T, f: F) -> Option<T>
         F: Fn(T) -> Ordering,
 {
     //TODO @mark: this is 86.7% of the CPU time!
-    assert!(max >= min);
+    debug_assert!(max >= min);
     // Test the order criterion if in debug mode
     max = max + 1;
     // Bisection

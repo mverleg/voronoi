@@ -9,7 +9,7 @@ use std::collections::HashSet;
 
 /// Distribute points randomly.
 pub fn generate_random_points(img: &Img, avg_patch_size: usize, rng: &mut StdRng) -> UPoints {
-    assert!(avg_patch_size > 0);
+    debug_assert!(avg_patch_size > 0);
     let (width, height, count) = (img.width(), img.height(), img.pixel_cnt() / avg_patch_size);
     let mut points = HashSet::<Point2D>::with_capacity(count);
     while points.len() < count {
@@ -27,7 +27,7 @@ pub fn generate_random_points(img: &Img, avg_patch_size: usize, rng: &mut StdRng
 
 /// Distribute points predictably.
 pub fn generate_fixed_points(width: X, height: Y, count: usize) -> UPoints {
-    assert!(width.euclidean_norm() * height.euclidean_norm() > Dist::fnew(9.0 * (count as f64)));
+    debug_assert!(width.euclidean_norm() * height.euclidean_norm() > Dist::fnew(9.0 * (count as f64)));
     let mut points = HashSet::<Point2D>::with_capacity(count);
     let count_per_dim = (count as f64).sqrt().ceil() as usize;
     for xi in 0..count_per_dim {

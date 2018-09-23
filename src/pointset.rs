@@ -16,7 +16,7 @@ pub struct UPoints {
 impl UPoints {
     pub fn new(points: Vec<Point2D>) -> Self {
         let length = points.len();
-        assert!(length > 0);
+        debug_assert!(length > 0);
         {
             // Hopefully this next line gets optimized away in production mode
             let unique_points = HashSet::<&Point2D>::from_iter(points.iter());

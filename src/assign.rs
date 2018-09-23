@@ -8,7 +8,7 @@ use pointset::UPoints;
 
 /// This assigns the correct PointId to every single cell in `groups`.
 pub fn assign_to_centers(mut groups: Grouping, centers: &mut UPoints) -> Grouping {
-    assert!(centers.len() > 0);
+    debug_assert!(centers.len() > 0);
     //TODO @mark: output_vec line once per thread:
     let mut output_vec: Vec<PointId> = Vec::with_capacity(centers.len());
     for (x, row) in groups.iter_mut().enumerate() {
@@ -47,7 +47,7 @@ fn find_nearest_to_reference(
     candidates: &Vec<PointId>,
     centers: &UPoints,
 ) -> PointId {
-    assert!(
+    debug_assert!(
         centers.len() > 0,
         "There are no centers within the bounding box, which should never happen"
     );
