@@ -1,4 +1,4 @@
-use dims::{Dim, X, Y};
+use dims::{X, Y};
 use img::Img;
 use norms::Dist;
 use norms::Norm;
@@ -14,8 +14,8 @@ pub fn generate_random_points(img: &Img, avg_patch_size: usize, rng: &mut StdRng
     let mut points = HashSet::<Point2D>::with_capacity(count);
     while points.len() < count {
         let point = Point2D::from_raw(
-            rng.gen_range(0, width._expose()),
-            rng.gen_range(0, height._expose()),
+            rng.gen_range(0, width.value),
+            rng.gen_range(0, height.value),
         );
         if !points.contains(&point) {
             points.insert(point);

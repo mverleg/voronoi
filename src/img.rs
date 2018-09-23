@@ -1,5 +1,5 @@
 use color::Color;
-use dims::{Dim, X, Y};
+use dims::{X, Y};
 use image::DynamicImage;
 use image::ImageBuffer;
 use std::io;
@@ -26,8 +26,8 @@ impl Img {
 
     pub fn empty(width: X, height: Y) -> Self {
         Img::wrap(ImageBuffer::new(
-            width._expose() as u32,
-            height._expose() as u32,
+            width.value as u32,
+            height.value as u32,
         ))
     }
 
@@ -53,7 +53,7 @@ impl Img {
 
     #[inline]
     pub fn pixel_cnt(&self) -> usize {
-        (self.width()._expose() * self.height()._expose()) as usize
+        (self.width().value * self.height().value) as usize
     }
 
     pub fn save<Q>(&self, path: Q) -> io::Result<()>
@@ -69,14 +69,14 @@ impl Index<(X, Y)> for Img {
 
     fn index(&self, index: (X, Y)) -> &Self::Output {
         let (x, y) = index;
-        &self.data[(x._expose() as u32, y._expose() as u32)]
+        &self.data[(x.value as u32, y.value as u32)]
     }
 }
 
 impl IndexMut<(X, Y)> for Img {
     fn index_mut(&mut self, index: (X, Y)) -> &mut Self::Output {
         let (x, y) = index;
-        &mut self.data[(x._expose() as u32, y._expose() as u32)]
+        &mut self.data[(x.value as u32, y.value as u32)]
     }
 }
 

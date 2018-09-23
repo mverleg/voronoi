@@ -1,5 +1,4 @@
-use dims::Dim;
-use dims::{dX, dY};
+use dims::{X, Y, dX, dY};
 use point::Step2D;
 use std::ops::Add;
 use std::ops::Mul;
@@ -161,29 +160,32 @@ impl Norm for Step2D {
     }
 }
 
-impl<D> Norm for D
-where
-    D: Dim,
-{
-    fn manhattan_pseudo(&self) -> PseudoDist {
-        PseudoDist {
-            value: self._expose() as f64,
-        }
-    }
+macro_rules! impl_norm_for_dim {
+    ( $T:ident ) => {
+        impl Norm for $T {
+            fn manhattan_pseudo(&self) -> PseudoDist {
+                PseudoDist {
+                    value: self.value as f64,
+                }
+            }
 
-    fn euclidean_pseudo(&self) -> PseudoDist {
-        PseudoDist {
-            value: self._expose().pow(2) as f64,
-        }
-    }
+            fn euclidean_pseudo(&self) -> PseudoDist {
+                PseudoDist {
+                    value: self.value.pow(2) as f64,
+                }
+            }
 
-    #[allow(non_snake_case)]
-    fn L3_pseudo(&self) -> PseudoDist {
-        PseudoDist {
-            value: self._expose().pow(3) as f64,
+            #[allow(non_snake_case)]
+            fn L3_pseudo(&self) -> PseudoDist {
+                PseudoDist {
+                    value: self.value.pow(3) as f64,
+                }
+            }
         }
     }
 }
+impl_norm_for_dim!(X);
+impl_norm_for_dim!(Y);
 
 #[cfg(test)]
 mod tests {

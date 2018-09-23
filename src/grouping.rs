@@ -1,4 +1,4 @@
-use dims::{Dim, X, Y};
+use dims::{X, Y};
 use pointid::PointId;
 use std::ops::Index;
 use std::slice::IterMut;
@@ -12,8 +12,8 @@ impl Grouping {
     pub fn new(width: X, height: Y) -> Self {
         Grouping {
             center_links: vec![
-                vec![PointId::empty(); height._expose() as usize];
-                width._expose() as usize
+                vec![PointId::empty(); height.value];
+                width.value as usize
             ],
         }
     }
@@ -41,28 +41,28 @@ impl Grouping {
     #[inline]
     pub fn set(&mut self, x: X, y: Y, point_id: PointId) {
         debug_assert!(
-            x._expose() < self.width()._expose(),
+            x.value < self.width().value,
             format!(
                 "Expectation violated: X {} < X-dim {}\n",
-                x._expose(),
-                self.width()._expose()
+                x.value,
+                self.width().value
             )
         );
         debug_assert!(
-            y._expose() < self.height()._expose(),
+            y.value < self.height().value,
             format!(
                 "Expectation violated: Y {} < y-dim {}\n",
-                y._expose(),
-                self.height()._expose()
+                y.value,
+                self.height().value
             )
         );
-        self.center_links[x._expose() as usize][y._expose() as usize] = point_id;
+        self.center_links[x.value as usize][y.value as usize] = point_id;
     }
 
     #[inline]
     pub fn get(&self, x: X, y: Y) -> PointId {
         //TODO @mark: from over here, it looks like X and Y should be usize
-        self.center_links[x._expose() as usize][y._expose() as usize]
+        self.center_links[x.value as usize][y.value as usize]
     }
 }
 
@@ -70,7 +70,7 @@ impl Index<(X, Y)> for Grouping {
     type Output = PointId;
 
     fn index(&self, index: (X, Y)) -> &Self::Output {
-        &self.center_links[(index.0)._expose() as usize][(index.1)._expose() as usize]
+        &self.center_links[(index.0).value as usize][(index.1).value as usize]
     }
 }
 

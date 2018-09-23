@@ -3,11 +3,6 @@ use std::ops::{Add, Sub};
 
 /// These X and Y are indices (unsigned integers), not physical distances.
 
-pub trait Dim {
-    /// Expose the internal value. Careful with trying to use this to get around type safety.
-    fn _expose(&self) -> usize;
-}
-
 macro_rules! make_dim {
     ( $T:ident, $dT:ident ) => {
         #[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
@@ -21,12 +16,6 @@ macro_rules! make_dim {
             }
 
             pub fn as_index(&self) -> usize {
-                self.value as usize
-            }
-        }
-
-        impl Dim for $T {
-            fn _expose(&self) -> usize {
                 self.value
             }
         }
