@@ -1,10 +1,11 @@
 use colorset::PointColorAverages;
-use find_index::find_index_nocheck;
+use find_index::find_index;
 use norms::Dist;
 use point::Point2D;
 use pointid::PointId;
 use std::cmp::Ordering;
 use std::collections::HashSet;
+#[cfg(debug_assertions)]
 use std::iter::FromIterator;
 
 /// Collection of *unique* points.
@@ -17,6 +18,7 @@ impl UPoints {
     pub fn new(points: Vec<Point2D>) -> Self {
         let length = points.len();
         debug_assert!(length > 0);
+        #[cfg(debug_assertions)]
         {
             // Hopefully this next line gets optimized away in production mode
             let unique_points = HashSet::<&Point2D>::from_iter(points.iter());
@@ -43,7 +45,7 @@ impl UPoints {
         let urange = range.ufloor();
         let x_min = reference.x() - urange;
         let x_max = reference.x() + urange;
-        let reference_index: Option<PointId> = find_index_nocheck(
+        let reference_index: Option<PointId> = find_index(
             PointId::new(0),
             PointId::new(self.len() - 1),
             |index: PointId| {
@@ -107,7 +109,7 @@ impl UPoints {
         range: Dist,
         output_vec: &mut Vec<PointId>,
     ) {
-        assert!(output_vec.capacity() >= self.points_by_x.len());
+        debug_assert!(output_vec.capacity() >= self.points_by_x.len());
         self.within_box_internal(reference, range, output_vec);
     }
 
