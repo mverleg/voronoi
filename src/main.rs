@@ -25,6 +25,9 @@ use rand::{SeedableRng, StdRng};
 use std::process::Command;
 use pointset::UPoints;
 
+#[macro_use]
+pub mod test_util;
+
 pub mod argparse;
 pub mod assign;
 pub mod color;
@@ -40,6 +43,7 @@ pub mod point;
 pub mod pointid;
 pub mod pointset;
 
+//TODO @mark: update readme
 //TODO @mark: find a way to turn of all asserts in optimized mode? => or just convert the hot-loop-ones to debug_assert and keep the rest
 //TODO @mark: get rid of expose()
 
@@ -80,14 +84,15 @@ mod tests {
         // Create inputs
         let pth = Path::new("resources").join("imgs").join("parrots.png");
         let rng = SeedableRng::from_seed(default_seed());
-        let img = Img::load(pth.as_path());
+        let original_img = Img::load(pth.as_path());
         // Warmup
-        let centers = generate_random_points(img, 100, rng);
-        let voronoi = voronoiify_image(img, centers);
+        let centers = generate_random_points(&original_img, 100, rng);
+        let voronoi = voronoiify_image(original_img, centers);
         // Benchmark
         for _ in 0 .. 100 {
-            let centers = generate_random_points(img, 100, rng);
-            bench.iter(|| voronoiify_image(img, centers));
+            let centers = generate_random_points(&original_img, 100, rng);
+            let img = original_img.clone();
+            bench.iter(|| voronoiify_image(original_img, centers));
         }
     }
 }

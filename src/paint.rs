@@ -45,6 +45,7 @@ mod tests {
     use super::*;
     use color::new_color;
     use pointid::PointId;
+    use dims::{X, Y};
 
     fn make_groups() -> Grouping {
         let p0 = PointId::new(0);
