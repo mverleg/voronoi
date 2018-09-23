@@ -88,7 +88,7 @@ mod tests {
         let mut centers = generate_random_points(&original_img, 100, &mut rng);
         let voronoi = voronoiify_image(&mut original_img, &mut centers);
         // Benchmark
-        for _ in 0 .. 100 {
+        for _ in 0 .. 10 {
             let mut centers = generate_random_points(&original_img, 100, &mut rng);
             let mut img = original_img.clone();
             bench.iter(|| voronoiify_image(&mut img, &mut centers));
