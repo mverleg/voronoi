@@ -28,7 +28,6 @@ fn assign_to_centers_for_row(
     let mut reference = centers.first_by_x();
     for y in 0..row.len() {
         let current: Point2D = Point2D::from_raw(x, y);
-        //        println!("distance: {:?}", (current - reference).manhattan_norm() + Dist::fnew(1.));  //TODO: mark (temporary)
         centers.within_box_noalloc(
             current,
             (current - reference).manhattan_norm() + Dist::fnew(1.),
@@ -37,7 +36,7 @@ fn assign_to_centers_for_row(
         // `output_vec` will contain the result of `within_box_noalloc`
         let nearest: PointId = find_nearest_to_reference(current, output_vec, &centers);
         row[y] = nearest;
-        reference = centers.get(nearest);
+        reference = centers[nearest];
     }
 }
 
@@ -53,7 +52,7 @@ fn find_nearest_to_reference(
     );
     let mut nearest_center: PointId = candidates[0];
     let mut smallest_dist = (centers.get(nearest_center) - point).euclidean_pseudo();
-    //TODO @mark: is this 'skip' faster than just repeating an element?
+    //TODO @mark: is this 'skip(1)' faster than just repeating an element?
     //TODO @mark: want to not use *, iterate over copies...
     for center in candidates.iter().skip(1) {
         let current_dist = (centers.get(*center) - point).euclidean_pseudo();

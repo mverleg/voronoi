@@ -5,7 +5,7 @@ use point::Point2D;
 use pointid::PointId;
 use std::cmp::Ordering;
 use std::collections::HashSet;
-#[cfg(debug_assertions)]
+#[allow(unused)] // I think the compiler is wrong here
 use std::iter::FromIterator;
 
 /// Collection of *unique* points.

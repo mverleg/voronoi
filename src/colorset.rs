@@ -71,7 +71,6 @@ impl PointColors {
 
     #[inline]
     pub fn get(&self, id: PointId) -> Color {
-        //TODO @mark: is this indeed a copy type?
         self.colors[id._expose()]
     }
 }

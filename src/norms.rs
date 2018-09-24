@@ -8,23 +8,29 @@ use std::ops::Sub;
 #[allow(non_snake_case)]
 pub trait Norm {
     // Default implementations assume that pseudo-norm is just |x|^n + |y|^n without any roots taken.
+    #[inline]
     fn manhattan_norm(&self) -> Dist {
         Dist {
             value: self.manhattan_pseudo().value,
         }
     }
+    #[inline]
     fn euclidean_norm(&self) -> Dist {
         Dist {
             value: self.euclidean_pseudo().value.sqrt(),
         }
     }
+    #[inline]
     fn L3_norm(&self) -> Dist {
         Dist {
             value: self.L3_pseudo().value.cbrt(),
         }
     }
+    #[inline]
     fn manhattan_pseudo(&self) -> PseudoDist;
+    #[inline]
     fn euclidean_pseudo(&self) -> PseudoDist;
+    #[inline]
     fn L3_pseudo(&self) -> PseudoDist;
 }
 
@@ -193,7 +199,6 @@ mod tests {
     use point::{Step, Step2D};
     use std::f64::consts::PI;
 
-    //TODO @mark: use 'norm' type alias if possible
     fn get_norm_funcs<N>() -> Vec<&'static Fn(&N) -> Dist>
     where
         N: Norm,

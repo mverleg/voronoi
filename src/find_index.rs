@@ -27,25 +27,24 @@ where
     T: PartialOrd + Add<usize, Output = T> + Sub<usize, Output = T> + Mid + Copy + Debug,
     F: Fn(T) -> Ordering,
 {
-    //TODO @mark: this is 86.7% of the CPU time!
     assert!(max >= min);
     #[cfg(debug_assertions)]
-        {
-            // Test the order criterion if in debug mode
-            let mut k = min;
-            let top = max - 1;
-            while k < top {
-                let order_current = f(k);
-                let order_next = f(k + 1);
-                if order_current == Ordering::Equal {
-                    assert!(order_next == Ordering::Equal || order_next == Ordering::Greater);
-                }
-                if order_current == Ordering::Greater {
-                    assert!(order_next == Ordering::Greater);
-                }
-                k = k + 1;
+    {
+        // Test the order criterion if in debug mode
+        let mut k = min;
+        let top = max - 1;
+        while k < top {
+            let order_current = f(k);
+            let order_next = f(k + 1);
+            if order_current == Ordering::Equal {
+                assert!(order_next == Ordering::Equal || order_next == Ordering::Greater);
             }
+            if order_current == Ordering::Greater {
+                assert!(order_next == Ordering::Greater);
+            }
+            k = k + 1;
         }
+    }
     // Test the order criterion if in debug mode
     max = max + 1;
     // Bisection

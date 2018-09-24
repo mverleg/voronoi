@@ -6,6 +6,8 @@ use std::slice::IterMut;
 #[derive(Debug)]
 pub struct Grouping {
     center_links: Vec<Vec<PointId>>,
+    width: X,
+    height: Y,
 }
 
 impl Grouping {
@@ -15,18 +17,19 @@ impl Grouping {
                 vec![PointId::empty(); height.value];
                 width.value as usize
             ],
+            width,
+            height,
         }
     }
 
     #[inline]
     pub fn width(&self) -> X {
-        //TODO @mark: consider just storing these fields
-        X::new(self.center_links.len() as usize)
+        self.width
     }
 
     #[inline]
     pub fn height(&self) -> Y {
-        Y::new(self.center_links[0].len() as usize)
+        self.height
     }
 
     //TODO @mark: still used?

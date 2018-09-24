@@ -30,6 +30,7 @@ impl PointId {
     }
 
     /// Expose the internal value. Careful with trying to use this to get around type safety.
+    //TODO @mark: remove
     pub fn _expose(&self) -> usize {
         self.value
     }

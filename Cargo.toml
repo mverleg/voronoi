@@ -14,6 +14,3 @@ byteorder = "1.2.*"
 lto = true
 # TODO remove panic to make smaller
 # panic = 'abort'  # causes compile error
-
-# TODO compile for native architecture
-
