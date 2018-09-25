@@ -36,7 +36,8 @@ fn assign_to_centers_for_row(
         // `output_vec` will contain the result of `within_box_noalloc`
         let nearest: PointId = find_nearest_to_reference(current, output_vec, &centers);
         row[y] = nearest;
-        reference = centers[nearest];
+        //TODO @mark: index
+        reference = centers.get(nearest);
     }
 }
 

@@ -1,6 +1,7 @@
 #![feature(extern_prelude)]
 #![feature(nll)]
 #![feature(test)]
+#![feature(duration_as_u128)]
 
 /// alloc_system avoids using the default bundled allocator, to save space
 /// todo: could not get this to work, no space saved at all
@@ -16,18 +17,20 @@ extern crate threadpool;
 
 use argparse::parse_args;
 use assign::assign_to_centers;
+use benchmark::run_bench;
 use distribute::generate_random_points;
 use grouping::Grouping;
 use img::Img;
 use paint::pixel_to_group_colors;
+use pointset::UPoints;
 use rand::{SeedableRng, StdRng};
 #[allow(unused_imports)]
 use std::process::Command;
-use pointset::UPoints;
 
 #[macro_use]
 #[cfg(test)]
 pub mod test_util;
+pub mod benchmark;
 
 pub mod argparse;
 pub mod assign;
@@ -48,7 +51,11 @@ pub mod pointset;
 //TODO @mark: find a way to turn of all asserts in optimized mode? => or just convert the hot-loop-ones to debug_assert and keep the rest
 
 fn main() {
-    let (input, output, size, show, seed) = parse_args();
+    let (input, output, size, show, bench, seed) = parse_args();
+    if bench {
+        println!("running benchmark, may take a while");
+        run_bench(3);
+    }
     println!("starting voronoi on image from {}", input.display());
     let mut rng: StdRng = SeedableRng::from_seed(seed);
     let mut img = Img::load(&input);
@@ -62,6 +69,7 @@ fn main() {
     }
 }
 
+/// Voronoi transform function
 pub fn voronoiify_image(img: &mut Img, center_points: &mut UPoints) -> Img {
     let center_colors = center_points.new_color_averager();
     // Assign all pixels to the nearest center.
@@ -69,31 +77,4 @@ pub fn voronoiify_image(img: &mut Img, center_points: &mut UPoints) -> Img {
     let groups = assign_to_centers(pixel_group, center_points);
     let voronoi = pixel_to_group_colors(groups, center_colors, img);
     voronoi
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use argparse::default_seed;
-    use std::path::Path;
-    use test::Bencher;
-    use rand::{StdRng, SeedableRng};  //TODO @mark: THIS CODE IS TEMPORARY!
-
-    #[bench]
-    fn test_full_flow_performance(bench: &mut Bencher) {
-        // Create inputs
-        let pth = Path::new("resources").join("imgs").join("parrots.png");
-        let mut rng: StdRng = SeedableRng::from_seed(default_seed());
-        let original_img = Img::load(pth.as_path());
-        // Warmup
-        let mut img = original_img.clone();
-        let mut centers = generate_random_points(&img, 100, &mut rng);
-        test::black_box(voronoiify_image(&mut img, &mut centers));
-        // Benchmark
-        for _ in 0 .. 10 {
-            let mut img = original_img.clone();
-            let mut centers = generate_random_points(&img, 100, &mut rng);
-            bench.iter(|| voronoiify_image(&mut img, &mut centers));
-        }
-    }
 }
