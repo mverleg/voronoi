@@ -7,7 +7,7 @@ use std::process::exit;
 use std::process::Command;
 use std::env::temp_dir;
 
-pub fn parse_args() -> (PathBuf, PathBuf, usize, bool, bool, [u8; 32]) {
+pub fn parse_args() -> (PathBuf, PathBuf, usize, bool, [u8; 32]) {
     let args = App::new("Voronoiify")
         .version("1.0")
         .about("Group image into voronoi-based patches and assign the average color to each patch")
@@ -36,11 +36,6 @@ pub fn parse_args() -> (PathBuf, PathBuf, usize, bool, bool, [u8; 32]) {
                 .help("Show the generated image using EOG")
                 .short("s")
                 .long("show"),
-        ).arg(
-            Arg::with_name("benchmark")
-                .help("Run a benchmark before producing output")
-                .short("b")
-                .long("benchmark"),
         ).arg(
             Arg::with_name("seed")
                 .help("Random seed between 0 and 2^64 (exclusive)")
@@ -88,9 +83,6 @@ pub fn parse_args() -> (PathBuf, PathBuf, usize, bool, bool, [u8; 32]) {
     // Show
     let show = args.is_present("show");
 
-    // Benchmark
-    let benchmark = args.is_present("benchmark");
-
     // Seed
     let seed = if let Some(seedtxt) = args.value_of("seed") {
         if let Ok(seedint) = seedtxt.parse::<u64>() {
@@ -112,7 +104,7 @@ pub fn parse_args() -> (PathBuf, PathBuf, usize, bool, bool, [u8; 32]) {
         default_seed()
     };
 
-    (input, output, size, show, benchmark, seed)
+    (input, output, size, show, seed)
 }
 
 #[inline]

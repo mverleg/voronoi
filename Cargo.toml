@@ -15,3 +15,11 @@ separator = "0.3.*"
 lto = true
 # TODO remove panic to make smaller
 # panic = 'abort'  # causes compile error
+
+[[bin]]
+name = "voronoi"
+path = "src/main.rs"
+
+[[bin]]
+name = "voronoi-benchmark"
+path = "src/benchmark.rs"

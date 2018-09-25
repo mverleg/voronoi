@@ -12,8 +12,8 @@ extern crate byteorder;
 extern crate clap;
 extern crate image;
 extern crate rand;
-extern crate threadpool;
 extern crate separator;
+extern crate threadpool;
 
 use argparse::parse_args;
 use assign::assign_to_centers;
@@ -51,11 +51,7 @@ pub mod pointset;
 //TODO @mark: find a way to turn of all asserts in optimized mode? => or just convert the hot-loop-ones to debug_assert and keep the rest
 
 fn main() {
-    let (input, output, size, show, bench, seed) = parse_args();
-    if bench {
-        println!("running benchmark, may take a while");
-        run_bench(100);
-    }
+    let (input, output, size, show, seed) = parse_args();
     println!("starting voronoi on image from {}", input.display());
     let mut rng: StdRng = SeedableRng::from_seed(seed);
     let mut img = Img::load(&input);
