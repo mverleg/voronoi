@@ -16,6 +16,10 @@ lto = true
 # TODO remove panic to make smaller
 # panic = 'abort'  # causes compile error
 
+[lib]
+name = "voronoi"
+path = "src/voronoi.rs"
+
 [[bin]]
 name = "voronoi"
 path = "src/main.rs"
