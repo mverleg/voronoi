@@ -1,14 +1,10 @@
-extern crate byteorder;
-extern crate clap;
-extern crate image;
-extern crate rand;
 extern crate test;
-extern crate threadpool;
 
 use argparse::default_seed;
 use distribute::generate_random_points;
 use img::Img;
 use rand::{SeedableRng, StdRng};
+use separator::Separatable;
 use std::path::Path;
 #[allow(unused_imports)]
 use std::process::Command;
@@ -23,24 +19,26 @@ pub fn run_bench(reps: usize) {
     let mut rng: StdRng = SeedableRng::from_seed(default_seed());
     let original_img = Img::load(pth.as_path());
     // Benchmark
-    let mut times_ns: Vec<u128> = Vec::with_capacity(reps + 1);
+    let mut times_ns: Vec<u64> = Vec::with_capacity(reps + 1);
     for _ in 0 .. reps + 1 {
         let mut img = original_img.clone();
         let mut centers = generate_random_points(&img, 100, &mut rng);
         let start = Instant::now();
         test::black_box(voronoiify_image(&mut img, &mut centers));
         let end = Instant::now();
-        times_ns.push(end.duration_since(start).as_nanos());
+        times_ns.push(end.duration_since(start).as_nanos() as u64);
     }
     // First iteration is for warmup
-    let avg: u128 = times_ns.iter().skip(1)
-        .fold(0u128, |s, t| s + t)
-        / reps as u128;
-    let std: u128 = times_ns.iter().skip(1)
-        .map(|t| (t - avg).pow(2))
-        .fold(0u128, |s, t| s + t)
-        / (reps - 1) as u128;
-    println!("{} reps took {} ± {} ns each", reps, avg, std);
+    let avg: u64 = times_ns.iter().skip(1)
+        .fold(0, |s, t| s + t)
+        / (reps as u64);
+    let std: f64 = ((times_ns.iter().skip(1)
+        .map(|t| (if t > &avg { t - avg } else { avg - t }).pow(2))
+        .fold(0, |s, t| s + t)
+        / (reps - 1) as u64)
+        as f64).sqrt();
+    let devperc = 100f64 * std / (avg as f64);
+    println!("{} reps took {} ns ± {:.2} % each", reps, (avg as u64).separated_string(), devperc);
 }
 
 #[cfg(test)]

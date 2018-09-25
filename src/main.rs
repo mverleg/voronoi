@@ -12,8 +12,8 @@ extern crate byteorder;
 extern crate clap;
 extern crate image;
 extern crate rand;
-extern crate test;
 extern crate threadpool;
+extern crate separator;
 
 use argparse::parse_args;
 use assign::assign_to_centers;
@@ -54,7 +54,7 @@ fn main() {
     let (input, output, size, show, bench, seed) = parse_args();
     if bench {
         println!("running benchmark, may take a while");
-        run_bench(3);
+        run_bench(100);
     }
     println!("starting voronoi on image from {}", input.display());
     let mut rng: StdRng = SeedableRng::from_seed(seed);

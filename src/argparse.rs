@@ -82,7 +82,7 @@ pub fn parse_args() -> (PathBuf, PathBuf, usize, bool, bool, [u8; 32]) {
             exit(4);
         }
     } else {
-        50
+        200
     };
 
     // Show
