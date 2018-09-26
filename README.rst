@@ -49,7 +49,8 @@ Difficulties:
 How to use
 -------------------------------
 
-* Compile: `RUSTFLAGS="-C target-cpu=native" cargo build --release`
-* Decrease size: `strip target/release/voronoi`
+* Compile: `RUSTFLAGS="-C target-cpu=native" cargo build --release --bin voronoi-benchmark --bin voronoi`
+* Decrease size: `strip target/release/voronoi target/release/voronoi-benchmark`
 * Run: `target/release/voronoi resources/imgs/parrots.png --show`
+* Benchmark: `target/release/voronoi-benchmark`
 

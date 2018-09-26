@@ -4,6 +4,7 @@ use norms::Dist;
 use point::Point2D;
 use pointid::PointId;
 use std::cmp::Ordering;
+#[cfg(debug_assertions)]
 use std::collections::HashSet;
 #[allow(unused)] // I think the compiler is wrong here
 use std::iter::FromIterator;
@@ -144,6 +145,7 @@ impl IntoIterator for UPoints {
 mod tests {
     use dims::{X, Y};
     use distribute::generate_fixed_points;
+    use std::collections::HashSet;
     use super::*;
 
     #[test]

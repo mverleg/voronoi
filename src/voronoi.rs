@@ -63,15 +63,27 @@ pub fn voronoiify_image(img: &mut Img, center_points: &mut UPoints) -> Img {
 }
 
 /// Benchmark function for --benchmark argument (because tests aren't customizable enough)
-pub fn run_bench(reps: usize) {
+pub fn run_bench(reps: usize, do_log: bool) {
     assert!(reps >= 2);
+    if do_log {
+        println!("running benchmark");
+    }
+    let init = Instant::now();
+    let mut last_log = 0;
     // Create inputs
     let pth = Path::new("resources").join("imgs").join("parrots.png");
     let mut rng: StdRng = SeedableRng::from_seed(default_seed());
     let original_img = Img::load(pth.as_path());
     // Benchmark
     let mut times_ns: Vec<u64> = Vec::with_capacity(reps + 1);
-    for _ in 0 .. reps + 1 {
+    for rep in 0 .. reps + 1 {
+        if do_log {
+            let total_time = Instant::now().duration_since(init).as_secs();
+            if total_time > last_log {
+                last_log = total_time;
+                println!(" {} / {}", rep, reps);
+            }
+        }
         let mut img = original_img.clone();
         let mut centers = generate_random_points(&img, 100, &mut rng);
         let start = Instant::now();
