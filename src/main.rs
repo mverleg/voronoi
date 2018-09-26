@@ -5,15 +5,15 @@
 extern crate byteorder;
 extern crate clap;
 extern crate rand;
-extern crate voronoi;
+extern crate vorolib;
 
 use argparse::parse_args;
 use rand::{SeedableRng, StdRng};
 #[allow(unused_imports)]
 use std::process::Command;
-use voronoi::distribute::generate_random_points;
-use voronoi::img::Img;
-use voronoi::voronoiify_image;
+use vorolib::distribute::generate_random_points;
+use vorolib::img::Img;
+use vorolib::voronoiify_image;
 
 pub mod argparse;
 

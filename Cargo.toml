@@ -17,7 +17,7 @@ lto = true
 # panic = 'abort'  # causes compile error
 
 [lib]
-name = "voronoi"
+name = "vorolib"
 path = "src/voronoi.rs"
 
 [[bin]]

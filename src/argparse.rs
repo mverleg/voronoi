@@ -6,7 +6,7 @@ use std::path::{Path, PathBuf};
 #[allow(unused_imports)]
 use std::process::Command;
 use std::process::exit;
-use voronoi::distribute::default_seed;
+use vorolib::distribute::default_seed;
 
 pub fn parse_args() -> (PathBuf, PathBuf, usize, bool, [u8; 32]) {
     let args = App::new("Voronoiify")
