@@ -2,29 +2,20 @@
 //TODO @mark: update readme
 //TODO @mark: find a way to turn of all asserts in optimized mode? => or just convert the hot-loop-ones to debug_assert and keep the rest
 
+extern crate byteorder;
+extern crate clap;
 extern crate rand;
 extern crate voronoi;
-extern crate clap;
-extern crate byteorder;
-
-pub mod argparse;
 
 use argparse::parse_args;
-use assign::assign_to_centers;
-use benchmark::run_bench;
-use distribute::generate_random_points;
-use grouping::Grouping;
-use img::Img;
-use paint::pixel_to_group_colors;
-use pointset::UPoints;
 use rand::{SeedableRng, StdRng};
-use rand::StdRng;
 #[allow(unused_imports)]
 use std::process::Command;
-use voronoi::argparse::parse_args;
-use voronoi::img::Img;
 use voronoi::distribute::generate_random_points;
+use voronoi::img::Img;
 use voronoi::voronoiify_image;
+
+pub mod argparse;
 
 fn main() {
     let (input, output, size, show, seed) = parse_args();

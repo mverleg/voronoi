@@ -1,11 +1,12 @@
 use byteorder::LittleEndian;
 use byteorder::WriteBytesExt;
 use clap::{App, Arg};
+use std::env::temp_dir;
 use std::path::{Path, PathBuf};
-use std::process::exit;
 #[allow(unused_imports)]
 use std::process::Command;
-use std::env::temp_dir;
+use std::process::exit;
+use voronoi::distribute::default_seed;
 
 pub fn parse_args() -> (PathBuf, PathBuf, usize, bool, [u8; 32]) {
     let args = App::new("Voronoiify")
