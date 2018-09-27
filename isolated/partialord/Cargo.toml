@@ -1,0 +1,11 @@
+[package]
+name = "partialordtest"
+version = "0.1.0"
+authors = ["Mark <mverleg.noreply@gmail.com>"]
+
+[dependencies]
+rand = "0.5.*"
+
+[profile.release]
+opt-level = 3
+lto = true

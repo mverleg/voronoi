@@ -22,12 +22,14 @@ macro_rules! make_dim {
         }
 
         impl PartialOrd<Self> for $T {
+            #[inline]
             fn partial_cmp(&self, other: &$T) -> Option<Ordering> {
                 Some(self.value.cmp(&other.value))
             }
         }
 
         impl Ord for $T {
+            #[inline]
             fn cmp(&self, other: &$T) -> Ordering {
                 self.value.cmp(&other.value)
             }
