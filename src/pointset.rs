@@ -41,6 +41,7 @@ impl UPoints {
 
     #[inline]
     fn within_box_internal(&self, reference: Point2D, range: Dist, output_vec: &mut Vec<PointId>) {
+        //TODO @mark: 79% of opt1 runtime
         output_vec.clear();
         // Find any point within the range
         let urange = range.ufloor();
