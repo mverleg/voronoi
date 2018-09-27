@@ -57,6 +57,7 @@ pub fn voronoiify_image(img: &mut Img, center_points: &mut UPoints) -> Img {
     let center_colors = center_points.new_color_averager();
     // Assign all pixels to the nearest center.
     let pixel_group = Grouping::new(img.width(), img.height());
+    //TODO @mark: @opt=1 this is 93%
     let groups = assign_to_centers(pixel_group, center_points);
     let voronoi = pixel_to_group_colors(groups, center_colors, img);
     voronoi
@@ -76,12 +77,15 @@ pub fn run_bench(reps: usize, do_log: bool) {
     let original_img = Img::load(pth.as_path());
     // Benchmark
     let mut times_ns: Vec<u64> = Vec::with_capacity(reps + 1);
+    if do_log {
+        println!(" {:4} / {:4}", 0, reps);
+    }
     for rep in 0 .. reps + 1 {
         if do_log {
             let total_time = Instant::now().duration_since(init).as_secs();
             if total_time > last_log {
                 last_log = total_time;
-                println!(" {} / {}", rep, reps);
+                println!(" {:4} / {:4}", rep, reps);
             }
         }
         let mut img = original_img.clone();
@@ -89,7 +93,12 @@ pub fn run_bench(reps: usize, do_log: bool) {
         let start = Instant::now();
         test::black_box(voronoiify_image(&mut img, &mut centers));
         let end = Instant::now();
-        times_ns.push(end.duration_since(start).as_nanos() as u64);
+        //TODO @mark: temporarily disabled because valgrind cannot handle this
+//        times_ns.push(end.duration_since(start).as_nanos() as u64);
+        times_ns.push(1u64);
+    }
+    if do_log {
+        println!(" {:4} / {:4}", reps, reps);
     }
     // First iteration is for warmup
     let avg: u64 = times_ns.iter().skip(1)

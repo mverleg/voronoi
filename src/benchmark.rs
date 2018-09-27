@@ -33,7 +33,7 @@ pub fn main() {
     ).get_matches();
 
     // Repetition count
-    let resp = if let Some(sizetxt) = args.value_of("resp") {
+    let resp = if let Some(sizetxt) = args.value_of("reps") {
         if let Ok(sizeint) = sizetxt.parse::<i32>() {
             sizeint as usize
         } else {

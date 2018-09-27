@@ -1,7 +1,10 @@
+cargo-features = ["default-run", "profile-overrides"]
+
 [package]
 name = "voronoi"
 version = "0.1.0"
 authors = ["Mark <mverleg.noreply@gmail.com>"]
+default-run = "voronoi"
 
 [dependencies]
 image = "0.19.*"
@@ -11,8 +14,15 @@ clap = "2.32.*"
 byteorder = "1.2.*"
 separator = "0.3.*"
 
+[profile.dev.overrides."*"]
+opt-level = 3
+
+[profile.release.overrides."*"]
+opt-level = 3
+
 [profile.release]
 lto = true
+opt-level = 1  # TODO tmp limit inlining for profiling
 # TODO remove panic to make smaller
 # panic = 'abort'  # causes compile error
 
