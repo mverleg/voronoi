@@ -1,12 +1,14 @@
 use find_index::Mid;
 use std::ops::{Add, Sub};
-use std::cmp::Ordering;
 
 /// These X and Y are indices (unsigned integers), not physical distances.
 
 macro_rules! make_dim {
     ( $T:ident, $dT:ident ) => {
-        #[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
+
+        // Performance: hand-coding PartialEq is not faster than deriving,
+        // in fact it's slower unless lt/gt/le/ge are also hand-coded.
+        #[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
         pub struct $T {
             pub value: usize,
         }
@@ -18,20 +20,6 @@ macro_rules! make_dim {
 
             pub fn as_index(&self) -> usize {
                 self.value
-            }
-        }
-
-        impl PartialOrd<Self> for $T {
-            #[inline]
-            fn partial_cmp(&self, other: &$T) -> Option<Ordering> {
-                Some(self.value.cmp(&other.value))
-            }
-        }
-
-        impl Ord for $T {
-            #[inline]
-            fn cmp(&self, other: &$T) -> Ordering {
-                self.value.cmp(&other.value)
             }
         }
 

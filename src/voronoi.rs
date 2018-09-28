@@ -19,15 +19,10 @@ extern crate threadpool;
 //TODO @mark: make some of these mods private?
 
 use assign::assign_to_centers;
-use distribute::default_seed;
-use distribute::generate_random_points;
 use grouping::Grouping;
 use img::Img;
 use paint::pixel_to_group_colors;
 use pointset::UPoints;
-use rand::{SeedableRng, StdRng};
-use separator::Separatable;
-use std::path::Path;
 #[allow(unused_imports)]
 use std::process::Command;
 

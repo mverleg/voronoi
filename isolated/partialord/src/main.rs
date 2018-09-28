@@ -5,10 +5,11 @@ extern crate rand;
 use rand::Rng;
 use std::cmp::Ordering;
 use std::time::Instant;
+use std::fmt::Debug;
 
 pub fn main() {
     let mut rng = rand::thread_rng();
-    let mut data_4_deriv: Vec<Deriv> = (0 .. 100000)
+    let mut data_4_deriv: Vec<Deriv> = (0 .. 25000)
         .map(|_| Deriv { x: rng.gen_range(0, 5000)})
         .collect();
     let mut data_4_manual: Vec<Manual> = data_4_deriv.iter()
@@ -22,12 +23,12 @@ pub fn main() {
     println!("derive: {:.3}ms", Instant::now().duration_since(start).as_millis());
 }
 
-#[derive(Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Debug, Eq, PartialEq, Ord, PartialOrd)]
 struct Deriv {
     x: usize,
 }
 
-#[derive(Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq)]
 struct Manual {
     x: usize,
 }
@@ -47,7 +48,8 @@ impl Ord for Manual {
 }
 
 // https://rosettacode.org/wiki/Sorting_algorithms/Bubble_sort#Rust
-fn bubble_sort<T: Ord>(values: &mut[T]) {
+fn bubble_sort<T: Ord + Debug>(values: &mut[T]) {
+    println!("{:?}", values[0]);
     let mut n = values.len();
     let mut swapped = true;
 
