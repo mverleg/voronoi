@@ -3,3 +3,4 @@ target/
 .idea/
 *.lock
 *.out.*
+cmake-build-*/
