@@ -53,3 +53,8 @@ How to use
 * Decrease size: `strip target/release/voronoi target/release/voronoi-benchmark`
 * Run: `target/release/voronoi resources/imgs/parrots.png --show`
 * Benchmark: `time target/release/voronoi-benchmark`
+
+Random observations / hints:
+
+* Almost everything gets inlines at -O3, so flamegraphs don't work well.
+* To see generated code from derives `cargo rustc -- -Z unstable-options --pretty=expanded`.

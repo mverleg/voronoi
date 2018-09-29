@@ -11,8 +11,6 @@ extern crate vorolib;
 extern crate separator;
 
 use clap::{App, Arg};
-//use paint::pixel_to_group_colors;
-//use pointset::UPoints;
 use rand::{SeedableRng, StdRng};
 use separator::Separatable;
 use std::path::Path;

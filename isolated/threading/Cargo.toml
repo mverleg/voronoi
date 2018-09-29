@@ -1,0 +1,11 @@
+[package]
+name = "threading"
+version = "0.1.0"
+authors = ["Mark <mverleg.noreply@gmail.com>"]
+
+[dependencies]
+threadpool = "1.7.*"
+
+[profile.release]
+opt-level = 3
+lto = true
