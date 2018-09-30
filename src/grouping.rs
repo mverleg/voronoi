@@ -73,28 +73,12 @@ pub struct GroupingRow {
     height: Y,
 }
 
-//#[derive(Debug)]
-//struct GroupingRowIterator {
-//
-//}
-//
-//impl<'a> Iterator for GroupingRowIterator {
-//    type Item = GroupingRow;
-//
-//    #[inline]
-//    fn next(&mut self) -> Option<Self::Item> {
-//        if self.x >= self.grouping.width() {
-//            self.x = X::new(0);
-//            self.y = self.y + 1;
-//        }
-//        if self.y >= self.grouping.height() {
-//            return Option::None;
-//        }
-//        let res = Option::Some((self.x, self.y, self.grouping[(self.x, self.y)]));
-//        self.x = self.x + 1;
-//        res
-//    }
-//}
+impl GroupingRow {
+    #[inline]
+    pub fn indices(&self) -> impl Iterator<Item=Y> {
+        (0 .. self.height.value).map(|v| Y::new(v))
+    }
+}
 
 impl IntoIterator for Grouping {
     type Item = GroupingRow;
@@ -110,6 +94,16 @@ impl Index<(X, Y)> for Grouping {
 
     fn index(&self, index: (X, Y)) -> &Self::Output {
         &self.center_links[(index.0).value as usize][(index.1).value as usize]
+    }
+}
+
+impl Index<Y> for GroupingRow {
+    type Output = PointId;
+
+    #[inline]
+    //TODO @mark: update all Index that return copy types to just .get() to prevent & ?
+    fn index(&self, index: Y) -> &Self::Output {
+        self.center_links_row[index.value]
     }
 }
 

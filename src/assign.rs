@@ -1,10 +1,11 @@
 use grouping::Grouping;
 use norms::{Dist, Norm};
-use point::Point2D;
+use point::{Point, Point2D};
 use pointid::PointId;
 use pointset::UPoints;
 use threadpool::ThreadPool;
 use grouping::GroupingRow;
+use dims::X;
 
 //TODO @mark: inline every function used in inner loop
 
@@ -15,7 +16,7 @@ pub fn assign_to_centers(mut groups: Grouping, centers: &mut UPoints, workers: &
     //TODO @mark: I must either limit the borrow scope (no idea how), or I need to split groups and reassemble it after processing
     for (x, row) in groups.into_iter().enumerate() {
 //        assign_to_centers_for_row(x, row, &centers);
-        workers.execute(move|| assign_to_centers_for_row(x, row, &centers));
+        workers.execute(move|| assign_to_centers_for_row(X::new(x), row, &centers));
     }
     groups
 }
@@ -23,7 +24,7 @@ pub fn assign_to_centers(mut groups: Grouping, centers: &mut UPoints, workers: &
 //TODO @mark: paralellize here?
 #[inline]
 fn assign_to_centers_for_row(
-    x: usize,
+    x: X,
     row: GroupingRow,
     centers: &UPoints,
 ) {
@@ -32,8 +33,8 @@ fn assign_to_centers_for_row(
     // It also makes parallelization easier, since this would otherwise be per-thread.
     let mut output_vec: Vec<PointId> = Vec::with_capacity(centers.len());
     let mut reference = centers.first_by_x();
-    for y in 0 .. row.len() {
-        let current: Point2D = Point2D::from_raw(x, y);
+    for y in row.indices() {
+        let current: Point2D = Point2D::new(x, y);
         centers.within_box_noalloc(
             current,
             (current - reference).manhattan_norm() + Dist::fnew(1.),
@@ -45,6 +46,7 @@ fn assign_to_centers_for_row(
         //TODO @mark: index
         reference = centers.get(nearest);
     }
+    row; //TODO @mark: send this to a channel
 }
 
 #[inline]
