@@ -47,17 +47,14 @@ pub mod pointset;
 //TODO @mark: update readme
 //TODO @mark: find a way to turn of all asserts in optimized mode? => or just convert the hot-loop-ones to debug_assert and keep the rest
 
-pub fn make_threads() {
-    ThreadPool::new(n_workers)
-}
-
 /// Voronoi transform function
 pub fn voronoiify_image(img: &mut Img, center_points: &mut UPoints) -> Img {
     let center_colors = center_points.new_color_averager();
     // Assign all pixels to the nearest center.
     let pixel_group = Grouping::new(img.width(), img.height());
-    //TODO @mark: @opt=1 this is 93%
-    let groups = assign_to_centers(pixel_group, center_points);
+    //TODO @mark: if movies are added, make sure to recycle threadpool
+    let workers = ThreadPool::default();
+    let groups = assign_to_centers(pixel_group, center_points, &workers);
     let voronoi = pixel_to_group_colors(groups, center_colors, img);
     voronoi
 }

@@ -8,7 +8,11 @@ pub fn main() {
 
     // Arguments
     let args: Vec<_> = env::args().collect();
-    let n = args[1].parse::<u64>().unwrap_or(44);
+    let n = if args.len() >= 2 {
+        args[1].parse::<u64>().unwrap_or(44)
+    } else {
+        44
+    };
 
     // Pool
     let pool = ThreadPool::default();

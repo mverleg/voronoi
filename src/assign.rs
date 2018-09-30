@@ -3,16 +3,19 @@ use norms::{Dist, Norm};
 use point::Point2D;
 use pointid::PointId;
 use pointset::UPoints;
+use threadpool::ThreadPool;
+use grouping::GroupingRow;
 
 //TODO @mark: inline every function used in inner loop
 
 /// This assigns the correct PointId to every single cell in `groups`.
-pub fn assign_to_centers(mut groups: Grouping, centers: &mut UPoints) -> Grouping {
+pub fn assign_to_centers(mut groups: Grouping, centers: &mut UPoints, workers: &ThreadPool) -> Grouping {
+    //TODO @mark: @opt=1 this is 93%
     debug_assert!(centers.len() > 0);
-    //TODO @mark: output_vec line once per thread:
-    let mut output_vec: Vec<PointId> = Vec::with_capacity(centers.len());
-    for (x, row) in groups.iter_mut().enumerate() {
-        assign_to_centers_for_row(x, row, &centers, &mut output_vec);
+    //TODO @mark: I must either limit the borrow scope (no idea how), or I need to split groups and reassemble it after processing
+    for (x, row) in groups.into_iter().enumerate() {
+//        assign_to_centers_for_row(x, row, &centers);
+        workers.execute(move|| assign_to_centers_for_row(x, row, &centers));
     }
     groups
 }
@@ -21,20 +24,23 @@ pub fn assign_to_centers(mut groups: Grouping, centers: &mut UPoints) -> Groupin
 #[inline]
 fn assign_to_centers_for_row(
     x: usize,
-    row: &mut Vec<PointId>,
+    row: GroupingRow,
     centers: &UPoints,
-    output_vec: &mut Vec<PointId>,
 ) {
+    // Performance: I thought it would be faster to recycle this output vector,
+    // but (at least without parallelization), it is slightly faster to just recreate it.
+    // It also makes parallelization easier, since this would otherwise be per-thread.
+    let mut output_vec: Vec<PointId> = Vec::with_capacity(centers.len());
     let mut reference = centers.first_by_x();
-    for y in 0..row.len() {
+    for y in 0 .. row.len() {
         let current: Point2D = Point2D::from_raw(x, y);
         centers.within_box_noalloc(
             current,
             (current - reference).manhattan_norm() + Dist::fnew(1.),
-            output_vec,
+            &mut output_vec,
         );
         // `output_vec` will contain the result of `within_box_noalloc`
-        let nearest: PointId = find_nearest_to_reference(current, output_vec, &centers);
+        let nearest: PointId = find_nearest_to_reference(current, &mut output_vec, &centers);
         row[y] = nearest;
         //TODO @mark: index
         reference = centers.get(nearest);

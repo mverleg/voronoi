@@ -113,7 +113,6 @@ pub fn run_bench(reps: usize, do_log: bool) {
 mod tests {
     use super::*;
     use test::Bencher;
-    //TODO @mark: THIS CODE IS TEMPORARY!
 
     #[bench]
     fn test_full_flow_performance(bench: &mut Bencher) {

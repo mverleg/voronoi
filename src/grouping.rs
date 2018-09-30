@@ -1,11 +1,11 @@
 use dims::{X, Y};
 use pointid::PointId;
 use std::ops::Index;
-use std::slice::IterMut;
+use std::vec::IntoIter;
 
 #[derive(Debug)]
 pub struct Grouping {
-    center_links: Vec<Vec<PointId>>,
+    center_links: Vec<GroupingRow>,
     width: X,
     height: Y,
 }
@@ -14,7 +14,10 @@ impl Grouping {
     pub fn new(width: X, height: Y) -> Self {
         Grouping {
             center_links: vec![
-                vec![PointId::empty(); height.value];
+                GroupingRow {
+                    center_links_row: vec![PointId::empty(); height.value],
+                    height
+                };
                 width.value as usize
             ],
             width,
@@ -30,11 +33,6 @@ impl Grouping {
     #[inline]
     pub fn height(&self) -> Y {
         self.height
-    }
-
-    //TODO @mark: still used?
-    pub fn iter_mut(&mut self) -> IterMut<Vec<PointId>> {
-        self.center_links.iter_mut()
     }
 
     pub fn iter_indexed(&mut self) -> GroupIndexIterator {
@@ -69,6 +67,44 @@ impl Grouping {
     }
 }
 
+#[derive(Debug)]
+pub struct GroupingRow {
+    center_links_row: Vec<PointId>,
+    height: Y,
+}
+
+//#[derive(Debug)]
+//struct GroupingRowIterator {
+//
+//}
+//
+//impl<'a> Iterator for GroupingRowIterator {
+//    type Item = GroupingRow;
+//
+//    #[inline]
+//    fn next(&mut self) -> Option<Self::Item> {
+//        if self.x >= self.grouping.width() {
+//            self.x = X::new(0);
+//            self.y = self.y + 1;
+//        }
+//        if self.y >= self.grouping.height() {
+//            return Option::None;
+//        }
+//        let res = Option::Some((self.x, self.y, self.grouping[(self.x, self.y)]));
+//        self.x = self.x + 1;
+//        res
+//    }
+//}
+
+impl IntoIterator for Grouping {
+    type Item = GroupingRow;
+    type IntoIter = IntoIter<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.center_links.into_iter()
+    }
+}
+
 impl Index<(X, Y)> for Grouping {
     type Output = PointId;
 
@@ -97,6 +133,7 @@ impl<'a> GroupIndexIterator<'a> {
 impl<'a> Iterator for GroupIndexIterator<'a> {
     type Item = (X, Y, PointId);
 
+    #[inline]
     fn next(&mut self) -> Option<Self::Item> {
         if self.x >= self.grouping.width() {
             self.x = X::new(0);
