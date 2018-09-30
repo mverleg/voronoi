@@ -14,7 +14,7 @@ extern crate image;
 extern crate rand;
 extern crate separator;
 extern crate test;
-extern crate threadpool;
+extern crate scoped_pool;
 
 //TODO @mark: make some of these mods private?
 

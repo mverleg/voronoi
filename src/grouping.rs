@@ -57,17 +57,17 @@ impl Grouping {
                 self.height().value
             )
         );
-        self.center_links[x.value as usize][y.value as usize] = point_id;
+        self.center_links[x.value][y] = point_id;
     }
 
     #[inline]
     pub fn get(&self, x: X, y: Y) -> PointId {
         //TODO @mark: from over here, it looks like X and Y should be usize
-        self.center_links[x.value as usize][y.value as usize]
+        self.center_links[x.value][y]
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct GroupingRow {
     center_links_row: Vec<PointId>,
     height: Y,
@@ -93,7 +93,7 @@ impl Index<(X, Y)> for Grouping {
     type Output = PointId;
 
     fn index(&self, index: (X, Y)) -> &Self::Output {
-        &self.center_links[(index.0).value as usize][(index.1).value as usize]
+        &self.center_links[(index.0).value][(index.1)]
     }
 }
 
@@ -103,7 +103,7 @@ impl Index<Y> for GroupingRow {
     #[inline]
     //TODO @mark: update all Index that return copy types to just .get() to prevent & ?
     fn index(&self, index: Y) -> &Self::Output {
-        self.center_links_row[index.value]
+        &self.center_links_row[index.value]
     }
 }
 

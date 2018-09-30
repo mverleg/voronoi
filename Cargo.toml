@@ -9,7 +9,7 @@ default-run = "voronoi"
 [dependencies]
 image = "0.19.*"
 rand = "0.5.*"
-threadpool = "1.7.*"
+scoped-pool = "1.0.*"
 clap = "2.32.*"
 byteorder = "1.2.*"
 separator = "0.3.*"

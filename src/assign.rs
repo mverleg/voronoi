@@ -10,22 +10,23 @@ use dims::X;
 //TODO @mark: inline every function used in inner loop
 
 /// This assigns the correct PointId to every single cell in `groups`.
-pub fn assign_to_centers(mut groups: Grouping, centers: &mut UPoints, workers: &ThreadPool) -> Grouping {
+pub fn assign_to_centers(groups: Grouping, centers: &mut UPoints, workers: &ThreadPool) -> Grouping {
     //TODO @mark: @opt=1 this is 93%
     debug_assert!(centers.len() > 0);
     //TODO @mark: I must either limit the borrow scope (no idea how), or I need to split groups and reassemble it after processing
     for (x, row) in groups.into_iter().enumerate() {
 //        assign_to_centers_for_row(x, row, &centers);
-        workers.execute(move|| assign_to_centers_for_row(X::new(x), row, &centers));
+        workers.execute(|| assign_to_centers_for_row(X::new(x), row, &centers));
     }
-    groups
+//    groups //TODO @mark:
+    unimplemented!(); //TODO @mark: THIS CODE IS TEMPORARY!
 }
 
 //TODO @mark: paralellize here?
 #[inline]
 fn assign_to_centers_for_row(
     x: X,
-    row: GroupingRow,
+    mut row: GroupingRow,
     centers: &UPoints,
 ) {
     // Performance: I thought it would be faster to recycle this output vector,
