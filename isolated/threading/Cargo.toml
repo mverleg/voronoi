@@ -4,7 +4,8 @@ version = "0.1.0"
 authors = ["Mark <mverleg.noreply@gmail.com>"]
 
 [dependencies]
-threadpool = "1.7.*"
+scoped-pool = "1.0.*"
+num_cpus = "1.0.*"
 
 [profile.release]
 opt-level = 3
