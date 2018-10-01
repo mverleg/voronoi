@@ -1,7 +1,6 @@
 use dims::{X, Y};
 use pointid::PointId;
 use std::ops::Index;
-use std::vec::IntoIter;
 
 #[derive(Debug)]
 pub struct Grouping {
@@ -33,6 +32,11 @@ impl Grouping {
     #[inline]
     pub fn height(&self) -> Y {
         self.height
+    }
+
+    #[inline]
+    pub fn len(&self) -> usize {
+        self.width().value
     }
 
     pub fn iter_indexed(&mut self) -> GroupIndexIterator {
@@ -80,12 +84,43 @@ impl GroupingRow {
     }
 }
 
+#[derive(Debug)]
+pub struct GroupingRowIterator {
+    grouping: Grouping,
+    index: usize,
+    length: usize,
+}
+
+impl Iterator for GroupingRowIterator {
+    type Item = (X, GroupingRow);
+
+    #[inline]
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.index >= self.length {
+            return None;
+        }
+        //TODO @mark: how to remove a row? the original will get corrupted right? how does vec intoiter do that?
+        //TODO @mark: possibly store that intoiter and drain from it; no need to reinvent the wheel
+        let val = Some((
+            X::new(self.index),
+            self.grouping.center_links[self.index]
+        ));
+        self.index += 1;
+        return val
+        //TODO @mark: unit test?
+    }
+}
+
 impl IntoIterator for Grouping {
-    type Item = GroupingRow;
-    type IntoIter = IntoIter<Self::Item>;
+    type Item = <GroupingRowIterator as Iterator>::Item;
+    type IntoIter = GroupingRowIterator;
 
     fn into_iter(self) -> Self::IntoIter {
-        self.center_links.into_iter()
+        GroupingRowIterator {
+            grouping: self,
+            index: 0,
+            length: self.len(),
+        }
     }
 }
 

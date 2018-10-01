@@ -12,9 +12,10 @@ extern crate byteorder;
 extern crate clap;
 extern crate image;
 extern crate rand;
+extern crate scoped_pool;
 extern crate separator;
 extern crate test;
-extern crate scoped_pool;
+extern crate num_cpus;
 
 //TODO @mark: make some of these mods private?
 
@@ -23,9 +24,9 @@ use grouping::Grouping;
 use img::Img;
 use paint::pixel_to_group_colors;
 use pointset::UPoints;
+use scoped_pool::Pool;
 #[allow(unused_imports)]
 use std::process::Command;
-use threadpool::ThreadPool;
 
 #[macro_use]
 #[cfg(test)]
@@ -53,7 +54,7 @@ pub fn voronoiify_image(img: &mut Img, center_points: &mut UPoints) -> Img {
     // Assign all pixels to the nearest center.
     let pixel_group = Grouping::new(img.width(), img.height());
     //TODO @mark: if movies are added, make sure to recycle threadpool
-    let workers = ThreadPool::default();
+    let workers = Pool::new(num_cpus::get());
     let groups = assign_to_centers(pixel_group, center_points, &workers);
     let voronoi = pixel_to_group_colors(groups, center_colors, img);
     voronoi

@@ -1,23 +1,42 @@
-use grouping::Grouping;
+use dims::X;
+use grouping::{Grouping, GroupingRow};
 use norms::{Dist, Norm};
 use point::{Point, Point2D};
 use pointid::PointId;
 use pointset::UPoints;
-use threadpool::ThreadPool;
-use grouping::GroupingRow;
-use dims::X;
+use scoped_pool::Pool;
+use std::sync::mpsc::sync_channel;
 
 //TODO @mark: inline every function used in inner loop
 
 /// This assigns the correct PointId to every single cell in `groups`.
-pub fn assign_to_centers(groups: Grouping, centers: &mut UPoints, workers: &ThreadPool) -> Grouping {
+pub fn assign_to_centers(groups: Grouping, centers: &mut UPoints, workers: &Pool) -> Grouping {
     //TODO @mark: @opt=1 this is 93%
     debug_assert!(centers.len() > 0);
     //TODO @mark: I must either limit the borrow scope (no idea how), or I need to split groups and reassemble it after processing
-    for (x, row) in groups.into_iter().enumerate() {
+
+
+    let (tx, rx) = sync_channel::<(u64, u64)>(3);
+
+    workers.scoped(|scope| {
+        // Delegate work
+        let row_cnt = groups.len();
+        for (x, row) in groups.into_iter() {
+            scope.execute(||
+                assign_to_centers_for_row(x, row, &centers
+            ));
+        }
+        // Read the output
+        for (k, fibk) in rx.iter().take(row_cnt) {
+            println!("fib #{} is {}", k, fibk);
+        }
+    });
+
+
+//    for (x, row) in groups.into_iter().enumerate() {
 //        assign_to_centers_for_row(x, row, &centers);
-        workers.execute(|| assign_to_centers_for_row(X::new(x), row, &centers));
-    }
+//        workers.execute(|| assign_to_centers_for_row(X::new(x), row, &centers));
+//    }
 //    groups //TODO @mark:
     unimplemented!(); //TODO @mark: THIS CODE IS TEMPORARY!
 }
