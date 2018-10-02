@@ -16,14 +16,18 @@ pub fn assign_to_centers(groups: Grouping, centers: &mut UPoints, workers: &Pool
     //TODO @mark: I must either limit the borrow scope (no idea how), or I need to split groups and reassemble it after processing
 
 
-    let (tx, rx) = sync_channel::<(u64, u64)>(3);
-
     workers.scoped(|scope| {
+        let (tx, rx) = sync_channel::<(u64, u64)>(3);
         // Delegate work
         let row_cnt = groups.len();
         for (x, row) in groups.into_iter() {
-            scope.execute(||
-                assign_to_centers_for_row(x, row, &centers
+            let _: GroupingRow = row; //TODO @mark: THIS CODE IS TEMPORARY!
+            let centersi = &centers;
+            scope.execute(move||
+                assign_to_centers_for_row(
+                    x,
+                    row,
+                    &centersi
             ));
         }
         // Read the output
