@@ -22,7 +22,10 @@ pub fn generate_random_points(img: &Img, avg_patch_size: usize, rng: &mut StdRng
         } else {
         }
     }
-    UPoints::new(points.into_iter().collect())
+    UPoints::new(
+        img.width(), img.height(),
+        points.into_iter().collect()
+    )
 }
 
 /// Distribute points predictably.
@@ -37,7 +40,10 @@ pub fn generate_fixed_points(width: X, height: Y, count: usize) -> UPoints {
             points.insert(Point2D::from_raw(x as usize, y as usize));
         }
     }
-    UPoints::new(points.into_iter().collect())
+    UPoints::new(
+        width, height,
+        points.into_iter().collect()
+    )
 }
 
 #[cfg(test)]

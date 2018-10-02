@@ -10,18 +10,18 @@ use std::sync::mpsc::sync_channel;
 //TODO @mark: inline every function used in inner loop
 
 /// This assigns the correct PointId to every single cell in `groups`.
-pub fn assign_to_centers(groups: Grouping, centers: &mut UPoints, workers: &Pool) -> Grouping {
+pub fn assign_to_centers(centers: &mut UPoints, workers: &Pool) -> Grouping {
     //TODO @mark: @opt=1 this is 93%
     debug_assert!(centers.len() > 0);
     //TODO @mark: I must either limit the borrow scope (no idea how), or I need to split groups and reassemble it after processing
 
 
     workers.scoped(|scope| {
-        let (tx, rx) = sync_channel::<(u64, u64)>(3);
+        let (tx, rx) = sync_channel::<(u64, u64)>(32);
         // Delegate work
         let row_cnt = groups.len();
         for (x, row) in groups.into_iter() {
-            let _: GroupingRow = row; //TODO @mark: THIS CODE IS TEMPORARY!
+            println!("{:?} / {:?}", x, row_cnt); //TODO @mark: THIS CODE IS TEMPORARY!
             let centersi = &centers;
             scope.execute(move||
                 assign_to_centers_for_row(
@@ -30,19 +30,17 @@ pub fn assign_to_centers(groups: Grouping, centers: &mut UPoints, workers: &Pool
                     &centersi
             ));
         }
-        // Read the output
-        for (k, fibk) in rx.iter().take(row_cnt) {
-            println!("fib #{} is {}", k, fibk);
-        }
+//        // Read the output
+//        for (k, fibk) in rx.iter().take(row_cnt) {
+//            println!("fib #{} is {}", k, fibk);
+//        }
     });
-
-
+    Grouping::from(width, height, 1)
 //    for (x, row) in groups.into_iter().enumerate() {
 //        assign_to_centers_for_row(x, row, &centers);
 //        workers.execute(|| assign_to_centers_for_row(X::new(x), row, &centers));
 //    }
 //    groups //TODO @mark:
-    unimplemented!(); //TODO @mark: THIS CODE IS TEMPORARY!
 }
 
 //TODO @mark: paralellize here?

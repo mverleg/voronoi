@@ -52,10 +52,9 @@ pub mod pointset;
 pub fn voronoiify_image(img: &mut Img, center_points: &mut UPoints) -> Img {
     let center_colors = center_points.new_color_averager();
     // Assign all pixels to the nearest center.
-    let pixel_group = Grouping::new(img.width(), img.height());
     //TODO @mark: if movies are added, make sure to recycle threadpool
     let workers = Pool::new(num_cpus::get());
-    let groups = assign_to_centers(pixel_group, center_points, &workers);
+    let groups = assign_to_centers(center_points, &workers);
     let voronoi = pixel_to_group_colors(groups, center_colors, img);
     voronoi
 }

@@ -12,11 +12,13 @@ use std::iter::FromIterator;
 /// Collection of *unique* points.
 #[derive(Debug)]
 pub struct UPoints {
+    width: X,
+    height: Y,
     points_by_x: Vec<Point2D>,
 }
 
 impl UPoints {
-    pub fn new(points: Vec<Point2D>) -> Self {
+    pub fn new(width: X, height: Y, points: Vec<Point2D>) -> Self {
         let length = points.len();
         debug_assert!(length > 0);
         #[cfg(debug_assertions)]

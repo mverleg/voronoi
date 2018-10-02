@@ -1,6 +1,8 @@
 use dims::{X, Y};
 use pointid::PointId;
 use std::ops::Index;
+use std::vec::IntoIter;
+use std::ops::IndexMut;
 
 #[derive(Debug)]
 pub struct Grouping {
@@ -10,7 +12,7 @@ pub struct Grouping {
 }
 
 impl Grouping {
-    pub fn new(width: X, height: Y) -> Self {
+    pub fn empty(width: X, height: Y) -> Self {
         Grouping {
             center_links: vec![
                 GroupingRow {
@@ -19,6 +21,21 @@ impl Grouping {
                 };
                 width.value as usize
             ],
+            width,
+            height,
+        }
+    }
+
+    pub fn from(width: X, height: Y, centers: List<GroupingRow>) -> Self {
+        #[cfg(debug_assertions)]
+        {
+            debug_assert!(width == centers.len());
+            for row in centers {
+                debug_assert!(height == row.len());
+            }
+        }
+        Grouping {
+            center_links: centers,
             width,
             height,
         }
@@ -44,6 +61,7 @@ impl Grouping {
     }
 
     #[inline]
+    //TODO @mark: is this still used?
     pub fn set(&mut self, x: X, y: Y, point_id: PointId) {
         debug_assert!(
             x.value < self.width().value,
@@ -86,9 +104,8 @@ impl GroupingRow {
 
 #[derive(Debug)]
 pub struct GroupingRowIterator {
-    grouping: Grouping,
+    grouping: IntoIter<GroupingRow>,
     index: usize,
-    length: usize,
 }
 
 impl Iterator for GroupingRowIterator {
@@ -96,15 +113,12 @@ impl Iterator for GroupingRowIterator {
 
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {
-        if self.index >= self.length {
-            return None;
-        }
-        //TODO @mark: how to remove a row? the original will get corrupted right? how does vec intoiter do that?
-        //TODO @mark: possibly store that intoiter and drain from it; no need to reinvent the wheel
-        let val = Some((
-            X::new(self.index),
-            self.grouping.center_links[self.index]
-        ));
+        let val = match self.grouping.next() {
+            Some(row) => Some((
+                X::new(self.index),
+                row)),
+            None => None,
+        };
         self.index += 1;
         return val
         //TODO @mark: unit test?
@@ -117,9 +131,8 @@ impl IntoIterator for Grouping {
 
     fn into_iter(self) -> Self::IntoIter {
         GroupingRowIterator {
-            grouping: self,
+            grouping: self.center_links.into_iter(),
             index: 0,
-            length: self.len(),
         }
     }
 }
@@ -139,6 +152,12 @@ impl Index<Y> for GroupingRow {
     //TODO @mark: update all Index that return copy types to just .get() to prevent & ?
     fn index(&self, index: Y) -> &Self::Output {
         &self.center_links_row[index.value]
+    }
+}
+
+impl IndexMut<Y> for GroupingRow {
+    fn index_mut(&mut self, index: Y) -> &mut Self::Output {
+        &mut self.center_links_row[index.value]
     }
 }
 
