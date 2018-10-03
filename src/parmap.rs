@@ -8,26 +8,31 @@ use std::vec::Vec;
 
 /// Transform a collection to another collection using a closure,
 /// with execution happening in parallel on a new thread pool with one thread per cpu.
-pub fn par_map<I: Iterator<Item=T>, T, U: Debug>(collection: I, map: fn(T) -> U) -> Vec<U> {
+// Note: indirectly uses the `unsafe` keyword. I think it's safe.
+pub fn par_map<I: Iterator<Item=T>, T: Send, U: Send + Debug>(collection: I, map: fn(T) -> U) -> Vec<U> {
 
     // Make pool
     let pool = Pool::new(num_cpus::get());
 
     // Do the mapping
-    let result = par_map_on(&pool, collection, map);
+    let results = par_map_on(&pool, collection, map);
 
     // Stop pool
     pool.shutdown();
 
-    Vec::<U>::new()  //TODO @mark: THIS CODE IS TEMPORARY!
+    results
 }
 
 /// Transform a collection to another collection using a closure,
 /// with execution happening in parallel on a given thread pool.
-pub fn par_map_on<I: Iterator<Item=T>, T, U: Debug>(pool: &Pool, collection: I, map: fn(T) -> U) -> Vec<U> {
+// Note: uses the `unsafe` keyword. I think it's safe.
+pub fn par_map_on<I: Iterator<Item=T>, T: Send, U: Send + Debug>(pool: &Pool, collection: I, map: fn(T) -> U) -> Vec<U> {
 
     // Create the channel to stream output out
     let (tx, rx) = sync_channel::<(usize, U)>(3);
+
+    // Create scope for the output vector.
+    let mut scope_results: Option<Vec<U>> = None;
 
     pool.scoped(|scope| {
 
@@ -36,21 +41,29 @@ pub fn par_map_on<I: Iterator<Item=T>, T, U: Debug>(pool: &Pool, collection: I, 
         for (index, value) in collection.enumerate() {
 
             count += 1;
+            let txc = tx.clone();
             scope.execute(move ||
-                tx.send((
+                txc.send((
                     index,
                     map(value),
-                ))?
+                )).unwrap()
             );
         }
 
-        // Read the output
+        // Unsafely create a vector for the output
+        let mut results = Vec::with_capacity(count);
+        unsafe { results.set_len(count) };
+
+        // Read and store the output
         for (index, result) in rx.iter().take(count) {
-            println!("fib #{} is {:?}", index, result);
+            results[index] = result;
         }
+
+        // Set result on outer scope
+        scope_results = Some(results)
     });
 
-    Vec::<U>::new()  //TODO @mark: THIS CODE IS TEMPORARY!
+    scope_results.unwrap()
 }
 
 #[cfg(test)]

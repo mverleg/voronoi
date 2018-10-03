@@ -5,7 +5,6 @@ use point::{Point, Point2D};
 use pointid::PointId;
 use pointset::UPoints;
 use scoped_pool::Pool;
-use std::sync::mpsc::sync_channel;
 
 //TODO @mark: inline every function used in inner loop
 
