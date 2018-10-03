@@ -20,7 +20,6 @@ extern crate num_cpus;
 //TODO @mark: make some of these mods private?
 
 use assign::assign_to_centers;
-use grouping::Grouping;
 use img::Img;
 use paint::pixel_to_group_colors;
 use pointset::UPoints;

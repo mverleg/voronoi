@@ -49,7 +49,7 @@ mod tests {
     fn make_groups() -> Grouping {
         let p0 = PointId::new(0);
         let p1 = PointId::new(1);
-        let mut groups = Grouping::new(X::new(3), Y::new(2));
+        let mut groups = Grouping::empty(X::new(3), Y::new(2));
         let (x0, x1, x2, y0, y1) = (X::new(0), X::new(1), X::new(2), Y::new(0), Y::new(1));
         groups.set(x0, y0, p0);
         groups.set(x1, y0, p0);

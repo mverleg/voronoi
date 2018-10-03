@@ -17,7 +17,6 @@ pub fn assign_to_centers(centers: &mut UPoints, workers: &Pool) -> Grouping {
 
 
     workers.scoped(|scope| {
-        let (tx, rx) = sync_channel::<(u64, u64)>(32);
         // Delegate work
         unimplemented!(); //TODO @mark: THIS CODE IS TEMPORARY!
 //        let row_cnt = groups.len();

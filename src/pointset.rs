@@ -27,10 +27,11 @@ impl UPoints {
             // Hopefully this next line gets optimized away in production mode
             let unique_points = HashSet::<&Point2D>::from_iter(points.iter());
             debug_assert!(unique_points.len() == length);
+            //TODO @mark: check that all points within (width, height)
         }
         let mut points_by_x = points;
         points_by_x.sort_by(|p1, p2| p1.x().cmp(&p2.x()));
-        UPoints { points_by_x }
+        UPoints { width, height, points_by_x }
     }
 
     #[inline]

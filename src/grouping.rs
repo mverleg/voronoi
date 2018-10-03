@@ -29,9 +29,9 @@ impl Grouping {
     pub fn from(width: X, height: Y, centers: Vec<GroupingRow>) -> Self {
         #[cfg(debug_assertions)]
         {
-            debug_assert!(width == centers.len());
-            for row in centers {
-                debug_assert!(height == row.len());
+            debug_assert!(width.value == centers.len());
+            for row in centers.iter() {
+                debug_assert!(height == row.height());
             }
         }
         Grouping {
@@ -99,6 +99,11 @@ impl GroupingRow {
     #[inline]
     pub fn indices(&self) -> impl Iterator<Item=Y> {
         (0 .. self.height.value).map(|v| Y::new(v))
+    }
+
+    #[inline]
+    pub fn height(&self) -> Y {
+        self.height
     }
 }
 
@@ -202,7 +207,7 @@ mod tests {
 
     #[test]
     fn test_set_get() {
-        let mut groups = Grouping::new(X::new(2), Y::new(1));
+        let mut groups = Grouping::empty(X::new(2), Y::new(1));
         groups.set(X::new(1), Y::new(0), PointId::new(1));
         groups.set(X::new(0), Y::new(0), PointId::new(0));
         assert_eq!(PointId::new(0), groups.get(X::new(0), Y::new(0)));
@@ -211,7 +216,7 @@ mod tests {
 
     #[test]
     fn test_iter() {
-        let mut groups = Grouping::new(X::new(2), Y::new(1));
+        let mut groups = Grouping::empty(X::new(2), Y::new(1));
         groups.set(X::new(1), Y::new(0), PointId::new(1));
         groups.set(X::new(0), Y::new(0), PointId::new(0));
         let mut iter = groups.iter_indexed();
