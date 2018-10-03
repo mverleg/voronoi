@@ -8,6 +8,7 @@ use std::cmp::Ordering;
 use std::collections::HashSet;
 #[allow(unused)] // I think the compiler is wrong here
 use std::iter::FromIterator;
+use dims::{X, Y};
 
 /// Collection of *unique* points.
 #[derive(Debug)]

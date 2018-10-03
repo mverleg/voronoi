@@ -26,7 +26,7 @@ impl Grouping {
         }
     }
 
-    pub fn from(width: X, height: Y, centers: List<GroupingRow>) -> Self {
+    pub fn from(width: X, height: Y, centers: Vec<GroupingRow>) -> Self {
         #[cfg(debug_assertions)]
         {
             debug_assert!(width == centers.len());

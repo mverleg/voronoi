@@ -44,6 +44,7 @@ pub mod paint;
 pub mod point;
 pub mod pointid;
 pub mod pointset;
+pub mod parmap;
 
 //TODO @mark: update readme
 //TODO @mark: find a way to turn of all asserts in optimized mode? => or just convert the hot-loop-ones to debug_assert and keep the rest

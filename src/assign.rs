@@ -19,28 +19,30 @@ pub fn assign_to_centers(centers: &mut UPoints, workers: &Pool) -> Grouping {
     workers.scoped(|scope| {
         let (tx, rx) = sync_channel::<(u64, u64)>(32);
         // Delegate work
-        let row_cnt = groups.len();
-        for (x, row) in groups.into_iter() {
-            println!("{:?} / {:?}", x, row_cnt); //TODO @mark: THIS CODE IS TEMPORARY!
-            let centersi = &centers;
-            scope.execute(move||
-                assign_to_centers_for_row(
-                    x,
-                    row,
-                    &centersi
-            ));
-        }
+        unimplemented!(); //TODO @mark: THIS CODE IS TEMPORARY!
+//        let row_cnt = groups.len();
+//        for (x, row) in groups.into_iter() {
+//            println!("{:?} / {:?}", x, row_cnt); //TODO @mark: THIS CODE IS TEMPORARY!
+//            let centersi = &centers;
+//            scope.execute(move||
+//                assign_to_centers_for_row(
+//                    x,
+//                    row,
+//                    &centersi
+//            ));
+//        }
 //        // Read the output
 //        for (k, fibk) in rx.iter().take(row_cnt) {
 //            println!("fib #{} is {}", k, fibk);
 //        }
     });
-    Grouping::from(width, height, 1)
+//    Grouping::from(width, height, 1)
 //    for (x, row) in groups.into_iter().enumerate() {
 //        assign_to_centers_for_row(x, row, &centers);
 //        workers.execute(|| assign_to_centers_for_row(X::new(x), row, &centers));
 //    }
 //    groups //TODO @mark:
+    unimplemented!(); //TODO @mark: THIS CODE IS TEMPORARY!
 }
 
 //TODO @mark: paralellize here?
