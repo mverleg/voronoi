@@ -18,41 +18,23 @@ pub fn assign_to_centers(centers: &mut UPoints, workers: &Pool) -> Grouping {
     let width = centers.width();
     let height = centers.height();
 
-    let results = par_map_on(
-        workers,
-        width.indices_upto(),
-        |x: X| assign_to_centers_for_row(
-                    x, height, &centers
-    ));
+    let par = false;
+
+    let results = if par {
+        par_map_on(
+            workers,
+            width.indices_upto(),
+            |x: X| assign_to_centers_for_row(
+                x, height, &centers
+            ))
+    } else {
+        width.indices_upto().map(
+            |x: X| assign_to_centers_for_row(
+                x, height, &centers
+        )).collect()
+    };
 
     Grouping::from(width, height, results)
-
-//    workers.scoped(|scope| {
-        // Delegate work
-//        unimplemented!(); //TODO @mark: THIS CODE IS TEMPORARY!
-//        let row_cnt = groups.len();
-//        for (x, row) in groups.into_iter() {
-//            println!("{:?} / {:?}", x, row_cnt); //TODO @mark: THIS CODE IS TEMPORARY!
-//            let centersi = &centers;
-//            scope.execute(move||
-//                assign_to_centers_for_row(
-//                    x,
-//                    row,
-//                    &centersi
-//            ));
-//        }
-//        // Read the output
-//        for (k, fibk) in rx.iter().take(row_cnt) {
-//            println!("fib #{} is {}", k, fibk);
-//        }
-//    });
-//    Grouping::from(width, height, 1)
-//    for (x, row) in groups.into_iter().enumerate() {
-//        assign_to_centers_for_row(x, row, &centers);
-//        workers.execute(|| assign_to_centers_for_row(X::new(x), row, &centers));
-//    }
-//    groups //TODO @mark:
-//    unimplemented!(); //TODO @mark: THIS CODE IS TEMPORARY!
 }
 
 //TODO @mark: paralellize here?

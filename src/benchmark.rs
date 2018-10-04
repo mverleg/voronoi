@@ -69,7 +69,7 @@ pub fn run_bench(reps: usize, do_log: bool) {
     let init = Instant::now();
     let mut last_log = 0;
     // Create inputs
-    let pth = Path::new("resources").join("imgs").join("parrots.png");
+    let pth = test::black_box(Path::new("resources").join("imgs").join("parrots.png"));
     let mut rng: StdRng = SeedableRng::from_seed(default_seed());
     let original_img = Img::load(pth.as_path());
     // Benchmark
