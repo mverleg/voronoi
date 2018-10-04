@@ -31,11 +31,9 @@ pub fn par_map_on<I, T, U, F>(pool: &Pool, collection: I, map: F) -> Vec<U> wher
     I: Iterator<Item=T>, T: Send, U: Send + Debug, F: Send + Copy + Fn(T) -> U
 {
     // Create the channel to stream output out
-    let (tx, rx) = sync_channel::<(usize, U)>(3);
+    let (tx, rx) = sync_channel::<(usize, U)>(2 * num_cpus::get());
 
     // Create scope for the output vector.
-    let mut scope_results: Option<Vec<U>> = None;
-
     pool.scoped(|scope| {
 
         // Delegate work
@@ -52,20 +50,20 @@ pub fn par_map_on<I, T, U, F>(pool: &Pool, collection: I, map: F) -> Vec<U> wher
             );
         }
 
-        // Unsafely create a vector for the output
+        // Create an empty vector for the output
         let mut results = Vec::with_capacity(count);
-        unsafe { results.set_len(count) };
+        for _ in 0 .. count {
+            results.push(None);
+        }
 
         // Read and store the output
         for (index, result) in rx.iter().take(count) {
-            results[index] = result;
+            results[index] = Some(result);
         }
 
         // Set result on outer scope
-        scope_results = Some(results)
-    });
-
-    scope_results.unwrap()
+        results.into_iter().map(|row| row.unwrap()).collect()
+    })
 }
 
 #[cfg(test)]
