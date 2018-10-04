@@ -49,11 +49,9 @@ pub mod parmap;
 //TODO @mark: find a way to turn of all asserts in optimized mode? => or just convert the hot-loop-ones to debug_assert and keep the rest
 
 /// Voronoi transform function
-pub fn voronoiify_image(img: &mut Img, center_points: &mut UPoints) -> Img {
+pub fn voronoiify_image(img: &mut Img, center_points: &mut UPoints, workers: &Pool) -> Img {
     let center_colors = center_points.new_color_averager();
     // Assign all pixels to the nearest center.
-    //TODO @mark: if movies are added, make sure to recycle threadpool
-    let workers = Pool::new(num_cpus::get());
     let groups = assign_to_centers(center_points, &workers);
     let voronoi = pixel_to_group_colors(groups, center_colors, img);
     voronoi

@@ -2,6 +2,7 @@
 #![feature(plugin)]
 #![feature(custom_attribute)]
 #![feature(duration_as_u128)]
+#![feature(extern_prelude)]
 
 extern crate byteorder;
 extern crate clap;
@@ -9,6 +10,7 @@ extern crate rand;
 extern crate test;
 extern crate vorolib;
 extern crate separator;
+extern crate scoped_pool;
 
 use clap::{App, Arg};
 use rand::{SeedableRng, StdRng};
@@ -22,6 +24,7 @@ use vorolib::distribute::default_seed;
 use vorolib::distribute::generate_random_points;
 use vorolib::img::Img;
 use vorolib::voronoiify_image;
+use scoped_pool::Pool;
 
 pub mod argparse;
 
@@ -77,6 +80,7 @@ pub fn run_bench(reps: usize, do_log: bool) {
     if do_log {
         println!(" {:4} / {:4}", 0, reps);
     }
+    let workers = Pool::new(num_cpus::get());
     for rep in 0 .. reps + 1 {
         if do_log {
             let total_time = Instant::now().duration_since(init).as_secs();
@@ -88,7 +92,7 @@ pub fn run_bench(reps: usize, do_log: bool) {
         let mut img = original_img.clone();
         let mut centers = generate_random_points(&img, 100, &mut rng);
         let start = Instant::now();
-        test::black_box(voronoiify_image(&mut img, &mut centers));
+        test::black_box(voronoiify_image(&mut img, &mut centers, &workers));
         let end = Instant::now();
         times_ns.push(end.duration_since(start).as_nanos() as u64);
 //        times_ns.push(1u64);

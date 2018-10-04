@@ -1,3 +1,4 @@
+#![feature(extern_prelude)]
 
 //TODO @mark: update readme
 //TODO @mark: find a way to turn of all asserts in optimized mode? => or just convert the hot-loop-ones to debug_assert and keep the rest
@@ -6,6 +7,7 @@ extern crate byteorder;
 extern crate clap;
 extern crate rand;
 extern crate vorolib;
+extern crate scoped_pool;
 
 use argparse::parse_args;
 use rand::{SeedableRng, StdRng};
@@ -14,6 +16,7 @@ use std::process::Command;
 use vorolib::distribute::generate_random_points;
 use vorolib::img::Img;
 use vorolib::voronoiify_image;
+use scoped_pool::Pool;
 
 pub mod argparse;
 
@@ -23,7 +26,8 @@ fn main() {
     let mut rng: StdRng = SeedableRng::from_seed(seed);
     let mut img = Img::load(&input);
     let mut centers = generate_random_points(&img, size, &mut rng);
-    let voronoi = voronoiify_image(&mut img, &mut centers);
+    let workers = Pool::new(num_cpus::get());
+    let voronoi = voronoiify_image(&mut img, &mut centers, &workers);
     println!("saving generated image to {}", output.display());
     voronoi.save(output.as_path()).unwrap();
     if show {

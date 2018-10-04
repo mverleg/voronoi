@@ -13,14 +13,13 @@ use scoped_pool::Pool;
 pub fn assign_to_centers(centers: &mut UPoints, workers: &Pool) -> Grouping {
     //TODO @mark: @opt=1 this is 93%
     debug_assert!(centers.len() > 0);
-    //TODO @mark: I must either limit the borrow scope (no idea how), or I need to split groups and reassemble it after processing
 
     let width = centers.width();
     let height = centers.height();
 
-    let par = false;
-
-    let results = if par {
+    // Keep both parallel and serial codes for benchmarking
+    let use_parallel = true;
+    let results = if use_parallel {
         par_map_on(
             workers,
             width.indices_upto(),
