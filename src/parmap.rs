@@ -9,8 +9,9 @@ use std::vec::Vec;
 /// Transform a collection to another collection using a closure,
 /// with execution happening in parallel on a new thread pool with one thread per cpu.
 // Note: indirectly uses the `unsafe` keyword. I think it's safe.
-pub fn par_map<I: Iterator<Item=T>, T: Send, U: Send + Debug>(collection: I, map: fn(T) -> U) -> Vec<U> {
-
+pub fn par_map<I, T, U, F>(collection: I, map: F) -> Vec<U> where
+    I: Iterator<Item=T>, T: Send, U: Send + Debug, F: Send + Copy + Fn(T) -> U
+{
     // Make pool
     let pool = Pool::new(num_cpus::get());
 
@@ -26,8 +27,9 @@ pub fn par_map<I: Iterator<Item=T>, T: Send, U: Send + Debug>(collection: I, map
 /// Transform a collection to another collection using a closure,
 /// with execution happening in parallel on a given thread pool.
 // Note: uses the `unsafe` keyword. I think it's safe.
-pub fn par_map_on<I: Iterator<Item=T>, T: Send, U: Send + Debug>(pool: &Pool, collection: I, map: fn(T) -> U) -> Vec<U> {
-
+pub fn par_map_on<I, T, U, F>(pool: &Pool, collection: I, map: F) -> Vec<U> where
+    I: Iterator<Item=T>, T: Send, U: Send + Debug, F: Send + Copy + Fn(T) -> U
+{
     // Create the channel to stream output out
     let (tx, rx) = sync_channel::<(usize, U)>(3);
 
@@ -72,8 +74,20 @@ mod tests {
 
     #[test]
     fn test_par_map() {
-        let sq = par_map((0 .. 10).collect::<Vec<i32>>().into_iter(), |x: i32| x*x);
+        let sq = par_map(
+            (0 .. 10).collect::<Vec<i32>>().into_iter(),
+            |x: i32| x*x
+        );
         assert_eq!(vec![0, 1, 4, 9, 16, 25, 36, 49, 64, 81,], sq);
+    }
 
+    #[test]
+    fn test_par_map_closure() {
+        let shift = Box::new(10);
+        let sq = par_map(
+            (0 .. 10).collect::<Vec<i32>>().into_iter(),
+            |x: i32| x * x + *shift
+        );
+        assert_eq!(vec![10, 11, 14, 19, 26, 35, 46, 59, 74, 91,], sq);
     }
 }
