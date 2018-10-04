@@ -97,6 +97,13 @@ pub struct GroupingRow {
 
 impl GroupingRow {
     #[inline]
+    pub fn from(center_links_row: Vec<PointId>, height: Y) -> Self {
+        debug_assert!(center_links_row.len() == height.as_index());
+        GroupingRow { center_links_row, height }
+    }
+
+    #[inline]
+    //TODO @mark: into separate function
     pub fn indices(&self) -> impl Iterator<Item=Y> {
         (0 .. self.height.value).map(|v| Y::new(v))
     }

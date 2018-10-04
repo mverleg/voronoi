@@ -35,6 +35,16 @@ impl UPoints {
     }
 
     #[inline]
+    pub fn width(&self) -> X {
+        self.width
+    }
+
+    #[inline]
+    pub fn height(&self) -> Y {
+        self.height
+    }
+
+    #[inline]
     pub fn len(&self) -> usize {
         self.points_by_x.len()
     }

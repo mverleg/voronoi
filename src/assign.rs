@@ -1,6 +1,7 @@
-use dims::X;
+use dims::{X, Y};
 use grouping::{Grouping, GroupingRow};
 use norms::{Dist, Norm};
+use parmap::par_map_on;
 use point::{Point, Point2D};
 use pointid::PointId;
 use pointset::UPoints;
@@ -14,10 +15,21 @@ pub fn assign_to_centers(centers: &mut UPoints, workers: &Pool) -> Grouping {
     debug_assert!(centers.len() > 0);
     //TODO @mark: I must either limit the borrow scope (no idea how), or I need to split groups and reassemble it after processing
 
+    let width = centers.width();
+    let height = centers.height();
 
-    workers.scoped(|scope| {
+    let results = par_map_on(
+        workers,
+        width.indices_upto(),
+        |x: X| assign_to_centers_for_row(
+                    x, height, &centers
+    ));
+
+    Grouping::from(width, height, results)
+
+//    workers.scoped(|scope| {
         // Delegate work
-        unimplemented!(); //TODO @mark: THIS CODE IS TEMPORARY!
+//        unimplemented!(); //TODO @mark: THIS CODE IS TEMPORARY!
 //        let row_cnt = groups.len();
 //        for (x, row) in groups.into_iter() {
 //            println!("{:?} / {:?}", x, row_cnt); //TODO @mark: THIS CODE IS TEMPORARY!
@@ -33,29 +45,30 @@ pub fn assign_to_centers(centers: &mut UPoints, workers: &Pool) -> Grouping {
 //        for (k, fibk) in rx.iter().take(row_cnt) {
 //            println!("fib #{} is {}", k, fibk);
 //        }
-    });
+//    });
 //    Grouping::from(width, height, 1)
 //    for (x, row) in groups.into_iter().enumerate() {
 //        assign_to_centers_for_row(x, row, &centers);
 //        workers.execute(|| assign_to_centers_for_row(X::new(x), row, &centers));
 //    }
 //    groups //TODO @mark:
-    unimplemented!(); //TODO @mark: THIS CODE IS TEMPORARY!
+//    unimplemented!(); //TODO @mark: THIS CODE IS TEMPORARY!
 }
 
 //TODO @mark: paralellize here?
 #[inline]
 fn assign_to_centers_for_row(
     x: X,
-    mut row: GroupingRow,
+    y_range: Y,
     centers: &UPoints,
-) {
+) -> GroupingRow {
     // Performance: I thought it would be faster to recycle this output vector,
     // but (at least without parallelization), it is slightly faster to just recreate it.
     // It also makes parallelization easier, since this would otherwise be per-thread.
     let mut output_vec: Vec<PointId> = Vec::with_capacity(centers.len());
     let mut reference = centers.first_by_x();
-    for y in row.indices() {
+    let mut links = Vec::with_capacity(y_range.as_index());
+    for y in y_range.indices_upto() {
         let current: Point2D = Point2D::new(x, y);
         centers.within_box_noalloc(
             current,
@@ -64,11 +77,10 @@ fn assign_to_centers_for_row(
         );
         // `output_vec` will contain the result of `within_box_noalloc`
         let nearest: PointId = find_nearest_to_reference(current, &mut output_vec, &centers);
-        row[y] = nearest;
-        //TODO @mark: index
+        links.push(nearest);
         reference = centers.get(nearest);
     }
-    row; //TODO @mark: send this to a channel
+    GroupingRow::from(links, y_range)
 }
 
 #[inline]

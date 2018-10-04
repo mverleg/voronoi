@@ -21,6 +21,10 @@ macro_rules! make_dim {
             pub fn as_index(&self) -> usize {
                 self.value
             }
+
+            pub fn indices_upto(&self) -> impl Iterator<Item=$T> {
+                (0 .. self.value).map(|val| $T::new(val))
+            }
         }
 
         impl Mid for $T {
