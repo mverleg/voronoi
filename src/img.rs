@@ -40,18 +40,12 @@ impl Img {
             panic!("Wrong image type (maybe there is an alpha channel?)");
         }
     }
-
-    #[inline]
     pub fn width(&self) -> X {
         self.width
     }
-
-    #[inline]
     pub fn height(&self) -> Y {
         self.height
     }
-
-    #[inline]
     pub fn pixel_cnt(&self) -> usize {
         (self.width().value * self.height().value) as usize
     }
@@ -66,7 +60,6 @@ impl Img {
 
 impl Index<(X, Y)> for Img {
     type Output = Color;
-
     fn index(&self, index: (X, Y)) -> &Self::Output {
         let (x, y) = index;
         &self.data[(x.value as u32, y.value as u32)]

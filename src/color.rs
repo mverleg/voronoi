@@ -3,7 +3,6 @@ use std::ops::Add;
 use std::ops::AddAssign;
 
 pub type Color = Rgb<u8>;
-
 pub fn new_color(c0: u8, c1: u8, c2: u8) -> Color {
     Rgb([c0, c1, c2])
 }
@@ -27,7 +26,6 @@ impl RgbColorAverage {
             count: 0,
         }
     }
-
     pub fn calc_avg(&self) -> Color {
         debug_assert!(self.count > 0, "No colors have been added for this average; this should not happen if all points are unique");
         new_color(
@@ -36,7 +34,6 @@ impl RgbColorAverage {
             (self.c2 / self.count) as u8,
         )
     }
-
     fn add(&mut self, color: Color) {
         self.c0 += color.data[0] as u32;
         self.c1 += color.data[1] as u32;
@@ -59,7 +56,6 @@ impl<'a> AddAssign<Color> for &'a mut RgbColorAverage {
 
 impl Add<Color> for RgbColorAverage {
     type Output = Self;
-
     fn add(mut self, color: Color) -> Self::Output {
         self += color;
         self

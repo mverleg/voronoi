@@ -27,13 +27,9 @@ impl PointColorAverages {
         }
         PointColors::new(colors)
     }
-
-    #[inline]
     pub fn len(&self) -> usize {
         self.averages.len()
     }
-
-    #[inline]
     pub fn get(&mut self, id: PointId) -> &mut RgbColorAverage {
         &mut self.averages[id._expose()]
     }
@@ -41,7 +37,6 @@ impl PointColorAverages {
 
 impl Index<PointId> for PointColorAverages {
     type Output = RgbColorAverage;
-
     fn index(&self, index: PointId) -> &Self::Output {
         &self.averages[index._expose() as usize]
     }
@@ -63,13 +58,9 @@ impl PointColors {
     pub fn new(colors: Vec<Color>) -> Self {
         PointColors { colors }
     }
-
-    #[inline]
     pub fn len(&self) -> usize {
         self.colors.len()
     }
-
-    #[inline]
     pub fn get(&self, id: PointId) -> Color {
         self.colors[id._expose()]
     }
@@ -77,7 +68,6 @@ impl PointColors {
 
 impl Index<PointId> for PointColors {
     type Output = Color;
-
     fn index(&self, index: PointId) -> &Self::Output {
         &self.colors[index._expose()]
     }

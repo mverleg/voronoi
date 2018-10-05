@@ -33,27 +33,18 @@ impl UPoints {
         points_by_x.sort_by(|p1, p2| p1.x().cmp(&p2.x()));
         UPoints { width, height, points_by_x }
     }
-
-    #[inline]
     pub fn width(&self) -> X {
         self.width
     }
-
-    #[inline]
     pub fn height(&self) -> Y {
         self.height
     }
-
-    #[inline]
     pub fn len(&self) -> usize {
         self.points_by_x.len()
     }
-
     pub fn new_color_averager(&self) -> PointColorAverages {
         PointColorAverages::new(self.len())
     }
-
-    #[inline]
     fn within_box_internal(&self, reference: Point2D, range: Dist, output_vec: &mut Vec<PointId>) {
         //TODO @mark: 79% of opt1 runtime
         output_vec.clear();
@@ -118,7 +109,6 @@ impl UPoints {
     /// Return the index of app ponts within a square bounding box around `reference`, in arbitrary order.
     // Note that `output_vec` is used instead of return value to avoid allocating a vec for return value,
     // like in the good old Fortran days (and probably later). Use [within_box] if allocation is okay.
-    #[inline]
     pub fn within_box_noalloc(
         &self,
         reference: Point2D,
@@ -140,8 +130,6 @@ impl UPoints {
     pub fn first_by_x(&self) -> Point2D {
         self.points_by_x[0]
     }
-
-    #[inline]
     pub fn get(&self, id: PointId) -> Point2D {
         self.points_by_x[id._expose()]
     }
@@ -150,7 +138,6 @@ impl UPoints {
 impl IntoIterator for UPoints {
     type Item = Point2D;
     type IntoIter = ::std::vec::IntoIter<Point2D>;
-
     fn into_iter(self) -> <Self as IntoIterator>::IntoIter {
         self.points_by_x.into_iter()
     }

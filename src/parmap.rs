@@ -9,7 +9,6 @@ use std::vec::Vec;
 /// Transform a collection to another collection using a closure,
 /// with execution happening in parallel on a new thread pool with one thread per cpu.
 // Note: indirectly uses the `unsafe` keyword. I think it's safe.
-#[inline]
 pub fn par_map<I, T, U, F>(collection: I, map: F) -> Vec<U> where
     I: Iterator<Item=T>, T: Send, U: Send + Debug, F: Send + Copy + Fn(T) -> U
 {
@@ -28,7 +27,6 @@ pub fn par_map<I, T, U, F>(collection: I, map: F) -> Vec<U> where
 /// Transform a collection to another collection using a closure,
 /// with execution happening in parallel on a given thread pool.
 // Note: uses the `unsafe` keyword. I think it's safe.
-#[inline]
 pub fn par_map_on<I, T, U, F>(pool: &Pool, collection: I, map: F) -> Vec<U> where
     I: Iterator<Item=T>, T: Send, U: Send + Debug, F: Send + Copy + Fn(T) -> U
 {
