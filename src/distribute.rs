@@ -67,8 +67,6 @@ mod tests {
         assert!(lookup.contains(&Point2D::from_raw(12, 12)));
     }
 }
-
-#[inline]
 pub fn default_seed() -> [u8; 32] {
     [
         154, 209, 215, 146, 162, 81, 13, 78, 243, 132, 107, 232, 61, 157, 71, 142, 202, 167, 65,

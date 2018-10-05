@@ -40,27 +40,18 @@ impl Grouping {
             height,
         }
     }
-
-    #[inline]
     pub fn width(&self) -> X {
         self.width
     }
-
-    #[inline]
     pub fn height(&self) -> Y {
         self.height
     }
-
-    #[inline]
     pub fn len(&self) -> usize {
         self.width().value
     }
-
     pub fn iter_indexed(&mut self) -> GroupIndexIterator {
         GroupIndexIterator::new(self)
     }
-
-    #[inline]
     pub fn set(&mut self, x: X, y: Y, point_id: PointId) {
         debug_assert!(
             x.value < self.width().value,
@@ -80,8 +71,6 @@ impl Grouping {
         );
         self.center_links[x.value][y] = point_id;
     }
-
-    #[inline]
     pub fn get(&self, x: X, y: Y) -> PointId {
         //TODO @mark: from over here, it looks like X and Y should be usize
         self.center_links[x.value][y]
@@ -95,19 +84,14 @@ pub struct GroupingRow {
 }
 
 impl GroupingRow {
-    #[inline]
     pub fn from(center_links_row: Vec<PointId>, height: Y) -> Self {
         debug_assert!(center_links_row.len() == height.as_index());
         GroupingRow { center_links_row, height }
     }
-
-    #[inline]
     //TODO @mark: into separate function
     pub fn indices(&self) -> impl Iterator<Item=Y> {
         (0 .. self.height.value).map(|v| Y::new(v))
     }
-
-    #[inline]
     pub fn height(&self) -> Y {
         self.height
     }
@@ -121,8 +105,6 @@ pub struct GroupingRowIterator {
 
 impl Iterator for GroupingRowIterator {
     type Item = (X, GroupingRow);
-
-    #[inline]
     fn next(&mut self) -> Option<Self::Item> {
         let val = match self.grouping.next() {
             Some(row) => Some((
@@ -139,7 +121,6 @@ impl Iterator for GroupingRowIterator {
 impl IntoIterator for Grouping {
     type Item = <GroupingRowIterator as Iterator>::Item;
     type IntoIter = GroupingRowIterator;
-
     fn into_iter(self) -> Self::IntoIter {
         GroupingRowIterator {
             grouping: self.center_links.into_iter(),
@@ -150,7 +131,6 @@ impl IntoIterator for Grouping {
 
 impl Index<(X, Y)> for Grouping {
     type Output = PointId;
-
     fn index(&self, index: (X, Y)) -> &Self::Output {
         &self.center_links[(index.0).value][(index.1)]
     }
@@ -158,8 +138,6 @@ impl Index<(X, Y)> for Grouping {
 
 impl Index<Y> for GroupingRow {
     type Output = PointId;
-
-    #[inline]
     //TODO @mark: update all Index that return copy types to just .get() to prevent & ?
     fn index(&self, index: Y) -> &Self::Output {
         &self.center_links_row[index.value]
@@ -191,8 +169,6 @@ impl<'a> GroupIndexIterator<'a> {
 
 impl<'a> Iterator for GroupIndexIterator<'a> {
     type Item = (X, Y, PointId);
-
-    #[inline]
     fn next(&mut self) -> Option<Self::Item> {
         if self.x >= self.grouping.width() {
             self.x = X::new(0);

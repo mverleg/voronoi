@@ -17,18 +17,12 @@ macro_rules! make_dim {
             pub fn new(value: usize) -> Self {
                 $T { value }
             }
-
-            #[inline]
             pub fn as_index(&self) -> usize {
                 self.value
             }
-
-            #[inline]
             pub fn indices_upto(&self) -> impl Iterator<Item=$T> {
                 (0 .. self.value).map(|val| $T::new(val))
             }
-
-            #[inline]
             pub fn saturating_sub(self, other: usize) -> Self {
                 $T { value: self.value.saturating_sub(other) }
             }
@@ -52,7 +46,6 @@ macro_rules! make_dim {
             pub fn new(step: i32) -> Self {
                 $dT { step }
             }
-
             pub fn abs(&self) -> Self {
                 if self.step < 0 {
                     return $dT { step: self.step };
@@ -63,7 +56,6 @@ macro_rules! make_dim {
 
         impl Sub<$T> for $T {
             type Output = $dT;
-
             fn sub(self, other: $T) -> Self::Output {
                 $dT {
                     step: (self.value as i32) - (other.value as i32),
@@ -73,7 +65,6 @@ macro_rules! make_dim {
 
         impl Sub<$dT> for $T {
             type Output = $T;
-
             fn sub(self, other: $dT) -> Self::Output {
                 if (self.value as i32) < other.step {
                     $T { value: 0 }
@@ -87,7 +78,6 @@ macro_rules! make_dim {
 
         impl Add<usize> for $T {
             type Output = $T;
-
             fn add(self, other: usize) -> Self::Output {
                 $T {
                     value: self.value + other,

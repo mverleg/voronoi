@@ -16,13 +16,9 @@ impl Point2D {
     pub fn from_raw(x: usize, y: usize) -> Self {
         Self::new(X::new(x), Y::new(y))
     }
-
-    #[inline]
     pub fn x(&self) -> X {
         self.x
     }
-
-    #[inline]
     pub fn y(&self) -> Y {
         self.y
     }
@@ -51,13 +47,9 @@ impl Step for Step2D {
     fn new(dx: dX, dy: dY) -> Self {
         Step2D { dx, dy }
     }
-
-    #[inline]
     fn dx(&self) -> dX {
         self.dx
     }
-
-    #[inline]
     fn dy(&self) -> dY {
         self.dy
     }
@@ -66,7 +58,6 @@ impl Step for Step2D {
 /// This must be done for each Point type, because S must be specified
 impl Sub<Point2D> for Point2D {
     type Output = Step2D;
-
     fn sub(self, other: Point2D) -> Self::Output {
         Step2D::new(self.x - other.x, self.y - other.y)
     }

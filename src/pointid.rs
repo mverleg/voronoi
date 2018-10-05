@@ -11,17 +11,14 @@ impl PointId {
     pub fn new(value: usize) -> Self {
         PointId { value }
     }
-
     pub fn empty() -> Self {
         PointId {
             value: usize::max_value(),
         }
     }
-
     pub fn increment(&mut self) {
         self.value += 1
     }
-
     pub fn decrement(&mut self) {
         if self.value == 0 {
             panic!("PointId cannot be decremented because it is 0")
@@ -38,7 +35,6 @@ impl PointId {
 
 impl Add<Self> for PointId {
     type Output = Self;
-
     fn add(self, rhs: PointId) -> <Self as Add<PointId>>::Output {
         PointId::new(self.value + rhs.value)
     }
@@ -46,7 +42,6 @@ impl Add<Self> for PointId {
 
 impl Add<usize> for PointId {
     type Output = Self;
-
     fn add(self, rhs: usize) -> <Self as Add<PointId>>::Output {
         PointId::new(self.value + rhs)
     }
@@ -54,7 +49,6 @@ impl Add<usize> for PointId {
 
 impl Sub<usize> for PointId {
     type Output = Self;
-
     fn sub(self, rhs: usize) -> <Self as Add<PointId>>::Output {
         if rhs > self.value {
             panic!("PointId cannot be negative");

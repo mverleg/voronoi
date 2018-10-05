@@ -8,29 +8,23 @@ use std::ops::Sub;
 #[allow(non_snake_case)]
 pub trait Norm {
     // Default implementations assume that pseudo-norm is just |x|^n + |y|^n without any roots taken.
-    #[inline]
     fn manhattan_norm(&self) -> Dist {
         Dist {
             value: self.manhattan_pseudo().value,
         }
     }
-    #[inline]
     fn euclidean_norm(&self) -> Dist {
         Dist {
             value: self.euclidean_pseudo().value.sqrt(),
         }
     }
-    #[inline]
     fn L3_norm(&self) -> Dist {
         Dist {
             value: self.L3_pseudo().value.cbrt(),
         }
     }
-    #[inline]
     fn manhattan_pseudo(&self) -> PseudoDist;
-    #[inline]
     fn euclidean_pseudo(&self) -> PseudoDist;
-    #[inline]
     fn L3_pseudo(&self) -> PseudoDist;
 }
 
@@ -51,11 +45,9 @@ macro_rules! make_dist {
                 }
                 Some($T { value })
             }
-
             pub fn fnew(value: f64) -> Self {
                 Self::new(value).unwrap()
             }
-
             pub fn ufloor(&self) -> usize {
                 self.value.floor().abs() as usize
             }
@@ -63,7 +55,6 @@ macro_rules! make_dist {
 
         impl Add<$T> for $T {
             type Output = $T;
-
             fn add(self, other: $T) -> Self::Output {
                 $T {
                     value: self.value + other.value,
@@ -73,7 +64,6 @@ macro_rules! make_dist {
 
         impl Sub<$T> for $T {
             type Output = $T;
-
             fn sub(self, other: $T) -> Self::Output {
                 $T {
                     value: self.value - other.value,
@@ -83,7 +73,6 @@ macro_rules! make_dist {
 
         impl Mul<$T> for $T {
             type Output = $T;
-
             fn mul(self, other: $T) -> Self::Output {
                 $T {
                     value: self.value * other.value,
@@ -122,14 +111,12 @@ where
 {
     object.L3_norm()
 }
-
 pub fn pmanhattan<N>(object: &N) -> PseudoDist
 where
     N: Norm,
 {
     object.manhattan_pseudo()
 }
-
 pub fn peuclidean<N>(object: &N) -> PseudoDist
 where
     N: Norm,
@@ -151,7 +138,6 @@ impl Norm for Step2D {
             value: (self.dx.step.abs() + self.dy.step.abs()) as f64,
         }
     }
-
     fn euclidean_pseudo(&self) -> PseudoDist {
         PseudoDist {
             value: (self.dx.step.pow(2) + self.dy.step.pow(2)) as f64,
@@ -174,13 +160,11 @@ macro_rules! impl_norm_for_dim {
                     value: self.value as f64,
                 }
             }
-
             fn euclidean_pseudo(&self) -> PseudoDist {
                 PseudoDist {
                     value: self.value.pow(2) as f64,
                 }
             }
-
             #[allow(non_snake_case)]
             fn L3_pseudo(&self) -> PseudoDist {
                 PseudoDist {

@@ -32,8 +32,6 @@ pub fn assign_to_centers(centers: &mut UPoints, workers: &Pool) -> Grouping {
 
     Grouping::from(width, height, results)
 }
-
-#[inline]
 fn assign_to_centers_for_row(
     x: X,
     y_range: Y,
@@ -59,8 +57,6 @@ fn assign_to_centers_for_row(
     }
     GroupingRow::from(links, y_range)
 }
-
-#[inline]
 fn find_nearest_to_reference(
     point: Point2D,
     candidates: &Vec<PointId>,
