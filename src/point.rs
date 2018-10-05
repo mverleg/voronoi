@@ -1,6 +1,6 @@
 use dims::{dX, dY, X, Y};
 use std::hash::Hash;
-use std::ops::{Add, Sub};
+use std::ops::Sub;
 
 pub trait Point: Sized + Eq + Hash {
     fn new(x: X, y: Y) -> Self;
@@ -69,27 +69,5 @@ impl Sub<Point2D> for Point2D {
 
     fn sub(self, other: Point2D) -> Self::Output {
         Step2D::new(self.x - other.x, self.y - other.y)
-    }
-}
-
-impl<S> Sub<S> for Point2D
-where
-    S: Step,
-{
-    type Output = Point2D;
-
-    fn sub(self, other: S) -> Self::Output {
-        Point2D::new(self.x - other.dx(), self.y - other.dy())
-    }
-}
-
-impl<S> Add<S> for Point2D
-where
-    S: Step,
-{
-    type Output = Point2D;
-
-    fn add(self, other: S) -> Self::Output {
-        Point2D::new(self.x + other.dx(), self.y + other.dy())
     }
 }

@@ -61,7 +61,6 @@ impl Grouping {
     }
 
     #[inline]
-    //TODO @mark: is this still used?
     pub fn set(&mut self, x: X, y: Y, point_id: PointId) {
         debug_assert!(
             x.value < self.width().value,

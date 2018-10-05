@@ -78,21 +78,6 @@ macro_rules! make_dim {
             }
         }
 
-        impl Add<$dT> for $T {
-            type Output = $T;
-
-            fn add(self, other: $dT) -> Self::Output {
-                if (self.value as i32) < -other.step {
-                    $T { value: 0 }
-                } else {
-                    //TODO @mark: is this expensive? common?
-                    $T {
-                        value: (self.value as i32 + other.step) as usize,
-                    }
-                }
-            }
-        }
-
         impl Add<usize> for $T {
             type Output = $T;
 
@@ -122,19 +107,3 @@ macro_rules! make_dim {
 
 make_dim!(X, dX);
 make_dim!(Y, dY);
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_dim_ops() {
-        let x0 = X::new(0);
-        let x1 = X::new(1);
-        let x2 = X::new(2);
-        let dx1 = dX::new(-1);
-        let dx3 = dX::new(-3);
-        assert_eq!(x1, x2 + dx1);
-        assert_eq!(x0, x2 + dx3);
-    }
-}
