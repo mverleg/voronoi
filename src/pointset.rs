@@ -59,7 +59,7 @@ impl UPoints {
         output_vec.clear();
         // Find any point within the range
         let urange = range.ufloor();
-        let x_min = reference.x() - urange;
+        let x_min = reference.x().saturating_sub(urange);
         let x_max = reference.x() + urange;
         let reference_index: Option<PointId> = find_index(
             PointId::new(0),
@@ -77,13 +77,13 @@ impl UPoints {
         );
         //TODO: parallellize forward and backward searching?
         if let Some(reference_index) = reference_index {
-            let y_min = reference.y() - urange;
+            let y_min = reference.y().saturating_sub(urange);
             let y_max = reference.y() + urange;
             let length = PointId::new(self.len());
             // Iterate backward from that point until range is exceeded (since points are ordered)
             let mut index = reference_index;
             let mut current = self.get(index);
-            let x_min = reference.x() - urange;
+            let x_min = reference.x().saturating_sub(urange);
             while current.x() >= x_min {
                 if y_min <= current.y() && current.y() <= y_max {
                     debug_assert!(output_vec.len() <= self.points_by_x.len());

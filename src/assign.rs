@@ -7,11 +7,8 @@ use pointid::PointId;
 use pointset::UPoints;
 use scoped_pool::Pool;
 
-//TODO @mark: inline every function used in inner loop
-
 /// This assigns the correct PointId to every single cell in `groups`.
 pub fn assign_to_centers(centers: &mut UPoints, workers: &Pool) -> Grouping {
-    //TODO @mark: @opt=1 this is 93%
     debug_assert!(centers.len() > 0);
 
     let width = centers.width();
@@ -77,7 +74,7 @@ fn find_nearest_to_reference(
     let mut smallest_dist = (centers.get(nearest_center) - point).euclidean_pseudo();
     //TODO @mark: is this 'skip(1)' faster than just repeating an element?
     //TODO @mark: want to not use *, iterate over copies...
-    for center in candidates.iter().skip(1) {
+    for center in candidates.iter() {
         let current_dist = (centers.get(*center) - point).euclidean_pseudo();
         if current_dist < smallest_dist {
             smallest_dist = current_dist;

@@ -18,12 +18,19 @@ macro_rules! make_dim {
                 $T { value }
             }
 
+            #[inline]
             pub fn as_index(&self) -> usize {
                 self.value
             }
 
+            #[inline]
             pub fn indices_upto(&self) -> impl Iterator<Item=$T> {
                 (0 .. self.value).map(|val| $T::new(val))
+            }
+
+            #[inline]
+            pub fn saturating_sub(self, other: usize) -> Self {
+                $T { value: self.value.saturating_sub(other) }
             }
         }
 
@@ -84,21 +91,6 @@ macro_rules! make_dim {
             fn add(self, other: usize) -> Self::Output {
                 $T {
                     value: self.value + other,
-                }
-            }
-        }
-
-        impl Sub<usize> for $T {
-            type Output = $T;
-
-            fn sub(self, other: usize) -> Self::Output {
-                if self.value < other {
-                    $T { value: 0 }
-                } else {
-                    //TODO @mark: is this expensive? common?
-                    $T {
-                        value: (self.value - other) as usize,
-                    }
                 }
             }
         }
