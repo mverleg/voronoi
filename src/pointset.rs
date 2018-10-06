@@ -27,6 +27,10 @@ impl UPoints {
             // Hopefully this next line gets optimized away in production mode
             let unique_points = HashSet::<&Point2D>::from_iter(points.iter());
             debug_assert!(unique_points.len() == length);
+            for point in points.clone() {
+                debug_assert!(point.x() < width);
+                debug_assert!(point.y() < height);
+            }
             //TODO @mark: check that all points within (width, height)
         }
         let mut points_by_x = points;

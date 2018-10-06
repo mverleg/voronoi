@@ -1,4 +1,4 @@
-use dims::{dX, dY, X, Y};
+use dims::{X, Y};
 use point::Step2D;
 use std::ops::Add;
 use std::ops::Mul;
@@ -28,9 +28,6 @@ pub trait Norm {
     fn L3_pseudo(&self) -> PseudoDist;
 }
 
-#[allow(non_camel_case_types)]
-pub type norm = Fn(&dX, &dY) -> Dist;
-
 macro_rules! make_dist {
     ( $T:ident ) => {
         #[derive(Debug, PartialEq, PartialOrd, Clone, Copy)]
@@ -39,15 +36,20 @@ macro_rules! make_dist {
         }
 
         impl $T {
+            #[allow(dead_code)]  // not really dead
             pub fn new(value: f64) -> Option<Self> {
                 if value < 0.0 {
                     return None;
                 }
                 Some($T { value })
             }
+
+            #[allow(dead_code)]  // not really dead
             pub fn fnew(value: f64) -> Self {
                 Self::new(value).unwrap()
             }
+
+            #[allow(dead_code)]  // not really dead
             pub fn ufloor(&self) -> usize {
                 self.value.floor().abs() as usize
             }
@@ -88,6 +90,7 @@ make_dist!(Dist);
 make_dist!(PseudoDist);
 
 /// Manhattan (L1) distance for horizontal/vertical edges.
+#[allow(dead_code)]
 pub fn manhattan<N>(object: &N) -> Dist
 where
     N: Norm,
@@ -96,6 +99,7 @@ where
 }
 
 /// Euclidean (L2) distance squared for straight edges in any direction (standard Voronoi).
+#[allow(dead_code)]
 pub fn euclidean<N>(object: &N) -> Dist
 where
     N: Norm,
@@ -104,6 +108,7 @@ where
 }
 
 #[allow(non_snake_case)]
+#[allow(dead_code)]
 /// L3 distance cubed for curved edges.
 pub fn L3<N>(object: &N) -> Dist
 where
@@ -111,12 +116,15 @@ where
 {
     object.L3_norm()
 }
+
+#[allow(dead_code)]
 pub fn pmanhattan<N>(object: &N) -> PseudoDist
 where
     N: Norm,
 {
     object.manhattan_pseudo()
 }
+#[allow(dead_code)]
 pub fn peuclidean<N>(object: &N) -> PseudoDist
 where
     N: Norm,
@@ -125,6 +133,7 @@ where
 }
 
 #[allow(non_snake_case)]
+#[allow(dead_code)]
 pub fn pL3<N>(object: &N) -> PseudoDist
 where
     N: Norm,

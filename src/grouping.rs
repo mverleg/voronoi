@@ -12,20 +12,6 @@ pub struct Grouping {
 }
 
 impl Grouping {
-    pub fn empty(width: X, height: Y) -> Self {
-        Grouping {
-            center_links: vec![
-                GroupingRow {
-                    center_links_row: vec![PointId::empty(); height.value],
-                    height
-                };
-                width.value as usize
-            ],
-            width,
-            height,
-        }
-    }
-
     pub fn from(width: X, height: Y, centers: Vec<GroupingRow>) -> Self {
         #[cfg(debug_assertions)]
         {
@@ -40,40 +26,17 @@ impl Grouping {
             height,
         }
     }
+
     pub fn width(&self) -> X {
         self.width
     }
+
     pub fn height(&self) -> Y {
         self.height
     }
-    pub fn len(&self) -> usize {
-        self.width().value
-    }
+
     pub fn iter_indexed(&mut self) -> GroupIndexIterator {
         GroupIndexIterator::new(self)
-    }
-    pub fn set(&mut self, x: X, y: Y, point_id: PointId) {
-        debug_assert!(
-            x.value < self.width().value,
-            format!(
-                "Expectation violated: X {} < X-dim {}\n",
-                x.value,
-                self.width().value
-            )
-        );
-        debug_assert!(
-            y.value < self.height().value,
-            format!(
-                "Expectation violated: Y {} < y-dim {}\n",
-                y.value,
-                self.height().value
-            )
-        );
-        self.center_links[x.value][y] = point_id;
-    }
-    pub fn get(&self, x: X, y: Y) -> PointId {
-        //TODO @mark: from over here, it looks like X and Y should be usize
-        self.center_links[x.value][y]
     }
 }
 
@@ -90,10 +53,6 @@ impl GroupingRow {
             center_links_row,
             height,
         }
-    }
-
-    pub fn height(&self) -> Y {
-        self.height
     }
 }
 
