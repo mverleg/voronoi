@@ -11,13 +11,11 @@
 extern crate byteorder;
 extern crate clap;
 extern crate image;
+extern crate num_cpus;
 extern crate rand;
 extern crate scoped_pool;
 extern crate separator;
 extern crate test;
-extern crate num_cpus;
-
-//TODO @mark: make some of these mods private?
 
 use assign::assign_to_centers;
 use img::Img;
@@ -29,21 +27,21 @@ use std::process::Command;
 
 #[macro_use]
 #[cfg(test)]
-pub mod test_util;
-pub mod assign;
-pub mod color;
-pub mod colorset;
-pub mod dims;
+mod test_util;
+mod assign;
+mod color;
+mod colorset;
+mod dims;
+mod find_index;
+mod grouping;
+mod norms;
+mod paint;
+mod point;
+mod pointid;
+mod pointset;
+mod parmap;
 pub mod distribute;
-pub mod find_index;
-pub mod grouping;
 pub mod img;
-pub mod norms;
-pub mod paint;
-pub mod point;
-pub mod pointid;
-pub mod pointset;
-pub mod parmap;
 
 /// Voronoi transform function
 pub fn voronoiify_image(img: &mut Img, center_points: &mut UPoints, workers: &Pool) -> Img {
