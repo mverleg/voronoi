@@ -6,7 +6,7 @@ This little project:
 
 * Chooses a bunch of random points on an image.
 * Assigns each pixel to one of the random points (Voronoi).
-*
+* Paints all the pixels belonging to one point in the average color of them all.
 
 It's just a little challenge:
 
@@ -31,25 +31,31 @@ Performance
 * Try to avoid dynamic dispatch completely.
 * Avoid unnecessary math, e.g. L1/L2/L3 norm values have the same total order without the square/cubic root.
 * Avoid unnecessary allocations, i.e. keep recycling one vector per thread to store nearest points.
+* Assigning pixels to centers and colorizing the pixels can be parallellized per row without locks. Averaging the colors is harder because the average would be mutably shared.
 
-Todo: simd, cache locality, contiguous memory, parallelism, branch prediction, 
+The Voronoi transform above, with 500 pixels per patch on a small image, takes between 0.02s and 0.05s on my machine overall. This is mostly loading and saving of data and starting of the thread pool - without those, it takes 0.0075s or 133x per second.
+
+For a future time: simd, cache locality, contiguous memory, branch prediction.
 
 Types
 -------------------------------
 
-There are several considerations:
+There are several considerations for type safety:
 
 * There are pixels indexed in two dimensions by positive integers. We should not mix these dimensions or compare x and y for different points.
 * There is iteration over bounded regions of the image. So a total ordering as well as addition and subtraction are needed.
-* The sum of pixel positions has no meaning, but they may be summed to compute a midpoint position. But they can be subtracted, which gives a distance.
+* The sum of pixel positions has no meaning, but they may be summed to compute a midpoint position. But they can be subtracted, which gives a distance that can be negative - unlike indices themselves.
 * Distances are not real numbers and do not care about direction.
 * For polymorphism reasons, different norms should return identical or compatible types, even though their physical units are different, since `sqrt`s are skipped.
+* Created wrapper types for most collections to prevent accessing incorrectly.
 
 Difficulties:
 
 * Some operations cannot be overloaded generically but have to be re-done for every concrete type because of orphan rules. Macros help a little here.
 * It is necessary to expose the `usize` data for e.g. generating random numbers or building a `Vec`.
 * There is substantially more code to facilitate types and operations on them than there is 'business' logic.
+
+The type safety and tests worked, in a way: the program immediately worked once it compiled and passed all tests. It did however take more than an order of magnitude longer to make than the slow and naive Python version.
 
 How to use
 -------------------------------
@@ -64,3 +70,5 @@ Random observations / hints:
 * Almost everything gets inlines at -O3, so flamegraphs don't work well.
 * To see generated code from derives `cargo rustc -- -Z unstable-options --pretty=expanded`.
 * For some reason, `-C link-dead-code` seems to increase performance by 2-3%, while not increasing size.
+* Allocating a vector of center links per iteration was somehow faster than recycling the same vector repeatedly.
+* Removing all explicit inlines slightly improved performance.

@@ -1,7 +1,6 @@
 #![feature(extern_prelude)]
 
 //TODO @mark: update readme
-//TODO @mark: try with another distance function
 
 extern crate byteorder;
 extern crate clap;

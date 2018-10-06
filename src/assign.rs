@@ -15,7 +15,7 @@ pub fn assign_to_centers(centers: &mut UPoints, workers: &Pool) -> Grouping {
     let height = centers.height();
 
     // Keep both parallel and serial codes for benchmarking
-    let use_parallel = false;
+    let use_parallel = true;
     let results = if use_parallel {
         par_map_on(workers, width.indices_upto(), |x: X| {
             assign_to_centers_for_row(x, height, &centers)
