@@ -46,7 +46,6 @@ impl UPoints {
         PointColorAverages::new(self.len())
     }
     fn within_box_internal(&self, reference: Point2D, range: Dist, output_vec: &mut Vec<PointId>) {
-        //TODO @mark: 79% of opt1 runtime
         output_vec.clear();
         // Find any point within the range
         let urange = range.ufloor();
@@ -66,7 +65,6 @@ impl UPoints {
                 Ordering::Equal
             },
         );
-        //TODO: parallellize forward and backward searching?
         if let Some(reference_index) = reference_index {
             let y_min = reference.y().saturating_sub(urange);
             let y_max = reference.y() + urange;
@@ -131,7 +129,7 @@ impl UPoints {
         self.points_by_x[0]
     }
     pub fn get(&self, id: PointId) -> Point2D {
-        self.points_by_x[id._expose()]
+        self.points_by_x[id.as_index()]
     }
 }
 

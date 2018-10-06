@@ -22,7 +22,6 @@ where
 /// Order requirements for all x:
 /// * if f(x) is Equal, f(x+1) is Equal or Greater
 /// * if f(x) is Greater, f(x+1) is Greater
-//TODO @mark: inline?
 pub fn find_index<T, F>(mut min: T, mut max: T, f: F) -> Option<T>
 where
     T: PartialOrd + Add<usize, Output = T> + Sub<usize, Output = T> + Mid + Copy + Debug,

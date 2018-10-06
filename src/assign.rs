@@ -68,13 +68,11 @@ fn find_nearest_to_reference(
     );
     let mut nearest_center: PointId = candidates[0];
     let mut smallest_dist = (centers.get(nearest_center) - point).euclidean_pseudo();
-    //TODO @mark: is this 'skip(1)' faster than just repeating an element?
-    //TODO @mark: want to not use *, iterate over copies...
-    for center in candidates.iter() {
-        let current_dist = (centers.get(*center) - point).euclidean_pseudo();
+    for center in candidates.iter().cloned() {
+        let current_dist = (centers.get(center) - point).euclidean_pseudo();
         if current_dist < smallest_dist {
             smallest_dist = current_dist;
-            nearest_center = *center;
+            nearest_center = center;
         }
     }
     nearest_center

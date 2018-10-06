@@ -1,7 +1,6 @@
 #![feature(extern_prelude)]
 
 //TODO @mark: update readme
-//TODO @mark: find a way to turn of all asserts in optimized mode? => or just convert the hot-loop-ones to debug_assert and keep the rest
 
 extern crate byteorder;
 extern crate clap;

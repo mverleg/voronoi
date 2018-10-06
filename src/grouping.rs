@@ -88,10 +88,7 @@ impl GroupingRow {
         debug_assert!(center_links_row.len() == height.as_index());
         GroupingRow { center_links_row, height }
     }
-    //TODO @mark: into separate function
-    pub fn indices(&self) -> impl Iterator<Item=Y> {
-        (0 .. self.height.value).map(|v| Y::new(v))
-    }
+
     pub fn height(&self) -> Y {
         self.height
     }
@@ -114,7 +111,6 @@ impl Iterator for GroupingRowIterator {
         };
         self.index += 1;
         return val
-        //TODO @mark: unit test?
     }
 }
 

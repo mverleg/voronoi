@@ -19,7 +19,6 @@ impl PointColorAverages {
         PointColorAverages { averages: colors }
     }
 
-    //TODO @mark: is there some way to recycle PointColorAverages memory for PointColors
     pub fn compute(self) -> PointColors {
         let mut colors: Vec<Color> = Vec::with_capacity(self.len());
         for avg in self.averages.into_iter() {
@@ -31,14 +30,14 @@ impl PointColorAverages {
         self.averages.len()
     }
     pub fn get(&mut self, id: PointId) -> &mut RgbColorAverage {
-        &mut self.averages[id._expose()]
+        &mut self.averages[id.as_index()]
     }
 }
 
 impl Index<PointId> for PointColorAverages {
     type Output = RgbColorAverage;
     fn index(&self, index: PointId) -> &Self::Output {
-        &self.averages[index._expose() as usize]
+        &self.averages[index.as_index() as usize]
     }
 }
 
@@ -62,14 +61,14 @@ impl PointColors {
         self.colors.len()
     }
     pub fn get(&self, id: PointId) -> Color {
-        self.colors[id._expose()]
+        self.colors[id.as_index()]
     }
 }
 
 impl Index<PointId> for PointColors {
     type Output = Color;
     fn index(&self, index: PointId) -> &Self::Output {
-        &self.colors[index._expose()]
+        &self.colors[index.as_index()]
     }
 }
 

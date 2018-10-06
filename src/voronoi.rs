@@ -45,9 +45,6 @@ pub mod pointid;
 pub mod pointset;
 pub mod parmap;
 
-//TODO @mark: update readme
-//TODO @mark: find a way to turn of all asserts in optimized mode? => or just convert the hot-loop-ones to debug_assert and keep the rest
-
 /// Voronoi transform function
 pub fn voronoiify_image(img: &mut Img, center_points: &mut UPoints, workers: &Pool) -> Img {
     let center_colors = center_points.new_color_averager();

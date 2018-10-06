@@ -58,3 +58,4 @@ Random observations / hints:
 
 * Almost everything gets inlines at -O3, so flamegraphs don't work well.
 * To see generated code from derives `cargo rustc -- -Z unstable-options --pretty=expanded`.
+* For some reason, `-C link-dead-code` seems to increase performance by 2-3%, while not increasing size.

@@ -24,8 +24,6 @@ opt-level = 3
 [profile.release]
 lto = true
 #opt-level = 1  # limit inlining for profiling
-# TODO remove panic to make smaller
-# panic = 'abort'  # causes compile error
 
 [lib]
 name = "vorolib"

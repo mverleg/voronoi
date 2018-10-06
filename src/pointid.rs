@@ -2,7 +2,6 @@ use find_index::Mid;
 use std::ops::{Add, Sub};
 
 #[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq)]
-// TODO: usize.max_value() should be interpreted as empty and should not be requested
 pub struct PointId {
     value: usize,
 }
@@ -13,12 +12,15 @@ impl PointId {
     }
     pub fn empty() -> Self {
         PointId {
+            // This should be interpreted as empty and should not be requested
             value: usize::max_value(),
         }
     }
+
     pub fn increment(&mut self) {
         self.value += 1
     }
+
     pub fn decrement(&mut self) {
         if self.value == 0 {
             panic!("PointId cannot be decremented because it is 0")
@@ -28,7 +30,7 @@ impl PointId {
 
     /// Expose the internal value. Careful with trying to use this to get around type safety.
     //TODO @mark: remove
-    pub fn _expose(&self) -> usize {
+    pub fn as_index(&self) -> usize {
         self.value
     }
 }
