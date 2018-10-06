@@ -29,6 +29,7 @@ pub fn assign_to_centers(centers: &mut UPoints, workers: &Pool) -> Grouping {
 
     Grouping::from(width, height, results)
 }
+
 fn assign_to_centers_for_row(x: X, y_range: Y, centers: &UPoints) -> GroupingRow {
     // Performance: I thought it would be faster to recycle this output vector,
     // but (at least without parallelization), it is slightly faster to just recreate it.
@@ -50,6 +51,7 @@ fn assign_to_centers_for_row(x: X, y_range: Y, centers: &UPoints) -> GroupingRow
     }
     GroupingRow::from(links, y_range)
 }
+
 fn find_nearest_to_reference(
     point: Point2D,
     candidates: &Vec<PointId>,

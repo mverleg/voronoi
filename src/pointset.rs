@@ -31,7 +31,6 @@ impl UPoints {
                 debug_assert!(point.x() < width);
                 debug_assert!(point.y() < height);
             }
-            //TODO @mark: check that all points within (width, height)
         }
         let mut points_by_x = points;
         points_by_x.sort_by(|p1, p2| p1.x().cmp(&p2.x()));

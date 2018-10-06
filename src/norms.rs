@@ -156,7 +156,8 @@ impl Norm for Step2D {
     #[allow(non_snake_case)]
     fn L3_pseudo(&self) -> PseudoDist {
         PseudoDist {
-            value: (self.dx.step.abs().pow(3) + self.dy.step.abs().pow(3)) as f64,
+            value: (self.dx.step * self.dx.step * self.dx.step.abs()
+                + self.dy.step * self.dy.step * self.dy.step.abs()) as f64,
         }
     }
 }
