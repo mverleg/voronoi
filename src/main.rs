@@ -6,17 +6,17 @@
 extern crate byteorder;
 extern crate clap;
 extern crate rand;
-extern crate vorolib;
 extern crate scoped_pool;
+extern crate vorolib;
 
 use argparse::parse_args;
 use rand::{SeedableRng, StdRng};
+use scoped_pool::Pool;
 #[allow(unused_imports)]
 use std::process::Command;
 use vorolib::distribute::generate_random_points;
 use vorolib::img::Img;
 use vorolib::voronoiify_image;
-use scoped_pool::Pool;
 
 pub mod argparse;
 

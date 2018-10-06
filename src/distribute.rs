@@ -22,15 +22,14 @@ pub fn generate_random_points(img: &Img, avg_patch_size: usize, rng: &mut StdRng
         } else {
         }
     }
-    UPoints::new(
-        img.width(), img.height(),
-        points.into_iter().collect()
-    )
+    UPoints::new(img.width(), img.height(), points.into_iter().collect())
 }
 
 /// Distribute points predictably.
 pub fn generate_fixed_points(width: X, height: Y, count: usize) -> UPoints {
-    debug_assert!(width.euclidean_norm() * height.euclidean_norm() > Dist::fnew(9.0 * (count as f64)));
+    debug_assert!(
+        width.euclidean_norm() * height.euclidean_norm() > Dist::fnew(9.0 * (count as f64))
+    );
     let mut points = HashSet::<Point2D>::with_capacity(count);
     let count_per_dim = (count as f64).sqrt().ceil() as usize;
     for xi in 0..count_per_dim {
@@ -40,16 +39,13 @@ pub fn generate_fixed_points(width: X, height: Y, count: usize) -> UPoints {
             points.insert(Point2D::from_raw(x as usize, y as usize));
         }
     }
-    UPoints::new(
-        width, height,
-        points.into_iter().collect()
-    )
+    UPoints::new(width, height, points.into_iter().collect())
 }
 
 #[cfg(test)]
 mod tests {
-    use std::iter::FromIterator;
     use super::*;
+    use std::iter::FromIterator;
 
     #[test]
     fn test_equidistant() {

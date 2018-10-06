@@ -17,26 +17,19 @@ pub fn assign_to_centers(centers: &mut UPoints, workers: &Pool) -> Grouping {
     // Keep both parallel and serial codes for benchmarking
     let use_parallel = false;
     let results = if use_parallel {
-        par_map_on(
-            workers,
-            width.indices_upto(),
-            |x: X| assign_to_centers_for_row(
-                x, height, &centers
-            ))
+        par_map_on(workers, width.indices_upto(), |x: X| {
+            assign_to_centers_for_row(x, height, &centers)
+        })
     } else {
-        width.indices_upto().map(
-            |x: X| assign_to_centers_for_row(
-                x, height, &centers
-        )).collect()
+        width
+            .indices_upto()
+            .map(|x: X| assign_to_centers_for_row(x, height, &centers))
+            .collect()
     };
 
     Grouping::from(width, height, results)
 }
-fn assign_to_centers_for_row(
-    x: X,
-    y_range: Y,
-    centers: &UPoints,
-) -> GroupingRow {
+fn assign_to_centers_for_row(x: X, y_range: Y, centers: &UPoints) -> GroupingRow {
     // Performance: I thought it would be faster to recycle this output vector,
     // but (at least without parallelization), it is slightly faster to just recreate it.
     // It also makes parallelization easier, since this would otherwise be per-thread.

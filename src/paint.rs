@@ -43,8 +43,8 @@ pub fn paint_pixels_to_group_color(
 mod tests {
     use super::*;
     use color::new_color;
-    use pointid::PointId;
     use dims::{X, Y};
+    use pointid::PointId;
 
     fn make_groups() -> Grouping {
         let p0 = PointId::new(0);

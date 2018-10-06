@@ -3,9 +3,9 @@ use byteorder::WriteBytesExt;
 use clap::{App, Arg};
 use std::env::temp_dir;
 use std::path::{Path, PathBuf};
+use std::process::exit;
 #[allow(unused_imports)]
 use std::process::Command;
-use std::process::exit;
 use vorolib::distribute::default_seed;
 
 pub fn parse_args() -> (PathBuf, PathBuf, usize, bool, [u8; 32]) {
@@ -56,7 +56,10 @@ pub fn parse_args() -> (PathBuf, PathBuf, usize, bool, [u8; 32]) {
     // Output
     let output = match args.value_of("output") {
         Some(arg) => Path::new(arg).to_path_buf(),
-        None => temp_dir().join(format!("voronoi-{}", input.file_name().unwrap().to_str().unwrap())),
+        None => temp_dir().join(format!(
+            "voronoi-{}",
+            input.file_name().unwrap().to_str().unwrap()
+        )),
     };
 
     // Center count

@@ -5,7 +5,6 @@ use std::ops::{Add, Sub};
 
 macro_rules! make_dim {
     ( $T:ident, $dT:ident ) => {
-
         // Performance: hand-coding PartialEq is not faster than deriving,
         // in fact it's slower unless lt/gt/le/ge are also hand-coded.
         #[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
@@ -20,11 +19,13 @@ macro_rules! make_dim {
             pub fn as_index(&self) -> usize {
                 self.value
             }
-            pub fn indices_upto(&self) -> impl Iterator<Item=$T> {
-                (0 .. self.value).map(|val| $T::new(val))
+            pub fn indices_upto(&self) -> impl Iterator<Item = $T> {
+                (0..self.value).map(|val| $T::new(val))
             }
             pub fn saturating_sub(self, other: usize) -> Self {
-                $T { value: self.value.saturating_sub(other) }
+                $T {
+                    value: self.value.saturating_sub(other),
+                }
             }
         }
 

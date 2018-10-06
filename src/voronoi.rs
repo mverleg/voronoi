@@ -7,7 +7,6 @@
 /// todo: could not get this to work, no space saved at all
 // #![feature(alloc_system)]
 // extern crate alloc_system;
-
 extern crate byteorder;
 extern crate clap;
 extern crate image;
@@ -32,16 +31,16 @@ mod assign;
 mod color;
 mod colorset;
 mod dims;
+pub mod distribute;
 mod find_index;
 mod grouping;
+pub mod img;
 mod norms;
 mod paint;
+mod parmap;
 mod point;
 mod pointid;
 mod pointset;
-mod parmap;
-pub mod distribute;
-pub mod img;
 
 /// Voronoi transform function
 pub fn voronoiify_image(img: &mut Img, center_points: &mut UPoints, workers: &Pool) -> Img {
@@ -51,4 +50,3 @@ pub fn voronoiify_image(img: &mut Img, center_points: &mut UPoints, workers: &Po
     let voronoi = pixel_to_group_colors(groups, center_colors, img);
     voronoi
 }
-

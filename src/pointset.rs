@@ -1,4 +1,5 @@
 use colorset::PointColorAverages;
+use dims::{X, Y};
 use find_index::find_index;
 use norms::Dist;
 use point::Point2D;
@@ -8,7 +9,6 @@ use std::cmp::Ordering;
 use std::collections::HashSet;
 #[allow(unused)] // I think the compiler is wrong here
 use std::iter::FromIterator;
-use dims::{X, Y};
 
 /// Collection of *unique* points.
 #[derive(Debug)]
@@ -31,7 +31,11 @@ impl UPoints {
         }
         let mut points_by_x = points;
         points_by_x.sort_by(|p1, p2| p1.x().cmp(&p2.x()));
-        UPoints { width, height, points_by_x }
+        UPoints {
+            width,
+            height,
+            points_by_x,
+        }
     }
     pub fn width(&self) -> X {
         self.width
@@ -143,10 +147,10 @@ impl IntoIterator for UPoints {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use dims::{X, Y};
     use distribute::generate_fixed_points;
     use std::collections::HashSet;
-    use super::*;
 
     #[test]
     fn test_within_one_eq() {

@@ -25,10 +25,7 @@ impl Img {
     }
 
     pub fn empty(width: X, height: Y) -> Self {
-        Img::wrap(ImageBuffer::new(
-            width.value as u32,
-            height.value as u32,
-        ))
+        Img::wrap(ImageBuffer::new(width.value as u32, height.value as u32))
     }
 
     pub fn load(pth: &Path) -> Self {

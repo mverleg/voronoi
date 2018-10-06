@@ -1,8 +1,8 @@
 use dims::{X, Y};
 use pointid::PointId;
 use std::ops::Index;
-use std::vec::IntoIter;
 use std::ops::IndexMut;
+use std::vec::IntoIter;
 
 #[derive(Debug)]
 pub struct Grouping {
@@ -86,7 +86,10 @@ pub struct GroupingRow {
 impl GroupingRow {
     pub fn from(center_links_row: Vec<PointId>, height: Y) -> Self {
         debug_assert!(center_links_row.len() == height.as_index());
-        GroupingRow { center_links_row, height }
+        GroupingRow {
+            center_links_row,
+            height,
+        }
     }
 
     pub fn height(&self) -> Y {
@@ -104,13 +107,11 @@ impl Iterator for GroupingRowIterator {
     type Item = (X, GroupingRow);
     fn next(&mut self) -> Option<Self::Item> {
         let val = match self.grouping.next() {
-            Some(row) => Some((
-                X::new(self.index),
-                row)),
+            Some(row) => Some((X::new(self.index), row)),
             None => None,
         };
         self.index += 1;
-        return val
+        return val;
     }
 }
 

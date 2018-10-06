@@ -1,4 +1,4 @@
-use dims::{X, Y, dX, dY};
+use dims::{dX, dY, X, Y};
 use point::Step2D;
 use std::ops::Add;
 use std::ops::Mul;
@@ -172,7 +172,7 @@ macro_rules! impl_norm_for_dim {
                 }
             }
         }
-    }
+    };
 }
 impl_norm_for_dim!(X);
 impl_norm_for_dim!(Y);

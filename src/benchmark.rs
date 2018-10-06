@@ -7,24 +7,24 @@
 extern crate byteorder;
 extern crate clap;
 extern crate rand;
+extern crate scoped_pool;
+extern crate separator;
 extern crate test;
 extern crate vorolib;
-extern crate separator;
-extern crate scoped_pool;
 
 use clap::{App, Arg};
 use rand::{SeedableRng, StdRng};
+use scoped_pool::Pool;
 use separator::Separatable;
 use std::path::Path;
+use std::process::exit;
 #[allow(unused_imports)]
 use std::process::Command;
-use std::process::exit;
 use std::time::Instant;
 use vorolib::distribute::default_seed;
 use vorolib::distribute::generate_random_points;
 use vorolib::img::Img;
 use vorolib::voronoiify_image;
-use scoped_pool::Pool;
 
 pub mod argparse;
 
@@ -41,8 +41,8 @@ pub fn main() {
             Arg::with_name("verbose")
                 .help("Log every second approximately")
                 .short("v")
-                .long("verbose")
-    ).get_matches();
+                .long("verbose"),
+        ).get_matches();
 
     // Repetition count
     let resp = if let Some(sizetxt) = args.value_of("reps") {
@@ -81,7 +81,7 @@ pub fn run_bench(reps: usize, do_log: bool) {
         println!(" {:4} / {:4}", 0, reps);
     }
     let workers = Pool::new(num_cpus::get());
-    for rep in 0 .. reps + 1 {
+    for rep in 0..reps + 1 {
         if do_log {
             let total_time = Instant::now().duration_since(init).as_secs();
             if total_time > last_log {
@@ -95,22 +95,27 @@ pub fn run_bench(reps: usize, do_log: bool) {
         test::black_box(voronoiify_image(&mut img, &mut centers, &workers));
         let end = Instant::now();
         times_ns.push(end.duration_since(start).as_nanos() as u64);
-//        times_ns.push(1u64);
+        //        times_ns.push(1u64);
     }
     if do_log {
         println!(" {:4} / {:4}", reps, reps);
     }
     // First iteration is for warmup
-    let avg: u64 = times_ns.iter().skip(1)
-        .fold(0, |s, t| s + t)
-        / (reps as u64);
-    let std: f64 = ((times_ns.iter().skip(1)
+    let avg: u64 = times_ns.iter().skip(1).fold(0, |s, t| s + t) / (reps as u64);
+    let std: f64 = ((times_ns
+        .iter()
+        .skip(1)
         .map(|t| (if t > &avg { t - avg } else { avg - t }).pow(2))
         .fold(0, |s, t| s + t)
-        / (reps - 1) as u64)
-        as f64).sqrt();
+        / (reps - 1) as u64) as f64)
+        .sqrt();
     let devperc = 100f64 * std / (avg as f64);
-    println!("{} reps took {} ns ± {:.2} % each", reps, (avg as u64).separated_string(), devperc);
+    println!(
+        "{} reps took {} ns ± {:.2} % each",
+        reps,
+        (avg as u64).separated_string(),
+        devperc
+    );
 }
 
 #[cfg(test)]
