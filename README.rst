@@ -16,7 +16,12 @@ It's just a little challenge:
 Examples
 -------------------------------
 
-Not ready yet...
+The original image followed by Voronoi colorization under L1 (manhattan), L2 (euclidean) and L3 norm:
+
+.. image:: resources/imgs/parrots.png
+.. image:: resources/generated/voronoi_500_L1.png
+.. image:: resources/generated/voronoi_500_L2.png
+.. image:: resources/generated/voronoi_500_L3.png
 
 Performance
 -------------------------------
