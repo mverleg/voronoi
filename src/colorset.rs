@@ -20,6 +20,7 @@ impl PointColorAverages {
     }
 
     pub fn compute(self) -> PointColors {
+        //TODO @mark: parallel
         let mut colors: Vec<Color> = Vec::with_capacity(self.len());
         for avg in self.averages.into_iter() {
             colors.push(avg.calc_avg())

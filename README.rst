@@ -33,9 +33,7 @@ Performance
 * Avoid unnecessary allocations, i.e. keep recycling one vector per thread to store nearest points.
 * Assigning pixels to centers and colorizing the pixels can be parallellized per row without locks. Averaging the colors is harder because the average would be mutably shared.
 
-The Voronoi transform above, with 500 pixels per patch on a small image, takes between 0.02s and 0.05s on my machine overall. This is mostly loading and saving of data and starting of the thread pool - without those, it takes 0.0075s or 133x per second.
-
-For a future time: simd, cache locality, contiguous memory, branch prediction.
+The Voronoi transform above, with 500 pixels per patch on a small image, takes between 0.02s and 0.05s on my machine overall. This is mostly loading and saving of data and starting of the thread pool - without those, it takes 0.0075s or 133x per second. The stripped binary is 1.7mb.
 
 Types
 -------------------------------
@@ -70,5 +68,6 @@ Random observations / hints:
 * Almost everything gets inlines at -O3, so flamegraphs don't work well.
 * To see generated code from derives `cargo rustc -- -Z unstable-options --pretty=expanded`.
 * For some reason, `-C link-dead-code` seems to increase performance by 2-3%, while not increasing size.
+* To profile, `valgrind --tool=callgrind --dump-instr=yes --collect-jumps=yes --simulate-cache=yes`, but note that lots of stuff gets inlined.
 * Allocating a vector of center links per iteration was somehow faster than recycling the same vector repeatedly.
 * Removing all explicit inlines slightly improved performance.

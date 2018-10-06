@@ -33,6 +33,7 @@ pub fn paint_pixels_to_group_color(
     centers: PointColors,
     mut img: Img,
 ) -> Img {
+    //TODO @mark: parallel
     for (x, y, p) in groups.iter_indexed() {
         img[(x, y)] = centers[p];
     }
