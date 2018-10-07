@@ -31,6 +31,12 @@ pub mod argparse;
 pub fn main() {
     let args = App::new("Voronoi benchmark")
         .arg(
+            Arg::with_name("input")
+                .help("Input png file to run voronoiify benchmark on")
+                .short("i")
+                .long("input")
+                .value_name("IN_PTH")
+        ).arg(
             Arg::with_name("reps")
                 .help("How many repetitions")
                 .short("r")
@@ -43,6 +49,15 @@ pub fn main() {
                 .short("v")
                 .long("verbose"),
         ).get_matches();
+
+    let input = Path::new(
+        args.value_of("input")
+            .unwrap_or("resources/imgs/parrots.png")
+    ).to_path_buf();
+    if !input.exists() {
+        eprintln!("Benchmark input file {} does not exist", input.display());
+        exit(2);
+    }
 
     // Repetition count
     let resp = if let Some(sizetxt) = args.value_of("reps") {
