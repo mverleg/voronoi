@@ -1,7 +1,5 @@
 #![feature(extern_prelude)]
 
-//TODO @mark: update readme
-
 extern crate byteorder;
 extern crate clap;
 extern crate rand;

@@ -26,17 +26,65 @@ impl Grouping {
             height,
         }
     }
-
     pub fn width(&self) -> X {
         self.width
     }
-
     pub fn height(&self) -> Y {
         self.height
     }
-
     pub fn iter_indexed(&mut self) -> GroupIndexIterator {
         GroupIndexIterator::new(self)
+    }
+}
+
+// Test only
+pub trait TestTrait {
+    fn empty(width: X, height: Y) -> Grouping;
+
+    fn set(&mut self, x: X, y: Y, point_id: PointId);
+
+    fn get(&self, x: X, y: Y) -> PointId;
+}
+
+// Test only
+impl TestTrait for Grouping {
+    fn empty(width: X, height: Y) -> Grouping {
+        Grouping {
+            center_links: vec![
+                GroupingRow {
+                    center_links_row: vec![PointId::empty(); height.value],
+                    height
+                };
+                width.value as usize
+            ],
+            width,
+            height,
+        }
+    }
+
+    fn set(&mut self, x: X, y: Y, point_id: PointId) {
+        debug_assert!(
+            x.value < self.width().value,
+            format!(
+                "Expectation violated: X {} < X-dim {}\n",
+                x.value,
+                self.width().value
+            )
+        );
+        debug_assert!(
+            y.value < self.height().value,
+            format!(
+                "Expectation violated: Y {} < y-dim {}\n",
+                y.value,
+                self.height().value
+            )
+        );
+        self.center_links[x.value][y] = point_id;
+    }
+
+    fn get(&self, x: X, y: Y) -> PointId {
+        //TODO @mark: from over here, it looks like X and Y should be usize
+        self.center_links[x.value][y]
     }
 }
 
@@ -53,6 +101,11 @@ impl GroupingRow {
             center_links_row,
             height,
         }
+    }
+
+    #[allow(dead_code)]  // Not really unused
+    pub fn height(&self) -> Y {
+        self.height
     }
 }
 

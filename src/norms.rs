@@ -36,7 +36,6 @@ macro_rules! make_dist {
         }
 
         impl $T {
-            #[allow(dead_code)]  // not really dead
             pub fn new(value: f64) -> Option<Self> {
                 if value < 0.0 {
                     return None;
@@ -44,12 +43,12 @@ macro_rules! make_dist {
                 Some($T { value })
             }
 
-            #[allow(dead_code)]  // not really dead
+            #[allow(dead_code)]
             pub fn fnew(value: f64) -> Self {
                 Self::new(value).unwrap()
             }
 
-            #[allow(dead_code)]  // not really dead
+            #[allow(dead_code)]
             pub fn ufloor(&self) -> usize {
                 self.value.floor().abs() as usize
             }
@@ -124,6 +123,7 @@ where
 {
     object.manhattan_pseudo()
 }
+
 #[allow(dead_code)]
 pub fn peuclidean<N>(object: &N) -> PseudoDist
 where
@@ -192,6 +192,7 @@ mod tests {
     use super::*;
     use point::{Step, Step2D};
     use std::f64::consts::PI;
+    use dims::{dX, dY};
 
     fn get_norm_funcs<N>() -> Vec<&'static Fn(&N) -> Dist>
     where

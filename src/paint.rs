@@ -46,6 +46,7 @@ mod tests {
     use color::new_color;
     use dims::{X, Y};
     use pointid::PointId;
+    use grouping::TestTrait;
 
     fn make_groups() -> Grouping {
         let p0 = PointId::new(0);
