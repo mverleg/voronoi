@@ -25,6 +25,7 @@ use vorolib::distribute::default_seed;
 use vorolib::distribute::generate_random_points;
 use vorolib::img::Img;
 use vorolib::voronoiify_image;
+use std::path::PathBuf;
 
 pub mod argparse;
 
@@ -50,6 +51,7 @@ pub fn main() {
                 .long("verbose"),
         ).get_matches();
 
+    // Input
     let input = Path::new(
         args.value_of("input")
             .unwrap_or("resources/imgs/parrots.png")
@@ -75,11 +77,11 @@ pub fn main() {
     let do_log = args.is_present("verbose");
 
     // Run!
-    run_bench(resp, do_log);
+    run_bench(input, resp, do_log);
 }
 
 /// Benchmark function for --benchmark argument (because tests aren't customizable enough)
-pub fn run_bench(reps: usize, do_log: bool) {
+pub fn run_bench(input: PathBuf, reps: usize, do_log: bool) {
     assert!(reps >= 2);
     if do_log {
         println!("running benchmark");
@@ -87,7 +89,7 @@ pub fn run_bench(reps: usize, do_log: bool) {
     let init = Instant::now();
     let mut last_log = 0;
     // Create inputs
-    let pth = test::black_box(Path::new("resources").join("imgs").join("parrots.png"));
+    let pth = test::black_box(input);
     let mut rng: StdRng = SeedableRng::from_seed(default_seed());
     let original_img = Img::load(pth.as_path());
     // Benchmark
@@ -140,6 +142,7 @@ mod tests {
 
     #[bench]
     fn test_full_flow_performance(bench: &mut Bencher) {
-        bench.iter(|| run_bench(10, false));
+        let input = Path::new("resources").join("imgs").join("parrots.png");
+        bench.iter(|| run_bench(input, 10, false));
     }
 }
