@@ -58,6 +58,37 @@ The type safety and tests worked, in a way: the program immediately worked once 
 How to use
 -------------------------------
 
+To install:
+
+    cargo install voronoiify-image
+
+The most simple use is `voronoi my/img/path.png`.
+
+Several customization options can be found in `voronoi --help`.
+
+> Voronoiify
+> Group image into voronoi-based patches and assign the average color to each patch
+>
+> USAGE:
+>     voronoi [FLAGS] [OPTIONS] <IN_PTH>
+>
+> FLAGS:
+>     -h, --help       Prints help information
+>     -s, --show       Show the generated image using EOG
+>     -V, --version    Prints version information
+>
+> OPTIONS:
+>     -o, --output <OUT_PTH>           Path to store the generated file
+>     -r, --seed <SEED>                Random seed between 0 and 2^64 (exclusive)
+>     -c, --patch_size <PATCH_SIZE>    Average number of pixels per group
+>
+> ARGS:
+>     <IN_PTH>    Input png file to voronoiify
+
+The package is stable, but is not very rich in features. I.e. it is only tested with png images without alpha channels, and displaying the image is done with EOG. Pull requests are welcome!
+
+Development use:
+
 * Compile: `RUSTFLAGS="-C target-cpu=native" cargo build --release --bin voronoi-benchmark --bin voronoi`
 * Decrease size: `strip target/release/voronoi target/release/voronoi-benchmark`
 * Run: `target/release/voronoi resources/imgs/parrots.png --show`
