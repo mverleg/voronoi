@@ -10,7 +10,7 @@ This little project:
 
 It's just a little challenge:
 
-* Try to get good performance, by using algorithms with good complexity and by avoiding inefficiencies. No advanced math of GPUs, though.
+* Try to get good performance, by using algorithms with good complexity and by avoiding inefficiencies. No advanced math or GPUs, though.
 * Make it all as type-safe as possible.
 
 Examples
