@@ -43,7 +43,7 @@ impl Index<PointId> for PointColorAverages {
 }
 
 impl IndexMut<PointId> for PointColorAverages {
-    fn index_mut<'a>(&'a mut self, index: PointId) -> &'a mut Self::Output {
+    fn index_mut(&mut self, index: PointId) -> &mut Self::Output {
         self.get(index)
     }
 }
@@ -76,7 +76,7 @@ impl Index<PointId> for PointColors {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use color::new_color;
+    use crate::color::new_color;
 
     #[test]
     fn test_averages_to_colors() {

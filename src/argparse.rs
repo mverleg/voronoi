@@ -18,33 +18,38 @@ pub fn parse_args() -> (PathBuf, PathBuf, usize, bool, [u8; 32]) {
                 .required(true)
                 .value_name("IN_PTH")
                 .index(1),
-        ).arg(
+        )
+        .arg(
             Arg::with_name("output")
                 .help("Path to store the generated file")
                 .short("o")
                 .long("output")
                 .value_name("OUT_PTH")
                 .takes_value(true),
-        ).arg(
+        )
+        .arg(
             Arg::with_name("size")
                 .help("Average number of pixels per group")
                 .short("c")
                 .long("patch_size")
                 .value_name("PATCH_SIZE")
                 .takes_value(true),
-        ).arg(
+        )
+        .arg(
             Arg::with_name("show")
                 .help("Show the generated image using EOG")
                 .short("s")
                 .long("show"),
-        ).arg(
+        )
+        .arg(
             Arg::with_name("seed")
                 .help("Random seed between 0 and 2^64 (exclusive)")
                 .short("r")
                 .long("seed")
                 .value_name("SEED")
                 .takes_value(true),
-        ).get_matches();
+        )
+        .get_matches();
 
     // Input
     let input = Path::new(args.value_of("input").unwrap()).to_path_buf();

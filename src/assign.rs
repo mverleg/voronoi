@@ -45,18 +45,14 @@ fn assign_to_centers_for_row(x: X, y_range: Y, centers: &UPoints) -> GroupingRow
             &mut output_vec,
         );
         // `output_vec` will contain the result of `within_box_noalloc`
-        let nearest: PointId = find_nearest_to_reference(current, &mut output_vec, &centers);
+        let nearest: PointId = find_nearest_to_reference(current, &output_vec, &centers);
         links.push(nearest);
         reference = centers.get(nearest);
     }
     GroupingRow::from(links, y_range)
 }
 
-fn find_nearest_to_reference(
-    point: Point2D,
-    candidates: &Vec<PointId>,
-    centers: &UPoints,
-) -> PointId {
+fn find_nearest_to_reference(point: Point2D, candidates: &[PointId], centers: &UPoints) -> PointId {
     debug_assert!(
         centers.len() > 0,
         "There are no centers within the bounding box, which should never happen"

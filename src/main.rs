@@ -1,4 +1,5 @@
 use argparse::parse_args;
+use rand::rngs::StdRng;
 use rand::SeedableRng;
 use scoped_pool::Pool;
 #[allow(unused_imports)]
@@ -6,7 +7,6 @@ use std::process::Command;
 use vorolib::distribute::generate_random_points;
 use vorolib::img::Img;
 use vorolib::voronoiify_image;
-use rand::rngs::StdRng;
 
 pub mod argparse;
 

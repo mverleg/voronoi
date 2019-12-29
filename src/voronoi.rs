@@ -32,6 +32,5 @@ pub fn voronoiify_image(img: &mut Img, center_points: &mut UPoints, workers: &Po
     let center_colors = center_points.new_color_averager();
     // Assign all pixels to the nearest center.
     let groups = assign_to_centers(center_points, &workers);
-    let voronoi = pixel_to_group_colors(groups, center_colors, img);
-    voronoi
+    pixel_to_group_colors(groups, center_colors, img)
 }

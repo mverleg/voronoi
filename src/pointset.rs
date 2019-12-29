@@ -7,7 +7,6 @@ use crate::pointid::PointId;
 use ::std::cmp::Ordering;
 #[cfg(debug_assertions)]
 use ::std::collections::HashSet;
-#[allow(unused)] // I think the compiler is wrong here
 use ::std::iter::FromIterator;
 
 /// Collection of *unique* points.
@@ -151,9 +150,9 @@ impl IntoIterator for UPoints {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use dims::{X, Y};
-    use distribute::generate_fixed_points;
-    use std::collections::HashSet;
+    use crate::dims::{X, Y};
+    use crate::distribute::generate_fixed_points;
+    use ::std::collections::HashSet;
 
     #[test]
     fn test_within_one_eq() {
@@ -161,7 +160,7 @@ mod tests {
         let matches = points.within_box(Point2D::from_raw(4, 4), Dist::fnew(3.0));
         assert_eq!(4, matches.len());
         let lookup: HashSet<Point2D> =
-            HashSet::from_iter(matches.clone().into_iter().map(|id| points.get(id)));
+            HashSet::from_iter(matches.into_iter().map(|id| points.get(id)));
         assert!(lookup.contains(&Point2D::from_raw(2, 2)));
         assert!(lookup.contains(&Point2D::from_raw(2, 7)));
         assert!(lookup.contains(&Point2D::from_raw(7, 2)));
@@ -174,7 +173,7 @@ mod tests {
         let matches = points.within_box(Point2D::from_raw(4, 4), Dist::fnew(2.0));
         assert_eq!(1, matches.len());
         let lookup: HashSet<Point2D> =
-            HashSet::from_iter(matches.clone().into_iter().map(|id| points.get(id)));
+            HashSet::from_iter(matches.into_iter().map(|id| points.get(id)));
         assert!(lookup.contains(&Point2D::from_raw(2, 2)));
     }
 }

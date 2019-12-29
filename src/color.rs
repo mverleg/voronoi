@@ -26,6 +26,7 @@ impl RgbColorAverage {
             count: 0,
         }
     }
+
     pub fn calc_avg(&self) -> Color {
         debug_assert!(self.count > 0, "No colors have been added for this average; this should not happen if all points are unique");
         new_color(
@@ -34,11 +35,18 @@ impl RgbColorAverage {
             (self.c2 / self.count) as u8,
         )
     }
+
     fn add(&mut self, color: Color) {
         self.c0 += color.0[0] as u32;
         self.c1 += color.0[1] as u32;
         self.c2 += color.0[2] as u32;
         self.count += 1;
+    }
+}
+
+impl Default for RgbColorAverage {
+    fn default() -> Self {
+        RgbColorAverage::new()
     }
 }
 

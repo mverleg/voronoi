@@ -190,15 +190,15 @@ impl_norm_for_dim!(Y);
 #[cfg(test)]
 mod tests {
     use super::*;
-    use point::{Step, Step2D};
-    use std::f64::consts::PI;
-    use dims::{dX, dY};
+    use crate::dims::{dX, dY};
+    use crate::point::{Step, Step2D};
+    use ::std::f64::consts::PI;
 
-    fn get_norm_funcs<N>() -> Vec<&'static Fn(&N) -> Dist>
+    fn get_norm_funcs<N>() -> Vec<&'static dyn Fn(&N) -> Dist>
     where
         N: Norm,
     {
-        let mut funcs: Vec<&'static Fn(&N) -> Dist> = Vec::with_capacity(3);
+        let mut funcs: Vec<&'static dyn Fn(&N) -> Dist> = Vec::with_capacity(3);
         funcs.push(&manhattan);
         funcs.push(&euclidean);
         funcs.push(&L3);

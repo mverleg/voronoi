@@ -103,7 +103,7 @@ impl GroupingRow {
         }
     }
 
-    #[allow(dead_code)]  // Not really unused
+    #[allow(dead_code)] // Not really unused
     pub fn height(&self) -> Y {
         self.height
     }

@@ -1,7 +1,7 @@
 use ::std::collections::HashSet;
 
-use ::rand::Rng;
 use ::rand::rngs::StdRng;
+use ::rand::Rng;
 
 use crate::dims::{X, Y};
 use crate::img::Img;

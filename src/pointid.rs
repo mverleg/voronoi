@@ -29,7 +29,7 @@ impl PointId {
     }
 
     /// Expose the internal value. Careful with trying to use this to get around type safety.
-    pub fn as_index(&self) -> usize {
+    pub fn as_index(self) -> usize {
         self.value
     }
 }
