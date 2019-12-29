@@ -129,7 +129,6 @@ pub fn run_bench(input: PathBuf, reps: usize, do_log: bool) {
 
 #[cfg(test)]
 mod tests {
-    #![feature(test)]
     extern crate test;
     use super::*;
     use test::Bencher;
@@ -138,6 +137,6 @@ mod tests {
     #[bench]
     fn test_full_flow_performance(bench: &mut Bencher) {
         let input = Path::new("resources").join("imgs").join("parrots.png");
-        bench.iter(move || run_bench(input, 10, false));
+        bench.iter(|| run_bench(input.clone(), 10, false));
     }
 }
