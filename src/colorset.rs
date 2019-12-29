@@ -1,8 +1,8 @@
-use color::Color;
-use color::RgbColorAverage;
-use pointid::PointId;
-use std::ops::Index;
-use std::ops::IndexMut;
+use crate::color::Color;
+use crate::color::RgbColorAverage;
+use crate::pointid::PointId;
+use ::std::ops::Index;
+use ::std::ops::IndexMut;
 
 /// A color-averaging object per point.
 #[derive(Debug)]

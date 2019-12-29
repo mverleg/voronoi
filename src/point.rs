@@ -1,6 +1,6 @@
-use dims::{dX, dY, X, Y};
-use std::hash::Hash;
-use std::ops::Sub;
+use crate::dims::{dX, dY, X, Y};
+use ::std::hash::Hash;
+use ::std::ops::Sub;
 
 pub trait Point: Sized + Eq + Hash {
     fn new(x: X, y: Y) -> Self;

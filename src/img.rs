@@ -1,10 +1,10 @@
-use color::Color;
-use dims::{X, Y};
-use image::DynamicImage;
-use image::ImageBuffer;
-use std::ops::Index;
-use std::ops::IndexMut;
-use std::path::Path;
+use crate::color::Color;
+use crate::dims::{X, Y};
+use ::image::DynamicImage;
+use ::image::ImageBuffer;
+use ::std::ops::Index;
+use ::std::ops::IndexMut;
+use ::std::path::Path;
 
 pub struct Img {
     data: ImageBuffer<Color, Vec<u8>>,

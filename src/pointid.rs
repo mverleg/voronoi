@@ -1,5 +1,5 @@
-use find_index::Mid;
-use std::ops::{Add, Sub};
+use crate::find_index::Mid;
+use ::std::ops::{Add, Sub};
 
 #[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq)]
 pub struct PointId {

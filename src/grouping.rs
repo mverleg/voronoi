@@ -1,8 +1,8 @@
-use dims::{X, Y};
-use pointid::PointId;
-use std::ops::Index;
-use std::ops::IndexMut;
-use std::vec::IntoIter;
+use crate::dims::{X, Y};
+use crate::pointid::PointId;
+use ::std::ops::Index;
+use ::std::ops::IndexMut;
+use ::std::vec::IntoIter;
 
 #[derive(Debug)]
 pub struct Grouping {

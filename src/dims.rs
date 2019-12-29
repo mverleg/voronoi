@@ -1,5 +1,5 @@
-use find_index::Mid;
-use std::ops::{Add, Sub};
+use crate::find_index::Mid;
+use ::std::ops::{Add, Sub};
 
 /// These X and Y are indices (unsigned integers), not physical distances.
 

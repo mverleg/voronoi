@@ -1,14 +1,14 @@
-use colorset::PointColorAverages;
-use dims::{X, Y};
-use find_index::find_index;
-use norms::Dist;
-use point::Point2D;
-use pointid::PointId;
-use std::cmp::Ordering;
+use crate::colorset::PointColorAverages;
+use crate::dims::{X, Y};
+use crate::find_index::find_index;
+use crate::norms::Dist;
+use crate::point::Point2D;
+use crate::pointid::PointId;
+use ::std::cmp::Ordering;
 #[cfg(debug_assertions)]
-use std::collections::HashSet;
+use ::std::collections::HashSet;
 #[allow(unused)] // I think the compiler is wrong here
-use std::iter::FromIterator;
+use ::std::iter::FromIterator;
 
 /// Collection of *unique* points.
 #[derive(Debug)]

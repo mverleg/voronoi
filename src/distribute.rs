@@ -1,14 +1,14 @@
-use std::collections::HashSet;
+use ::std::collections::HashSet;
 
-use rand::Rng;
-use rand::rngs::StdRng;
+use ::rand::Rng;
+use ::rand::rngs::StdRng;
 
-use dims::{X, Y};
-use img::Img;
-use norms::Dist;
-use norms::Norm;
-use point::Point2D;
-use pointset::UPoints;
+use crate::dims::{X, Y};
+use crate::img::Img;
+use crate::norms::Dist;
+use crate::norms::Norm;
+use crate::point::Point2D;
+use crate::pointset::UPoints;
 
 /// Distribute points randomly.
 pub fn generate_random_points(img: &Img, avg_patch_size: usize, rng: &mut StdRng) -> UPoints {

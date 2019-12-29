@@ -1,7 +1,7 @@
-use colorset::PointColorAverages;
-use colorset::PointColors;
-use grouping::Grouping;
-use img::Img;
+use crate::colorset::PointColorAverages;
+use crate::colorset::PointColors;
+use crate::grouping::Grouping;
+use crate::img::Img;
 
 /// Set the color of each pixel to the average of the group.
 pub fn pixel_to_group_colors(

@@ -1,8 +1,8 @@
-use dims::{X, Y};
-use point::Step2D;
-use std::ops::Add;
-use std::ops::Mul;
-use std::ops::Sub;
+use crate::dims::{X, Y};
+use crate::point::Step2D;
+use ::std::ops::Add;
+use ::std::ops::Mul;
+use ::std::ops::Sub;
 
 /// Trait for objects that have a length (norm). Specifically L1, L2 and L3.
 #[allow(non_snake_case)]

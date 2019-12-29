@@ -4,9 +4,10 @@ name = "voronoiify-image"
 description = "Divide a PNG image into random nearest-neighbour regions and give each regio the average color of its pixels"
 license = "Apache-2.0"
 repository = "https://github.com/mverleg/voronoi"
-version = "1.0.2"
+version = "1.0.3"
 authors = ["Mark <mverleg.noreply@gmail.com>"]
 default-run = "voronoi"
+edition = "2018"
 
 [dependencies]
 image = "0.23.0-preview.0"
