@@ -1,7 +1,5 @@
-#![feature(extern_prelude)]
 #![feature(nll)]
 #![feature(test)]
-#![feature(duration_as_u128)]
 
 /// alloc_system avoids using the default bundled allocator, to save space
 /// todo: could not get this to work, no space saved at all

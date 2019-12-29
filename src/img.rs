@@ -2,7 +2,6 @@ use color::Color;
 use dims::{X, Y};
 use image::DynamicImage;
 use image::ImageBuffer;
-use std::io;
 use std::ops::Index;
 use std::ops::IndexMut;
 use std::path::Path;
@@ -47,7 +46,7 @@ impl Img {
         (self.width().value * self.height().value) as usize
     }
 
-    pub fn save<Q>(&self, path: Q) -> io::Result<()>
+    pub fn save<Q>(&self, path: Q) -> Result<(), image::ImageError>
     where
         Q: AsRef<Path>,
     {

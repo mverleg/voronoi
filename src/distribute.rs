@@ -1,11 +1,14 @@
+use std::collections::HashSet;
+
+use rand::Rng;
+use rand::rngs::StdRng;
+
 use dims::{X, Y};
 use img::Img;
 use norms::Dist;
 use norms::Norm;
 use point::Point2D;
 use pointset::UPoints;
-use rand::{Rng, StdRng};
-use std::collections::HashSet;
 
 /// Distribute points randomly.
 pub fn generate_random_points(img: &Img, avg_patch_size: usize, rng: &mut StdRng) -> UPoints {
@@ -44,8 +47,9 @@ pub fn generate_fixed_points(width: X, height: Y, count: usize) -> UPoints {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use std::iter::FromIterator;
+
+    use super::*;
 
     #[test]
     fn test_equidistant() {

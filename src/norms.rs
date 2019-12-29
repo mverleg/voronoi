@@ -84,8 +84,8 @@ macro_rules! make_dist {
 }
 
 make_dist!(Dist);
-/// Pseudo-distance is not a valid norm, but rather a value with the only guarantees
-/// that is has the exact same partial order as the real norm ([Dist]) and is non-negative.
+// Pseudo-distance is not a valid norm, but rather a value with the only guarantees
+// that is has the exact same partial order as the real norm ([Dist]) and is non-negative.
 make_dist!(PseudoDist);
 
 /// Manhattan (L1) distance for horizontal/vertical edges.

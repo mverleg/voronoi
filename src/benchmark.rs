@@ -1,8 +1,5 @@
 #![feature(test)]
 #![feature(plugin)]
-#![feature(custom_attribute)]
-#![feature(duration_as_u128)]
-#![feature(extern_prelude)]
 
 extern crate byteorder;
 extern crate clap;
@@ -12,20 +9,23 @@ extern crate separator;
 extern crate test;
 extern crate vorolib;
 
-use clap::{App, Arg};
-use rand::{SeedableRng, StdRng};
-use scoped_pool::Pool;
-use separator::Separatable;
 use std::path::Path;
-use std::process::exit;
+use std::path::PathBuf;
 #[allow(unused_imports)]
 use std::process::Command;
+use std::process::exit;
 use std::time::Instant;
+
+use clap::{App, Arg};
+use rand::rngs::StdRng;
+use rand::SeedableRng;
+use scoped_pool::Pool;
+use separator::Separatable;
+
 use vorolib::distribute::default_seed;
 use vorolib::distribute::generate_random_points;
 use vorolib::img::Img;
 use vorolib::voronoiify_image;
-use std::path::PathBuf;
 
 pub mod argparse;
 
@@ -137,8 +137,9 @@ pub fn run_bench(input: PathBuf, reps: usize, do_log: bool) {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use test::Bencher;
+
+    use super::*;
 
     #[bench]
     fn test_full_flow_performance(bench: &mut Bencher) {

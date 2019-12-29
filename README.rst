@@ -89,14 +89,14 @@ The package is stable, but is not very rich in features. I.e. it is only tested 
 
 Development use:
 
-* Compile: `RUSTFLAGS="-C target-cpu=native" cargo build --release --bin voronoi-benchmark --bin voronoi`
+* Compile: `cargo build --release --bin voronoi-benchmark --bin voronoi`
 * Decrease size: `strip target/release/voronoi target/release/voronoi-benchmark`
 * Run: `target/release/voronoi resources/imgs/parrots.png --show`
 * Benchmark: `time target/release/voronoi-benchmark`
 
 Random observations / hints:
 
-* Almost everything gets inlines at -O3, so flamegraphs don't work well.
+* Almost everything gets inlines at -O3, so flamegraphs don't work well. use `RUSTFLAGS=-Cinline-threshold=0` to disable inlining.
 * To see generated code from derives `cargo rustc -- -Z unstable-options --pretty=expanded`.
 * For some reason, `-C link-dead-code` seems to increase performance by 2-3%, while not increasing size.
 * To profile, `valgrind --tool=callgrind --dump-instr=yes --collect-jumps=yes --simulate-cache=yes`, but note that lots of stuff gets inlined.

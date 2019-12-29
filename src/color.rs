@@ -35,9 +35,9 @@ impl RgbColorAverage {
         )
     }
     fn add(&mut self, color: Color) {
-        self.c0 += color.data[0] as u32;
-        self.c1 += color.data[1] as u32;
-        self.c2 += color.data[2] as u32;
+        self.c0 += color.0[0] as u32;
+        self.c1 += color.0[1] as u32;
+        self.c2 += color.0[2] as u32;
         self.count += 1;
     }
 }
