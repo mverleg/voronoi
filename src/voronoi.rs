@@ -1,19 +1,6 @@
 #![feature(nll)]
 #![feature(test)]
 
-/// alloc_system avoids using the default bundled allocator, to save space
-/// todo: could not get this to work, no space saved at all
-// #![feature(alloc_system)]
-// extern crate alloc_system;
-extern crate byteorder;
-extern crate clap;
-extern crate image;
-extern crate num_cpus;
-extern crate rand;
-extern crate scoped_pool;
-extern crate separator;
-extern crate test;
-
 use assign::assign_to_centers;
 use img::Img;
 use paint::pixel_to_group_colors;

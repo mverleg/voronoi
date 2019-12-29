@@ -123,7 +123,7 @@ impl Iterator for GroupingRowIterator {
             None => None,
         };
         self.index += 1;
-        return val;
+        val
     }
 }
 

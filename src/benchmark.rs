@@ -1,14 +1,6 @@
 #![feature(test)]
 #![feature(plugin)]
 
-extern crate byteorder;
-extern crate clap;
-extern crate rand;
-extern crate scoped_pool;
-extern crate separator;
-extern crate test;
-extern crate vorolib;
-
 use std::path::Path;
 use std::path::PathBuf;
 #[allow(unused_imports)]
@@ -89,7 +81,7 @@ pub fn run_bench(input: PathBuf, reps: usize, do_log: bool) {
     let init = Instant::now();
     let mut last_log = 0;
     // Create inputs
-    let pth = test::black_box(input);
+    let pth = ::core::hint::black_box(input);
     let mut rng: StdRng = SeedableRng::from_seed(default_seed());
     let original_img = Img::load(pth.as_path());
     // Benchmark
@@ -109,7 +101,7 @@ pub fn run_bench(input: PathBuf, reps: usize, do_log: bool) {
         let mut img = original_img.clone();
         let mut centers = generate_random_points(&img, 100, &mut rng);
         let start = Instant::now();
-        test::black_box(voronoiify_image(&mut img, &mut centers, &workers));
+        ::core::hint::black_box(voronoiify_image(&mut img, &mut centers, &workers));
         let end = Instant::now();
         times_ns.push(end.duration_since(start).as_nanos() as u64);
         //        times_ns.push(1u64);
@@ -137,13 +129,15 @@ pub fn run_bench(input: PathBuf, reps: usize, do_log: bool) {
 
 #[cfg(test)]
 mod tests {
+    #![feature(test)]
+    extern crate test;
+    use super::*;
     use test::Bencher;
 
-    use super::*;
 
     #[bench]
     fn test_full_flow_performance(bench: &mut Bencher) {
         let input = Path::new("resources").join("imgs").join("parrots.png");
-        bench.iter(|| run_bench(input, 10, false));
+        bench.iter(move || run_bench(input, 10, false));
     }
 }

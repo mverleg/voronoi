@@ -20,7 +20,7 @@ macro_rules! make_dim {
                 self.value
             }
             pub fn indices_upto(&self) -> impl Iterator<Item = $T> {
-                (0..self.value).map(|val| $T::new(val))
+                (0..self.value).map($T::new)
             }
             pub fn saturating_sub(self, other: usize) -> Self {
                 $T {

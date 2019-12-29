@@ -5,7 +5,7 @@ use crate::parmap::par_map_on;
 use crate::point::{Point, Point2D};
 use crate::pointid::PointId;
 use crate::pointset::UPoints;
-use crate::scoped_pool::Pool;
+use ::scoped_pool::Pool;
 
 /// This assigns the correct PointId to every single cell in `groups`.
 pub fn assign_to_centers(centers: &mut UPoints, workers: &Pool) -> Grouping {
