@@ -33,7 +33,7 @@ Performance
 * Avoid unnecessary allocations, i.e. keep recycling one vector per thread to store nearest points.
 * Assigning pixels to centers and colorizing the pixels can be parallellized per row without locks. Averaging the colors is harder because the average would be mutably shared.
 
-The Voronoi transform above, with 500 pixels per patch on a small image, takes between 0.02s and 0.05s on my machine overall. This is mostly loading and saving of data and starting of the thread pool - without those, it takes 0.0075s or 133x per second. The stripped binary is 1.7mb.
+The Voronoi transform above, with 500 pixels per patch on a small image, takes between 0.02s and 0.05s on my machine overall. This is mostly loading and saving of data and starting of the thread pool - without those, it takes 0.0073s or 137x per second. The binary is 1.4mb.
 
 Types
 -------------------------------
@@ -90,7 +90,6 @@ The package is stable, but is not very rich in features. I.e. it is only tested 
 Development use:
 
 * Compile: `cargo build --release --bin voronoi-benchmark --bin voronoi`
-* Decrease size: `strip target/release/voronoi target/release/voronoi-benchmark`
 * Run: `target/release/voronoi resources/imgs/parrots.png --show`
 * Benchmark: `time target/release/voronoi-benchmark`
 
@@ -98,7 +97,6 @@ Random observations / hints:
 
 * Almost everything gets inlines at -O3, so flamegraphs don't work well. use `RUSTFLAGS=-Cinline-threshold=0` to disable inlining.
 * To see generated code from derives `cargo rustc -- -Z unstable-options --pretty=expanded`.
-* For some reason, `-C link-dead-code` seems to increase performance by 2-3%, while not increasing size.
 * To profile, `valgrind --tool=callgrind --dump-instr=yes --collect-jumps=yes --simulate-cache=yes`, but note that lots of stuff gets inlined.
 * Allocating a vector of center links per iteration was somehow faster than recycling the same vector repeatedly.
 * Removing all explicit inlines slightly improved performance.
