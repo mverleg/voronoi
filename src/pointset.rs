@@ -7,6 +7,7 @@ use crate::pointid::PointId;
 use ::std::cmp::Ordering;
 #[cfg(debug_assertions)]
 use ::std::collections::HashSet;
+#[cfg(debug_assertions)]
 use ::std::iter::FromIterator;
 
 /// Collection of *unique* points.
@@ -153,6 +154,7 @@ mod tests {
     use crate::dims::{X, Y};
     use crate::distribute::generate_fixed_points;
     use ::std::collections::HashSet;
+    use ::std::iter::FromIterator;
 
     #[test]
     fn test_within_one_eq() {

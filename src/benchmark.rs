@@ -1,6 +1,11 @@
 #![feature(test)]
 #![feature(plugin)]
 
+#[cfg(feature = "flame_it")]
+extern crate flame;
+#[cfg(feature = "flame_it")]
+#[macro_use] extern crate flamer;
+
 use std::path::Path;
 use std::path::PathBuf;
 use std::process::exit;
@@ -21,6 +26,7 @@ use vorolib::voronoiify_image;
 
 pub mod argparse;
 
+#[cfg_attr(feature = "flame_it", flame)]
 pub fn main() {
     let args = App::new("Voronoi benchmark")
         .arg(
@@ -76,18 +82,31 @@ pub fn main() {
     run_bench(input, resp, do_log);
 }
 
+#[cfg_attr(feature = "flame_it", flame)]
+pub fn load_img(pth: &Path) -> Img {
+    Img::load(pth)
+}
+
 /// Benchmark function for --benchmark argument (because tests aren't customizable enough)
-pub fn run_bench(input: PathBuf, reps: usize, do_log: bool) {
+#[cfg_attr(feature = "flame_it", flame)]
+pub fn run_bench(input: PathBuf, reps: usize, do_log_flag: bool) {
     assert!(reps >= 2);
-    if do_log {
-        println!("running benchmark");
-    }
+
+    let do_log: bool = if cfg!(feature = "log_it") {
+        do_log_flag
+    } else {
+        if do_log_flag {
+            eprintln!("cannot do verbose logging, because feature 'log_it' was disabled");
+        }
+        false
+    };
+
     let init = Instant::now();
     let mut last_log = 0;
     // Create inputs
     let pth = ::core::hint::black_box(input);
     let mut rng: StdRng = SeedableRng::from_seed(default_seed());
-    let original_img = Img::load(pth.as_path());
+    let original_img = load_img(pth.as_path());
     // Benchmark
     let mut times_ns: Vec<u64> = Vec::with_capacity(reps + 1);
     if do_log {
@@ -124,10 +143,11 @@ pub fn run_bench(input: PathBuf, reps: usize, do_log: bool) {
         .sqrt();
     let devperc = 100f64 * std / (avg as f64);
     println!(
-        "{} reps took {} ns ± {:.2} % each",
+        "{} reps took {} ns ± {:.2} % each ({} per second)",
         reps,
         (avg as u64).separated_string(),
-        devperc
+        devperc,
+        1_000_000_000 / avg
     );
 }
 
