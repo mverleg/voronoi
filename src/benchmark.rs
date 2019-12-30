@@ -6,23 +6,23 @@ extern crate flame;
 #[cfg(feature = "flame_it")]
 #[macro_use] extern crate flamer;
 
-use std::path::Path;
-use std::path::PathBuf;
-use std::process::exit;
+use ::std::path::Path;
+use ::std::path::PathBuf;
+use ::std::process::exit;
 #[allow(unused_imports)]
-use std::process::Command;
-use std::time::Instant;
+use ::std::process::Command;
+use ::std::time::Instant;
 
-use clap::{App, Arg};
-use rand::rngs::StdRng;
-use rand::SeedableRng;
-use scoped_pool::Pool;
-use separator::Separatable;
+use ::clap::{App, Arg};
+use ::rand::rngs::StdRng;
+use ::rand::SeedableRng;
+use ::scoped_pool::Pool;
+use ::separator::Separatable;
 
-use vorolib::distribute::default_seed;
-use vorolib::distribute::generate_random_points;
-use vorolib::img::Img;
-use vorolib::voronoiify_image;
+use crate::vorolib::distribute::default_seed;
+use crate::vorolib::distribute::generate_random_points;
+use crate::vorolib::img::Img;
+use crate::vorolib::voronoiify_image;
 
 pub mod argparse;
 
@@ -87,6 +87,31 @@ pub fn load_img(pth: &Path) -> Img {
     Img::load(pth)
 }
 
+#[cfg_attr(feature = "flame_it", flame)]
+pub fn clone_img(img: &Img) -> Img {
+    img.clone()
+}
+
+#[cfg_attr(feature = "flame_it", flame)]
+pub fn report_total_time(times_ns: &[u64]) {
+    let avg: u64 = times_ns.iter().skip(1).sum::<u64>() / (reps as u64);
+    let std: f64 = ((times_ns
+        .iter()
+        .skip(1)
+        .map(|t| (if t > &avg { t - avg } else { avg - t }).pow(2))
+        .sum::<u64>()
+        / (reps - 1) as u64) as f64)
+        .sqrt();
+    let devperc = 100f64 * std / (avg as f64);
+    println!(
+        "{} reps took {} ns ± {:.2} % each ({} per second)",
+        reps,
+        (avg as u64).separated_string(),
+        devperc,
+        1_000_000_000 / avg
+    );
+}
+
 /// Benchmark function for --benchmark argument (because tests aren't customizable enough)
 #[cfg_attr(feature = "flame_it", flame)]
 pub fn run_bench(input: PathBuf, reps: usize, do_log_flag: bool) {
@@ -121,7 +146,7 @@ pub fn run_bench(input: PathBuf, reps: usize, do_log_flag: bool) {
                 println!(" {:4} / {:4}", rep, reps);
             }
         }
-        let mut img = original_img.clone();
+        let mut img = clone_img(&original_img);
         let mut centers = generate_random_points(&img, 100, &mut rng);
         let start = Instant::now();
         ::core::hint::black_box(voronoiify_image(&mut img, &mut centers, &workers));
@@ -133,22 +158,7 @@ pub fn run_bench(input: PathBuf, reps: usize, do_log_flag: bool) {
         println!(" {:4} / {:4}", reps, reps);
     }
     // First iteration is for warmup
-    let avg: u64 = times_ns.iter().skip(1).sum::<u64>() / (reps as u64);
-    let std: f64 = ((times_ns
-        .iter()
-        .skip(1)
-        .map(|t| (if t > &avg { t - avg } else { avg - t }).pow(2))
-        .sum::<u64>()
-        / (reps - 1) as u64) as f64)
-        .sqrt();
-    let devperc = 100f64 * std / (avg as f64);
-    println!(
-        "{} reps took {} ns ± {:.2} % each ({} per second)",
-        reps,
-        (avg as u64).separated_string(),
-        devperc,
-        1_000_000_000 / avg
-    );
+    report_total_time(&times_ns);
 }
 
 #[cfg(test)]

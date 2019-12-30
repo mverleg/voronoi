@@ -28,6 +28,7 @@ mod pointid;
 mod pointset;
 
 /// Voronoi transform function
+#[cfg_attr(feature = "flame_it", flame)]
 pub fn voronoiify_image(img: &mut Img, center_points: &mut UPoints, workers: &Pool) -> Img {
     let center_colors = center_points.new_color_averager();
     // Assign all pixels to the nearest center.

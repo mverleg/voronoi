@@ -1,3 +1,4 @@
+
 use ::std::collections::HashSet;
 
 use ::rand::rngs::StdRng;
@@ -11,6 +12,7 @@ use crate::point::Point2D;
 use crate::pointset::UPoints;
 
 /// Distribute points randomly.
+#[cfg_attr(feature = "flame_it", flame)]
 pub fn generate_random_points(img: &Img, avg_patch_size: usize, rng: &mut StdRng) -> UPoints {
     debug_assert!(avg_patch_size > 0);
     let (width, height, count) = (img.width(), img.height(), img.pixel_cnt() / avg_patch_size);
