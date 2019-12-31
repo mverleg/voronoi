@@ -4,6 +4,7 @@ use crate::grouping::Grouping;
 use crate::img::Img;
 
 /// Set the color of each pixel to the average of the group.
+#[cfg_attr(feature = "flame_it", flame)]
 pub fn pixel_to_group_colors(
     mut groups: Grouping,
     mut centers_average_color: PointColorAverages,

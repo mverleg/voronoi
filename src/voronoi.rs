@@ -1,5 +1,11 @@
 #![feature(nll)]
 #![feature(test)]
+#![cfg_attr(feature = "flame_it", feature(proc_macro_hygiene))]
+
+#[cfg(feature = "flame_it")]
+extern crate flame;
+#[cfg(feature = "flame_it")]
+#[macro_use] extern crate flamer;
 
 use assign::assign_to_centers;
 use img::Img;

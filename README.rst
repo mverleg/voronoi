@@ -95,8 +95,30 @@ Development use:
 
 Random observations / hints:
 
-* Almost everything gets inlines at -O3, so flamegraphs don't work well. use `RUSTFLAGS=-Cinline-threshold=0` to disable inlining.
+* Almost everything gets inlines at -O3, so flamegraphs don't work well.
 * To see generated code from derives `cargo rustc -- -Z unstable-options --pretty=expanded`.
 * To profile, `valgrind --tool=callgrind --dump-instr=yes --collect-jumps=yes --simulate-cache=yes`, but note that lots of stuff gets inlined.
 * Allocating a vector of center links per iteration was somehow faster than recycling the same vector repeatedly.
 * Removing all explicit inlines slightly improved performance.
+
+Flamegraphs
+-------------------------------
+
+I previously experimented with ``flame``/``flamer`` (feature: ``flame_it``), but I switched to cargo flamegraph_ (fewer code change and can fold stack).
+
+Then make sure that:
+
+* ``perf`` is installed, on Ubuntu: ``apt-get install linux-tools-common linux-tools-generic linux-tools-$(uname -r)``
+* ``cargo install flamegraph``
+* In ``Cargo.toml``, you have ``debug = true`` for ``[profile.release]``.
+* In ``RUSTFLAGS``, you have ``-Cinline-threshold=0``.
+
+Then create the flamegraph like this::
+
+    RUSTFLAGS="-Ctarget-cpu=native -Cinline-threshold=0" cargo flamegraph -o target/flame.svg --bin=voronoi-benchmark -- --reps 500
+    firefox target/flame.svg
+
+Note that disabling inlining may double the time needed to run.
+
+
+.. _flamegraph: https://github.com/ferrous-systems/flamegraph

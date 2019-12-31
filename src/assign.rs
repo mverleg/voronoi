@@ -8,6 +8,7 @@ use crate::pointset::UPoints;
 use ::scoped_pool::Pool;
 
 /// This assigns the correct PointId to every single cell in `groups`.
+#[cfg_attr(feature = "flame_it", flame)]
 pub fn assign_to_centers(centers: &mut UPoints, workers: &Pool) -> Grouping {
     debug_assert!(centers.len() > 0);
 

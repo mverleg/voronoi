@@ -1,5 +1,6 @@
 #![feature(test)]
 #![feature(plugin)]
+#![cfg_attr(feature = "flame_it", feature(proc_macro_hygiene))]
 
 #[cfg(feature = "flame_it")]
 extern crate flame;
@@ -8,9 +9,9 @@ extern crate flame;
 
 use ::std::path::Path;
 use ::std::path::PathBuf;
-use ::std::process::exit;
 #[allow(unused_imports)]
 use ::std::process::Command;
+use ::std::process::exit;
 use ::std::time::Instant;
 
 use ::clap::{App, Arg};
@@ -19,10 +20,12 @@ use ::rand::SeedableRng;
 use ::scoped_pool::Pool;
 use ::separator::Separatable;
 
-use crate::vorolib::distribute::default_seed;
-use crate::vorolib::distribute::generate_random_points;
-use crate::vorolib::img::Img;
-use crate::vorolib::voronoiify_image;
+use ::vorolib::distribute::default_seed;
+use ::vorolib::distribute::generate_random_points;
+use ::vorolib::img::Img;
+use ::vorolib::voronoiify_image;
+#[cfg(feature = "flame_it")]
+use std::fs::File;
 
 pub mod argparse;
 
@@ -93,7 +96,8 @@ pub fn clone_img(img: &Img) -> Img {
 }
 
 #[cfg_attr(feature = "flame_it", flame)]
-pub fn report_total_time(times_ns: &[u64]) {
+pub fn report_total_time(times_ns: &[u64], reps: usize) {
+    // First iteration is for warmup
     let avg: u64 = times_ns.iter().skip(1).sum::<u64>() / (reps as u64);
     let std: f64 = ((times_ns
         .iter()
@@ -157,15 +161,22 @@ pub fn run_bench(input: PathBuf, reps: usize, do_log_flag: bool) {
     if do_log {
         println!(" {:4} / {:4}", reps, reps);
     }
-    // First iteration is for warmup
-    report_total_time(&times_ns);
+    #[cfg(feature = "flame_it")]
+    {
+        //flame::dump_stdout();
+        let f = File::create(&format!("target/flame-{}.json", reps));
+        flame::dump_json(&mut f.unwrap()).unwrap();
+    }
+    report_total_time(&times_ns, reps);
 }
 
 #[cfg(test)]
 mod tests {
     extern crate test;
-    use super::*;
+
     use test::Bencher;
+
+    use super::*;
 
     #[bench]
     fn test_full_flow_performance(bench: &mut Bencher) {
