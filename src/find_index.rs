@@ -46,6 +46,10 @@ where
         }
     }
     // Test the order criterion if in debug mode
+
+    //TODO @mark: make an intelligent guess as to the start point? (useful but note this is only 1.74%)
+    //TODO @mark: let index_guess = PointId::new(((x.as_index() * centers.len()) as f64 / centers.width().as_index() as f64) as usize);
+
     max = max + 1;
     // Bisection
     loop {

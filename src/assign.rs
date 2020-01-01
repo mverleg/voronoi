@@ -32,30 +32,24 @@ pub fn assign_to_centers(centers: &mut UPoints, workers: &Pool) -> Grouping {
 }
 
 fn assign_to_centers_for_row(x: X, y_range: Y, centers: &UPoints) -> GroupingRow {
-    // Performance: I thought it would be faster to recycle this output vector,
-    // but (at least without parallelization), it is slightly faster to just recreate it.
-    // It also makes parallelization easier, since this would otherwise be per-thread.
-    let mut output_vec: Vec<PointId> = Vec::with_capacity(centers.len());
     // Guess the point id based on them being homogeneous and ordered.
     let index_guess = PointId::new(((x.as_index() * centers.len()) as f64 / centers.width().as_index() as f64) as usize);
     let mut reference = centers.get(index_guess);
-    let mut links = Vec::with_capacity(y_range.as_index());
+    let mut center_assignments = Vec::with_capacity(y_range.as_index());
     for y in y_range.indices_upto() {
         let current: Point2D = Point2D::new(x, y);
-        centers.within_box_noalloc(
-            current,
-            (current - reference).manhattan_norm() + Dist::fnew(1.),
-            &mut output_vec,
-        );
-        // `output_vec` will contain the result of `within_box_noalloc`
-        let nearest: PointId = find_nearest_to_reference(current, &output_vec, &centers);
-        links.push(nearest);
+        let dist_upper_limit = (current - reference).manhattan_norm() + Dist::fnew(1.);
+        let nearest: PointId = centers.nearest_within_box(current, dist_upper_limit);
+        center_assignments.push(nearest);
         reference = centers.get(nearest);
     }
-    GroupingRow::from(links, y_range)
+    GroupingRow::from(center_assignments, y_range)
 }
 
 fn find_nearest_to_reference(point: Point2D, candidates: &[PointId], centers: &UPoints) -> PointId {
+
+    // Note: probably unused, superseded by `nearest_within_box`.
+
     debug_assert!(
         centers.len() > 0,
         "There are no centers within the bounding box, which should never happen"

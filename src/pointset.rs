@@ -2,6 +2,7 @@ use crate::colorset::PointColorAverages;
 use crate::dims::{X, Y};
 use crate::find_index::find_index;
 use crate::norms::Dist;
+use crate::norms::Norm;
 use crate::point::Point2D;
 use crate::pointid::PointId;
 use ::std::cmp::Ordering;
@@ -59,6 +60,9 @@ impl UPoints {
     }
 
     fn within_box_internal(&self, reference: Point2D, range: Dist, output_vec: &mut Vec<PointId>) {
+
+        // Note: probably unused, superseded by `nearest_within_box`.
+
         output_vec.clear();
         // Find any point within the range
         let urange = range.ufloor();
@@ -106,6 +110,7 @@ impl UPoints {
                 while current.x() <= x_max {
                     if y_min <= current.y() && current.y() <= y_max {
                         debug_assert!(output_vec.len() <= self.points_by_x.len());
+                        debug_assert!(output_vec.len() < output_vec.capacity());
                         output_vec.push(index);
                     }
                     index.increment();
@@ -118,7 +123,73 @@ impl UPoints {
         }
     }
 
-    /// Return the index of app ponts within a square bounding box around `reference`, in arbitrary order.
+    /// Return the nearest center, searching only within a box.
+    // (Because returning a list if a waste of performance)
+    pub fn nearest_within_box(
+        &self,
+        reference: Point2D,
+        max_range: Dist
+    ) -> PointId {
+        let urange = max_range.ufloor();
+        let x_min = reference.x().saturating_sub(urange);
+        let x_max = reference.x() + urange;
+        let starting_index: PointId = find_index(
+            PointId::new(0),
+            PointId::new(self.len() - 1),
+            |index: PointId| {
+                let x = self.get(index).x();
+                if x < x_min {
+                    return Ordering::Less;
+                }
+                if x > x_max {
+                    return Ordering::Greater;
+                }
+                Ordering::Equal
+            },
+        ).unwrap();
+        let mut closest_center = (starting_index, max_range);
+        let y_min = reference.y().saturating_sub(urange);
+        let y_max = reference.y() + urange;
+        let length = PointId::new(self.len());
+
+        // Iterate backward from that point until range is exceeded (since points are ordered)
+        let mut index = starting_index;
+        let mut current = self.get(index);
+        let x_min = reference.x().saturating_sub(urange);
+        while current.x() >= x_min {
+            let dist = self.get(index).euclidean_pseudo(current);
+            if dist < closest_center.1 {
+                closest_center = (index, dist);
+            }
+            if index == PointId::new(0) {
+                break;
+            }
+            index.decrement();
+            current = self.get(index);
+        }
+
+        // Iterate forward the same way
+        index = starting_index + 1;
+        if index < length {
+            current = self.get(index);
+            let x_max = reference.x() + urange;
+            while current.x() <= x_max {
+                let dist = self.get(index).euclidean_pseudo(current);
+                if dist < closest_center.1 {
+                    closest_center = (index, dist);
+                }
+                index.increment();
+                if index == length {
+                    break;
+                }
+                current = self.get(index);
+            }
+        }
+
+        closest_center.0
+    }
+
+    /// Return the index of all points within a square bounding box around `reference`, in arbitrary order.
     // Note that `output_vec` is used instead of return value to avoid allocating a vec for return value,
     // like in the good old Fortran days (and probably later). Use [within_box] if allocation is okay.
     pub fn within_box_noalloc(
