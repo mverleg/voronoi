@@ -1,15 +1,16 @@
-use crate::colorset::PointColorAverages;
-use crate::dims::{X, Y};
-use crate::find_index::find_index;
-use crate::norms::Dist;
-use crate::norms::Norm;
-use crate::point::Point2D;
-use crate::pointid::PointId;
 use ::std::cmp::Ordering;
 #[cfg(debug_assertions)]
 use ::std::collections::HashSet;
 #[cfg(debug_assertions)]
 use ::std::iter::FromIterator;
+
+use crate::colorset::PointColorAverages;
+use crate::dims::{dX, dY, X, Y};
+use crate::find_index::find_index;
+use crate::norms::Dist;
+use crate::norms::Norm;
+use crate::point::{Point2D, Step, Step2D};
+use crate::pointid::PointId;
 
 /// Collection of *unique* points.
 #[derive(Debug)]
@@ -59,9 +60,8 @@ impl UPoints {
         PointColorAverages::new(self.len())
     }
 
+    #[allow(unused)]  // Note: probably unused, superseded by `nearest_within_box`.
     fn within_box_internal(&self, reference: Point2D, range: Dist, output_vec: &mut Vec<PointId>) {
-
-        // Note: probably unused, superseded by `nearest_within_box`.
 
         output_vec.clear();
         // Find any point within the range
@@ -147,9 +147,8 @@ impl UPoints {
                 Ordering::Equal
             },
         ).unwrap();
-        let mut closest_center = (starting_index, max_range);
-        let y_min = reference.y().saturating_sub(urange);
-        let y_max = reference.y() + urange;
+        let max_dist = Step2D::new(dX::new(urange as i32), dY::new(0)).euclidean_pseudo();
+        let mut closest_center = (starting_index, max_dist);
         let length = PointId::new(self.len());
 
         // Iterate backward from that point until range is exceeded (since points are ordered)
@@ -157,7 +156,7 @@ impl UPoints {
         let mut current = self.get(index);
         let x_min = reference.x().saturating_sub(urange);
         while current.x() >= x_min {
-            let dist = self.get(index).euclidean_pseudo(current);
+            let dist = (self.get(index) - current).euclidean_pseudo();
             if dist < closest_center.1 {
                 closest_center = (index, dist);
             }
@@ -174,7 +173,7 @@ impl UPoints {
             current = self.get(index);
             let x_max = reference.x() + urange;
             while current.x() <= x_max {
-                let dist = self.get(index).euclidean_pseudo(current);
+                let dist = (self.get(index) - current).euclidean_pseudo();
                 if dist < closest_center.1 {
                     closest_center = (index, dist);
                 }
@@ -230,12 +229,15 @@ impl IntoIterator for UPoints {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::dims::{X, Y};
-    use crate::distribute::generate_fixed_points;
     use ::std::collections::HashSet;
     use ::std::iter::FromIterator;
 
+    use crate::dims::{X, Y};
+    use crate::distribute::generate_fixed_points;
+
+    use super::*;
+
+    #[ignore]  // Note: superseded by `nearest_within_box`.
     #[test]
     fn test_within_one_eq() {
         let points: UPoints = generate_fixed_points(X::new(15), Y::new(15), 9);
@@ -249,6 +251,7 @@ mod tests {
         assert!(lookup.contains(&Point2D::from_raw(7, 7)));
     }
 
+    #[ignore]  // Note: superseded by `nearest_within_box`.
     #[test]
     fn test_within_one_lt() {
         let points: UPoints = generate_fixed_points(X::new(15), Y::new(15), 9);
@@ -258,4 +261,6 @@ mod tests {
             HashSet::from_iter(matches.into_iter().map(|id| points.get(id)));
         assert!(lookup.contains(&Point2D::from_raw(2, 2)));
     }
+
+    //TODO @mark: test for `nearest_within_box`.
 }

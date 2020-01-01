@@ -46,9 +46,8 @@ fn assign_to_centers_for_row(x: X, y_range: Y, centers: &UPoints) -> GroupingRow
     GroupingRow::from(center_assignments, y_range)
 }
 
+#[allow(unused)]  // Note: probably unused, superseded by `nearest_within_box`.
 fn find_nearest_to_reference(point: Point2D, candidates: &[PointId], centers: &UPoints) -> PointId {
-
-    // Note: probably unused, superseded by `nearest_within_box`.
 
     debug_assert!(
         centers.len() > 0,
