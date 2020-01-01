@@ -18,6 +18,7 @@ use std::process::Command;
 #[macro_use]
 #[cfg(test)]
 mod test_util;
+mod util;
 mod assign;
 mod color;
 mod colorset;

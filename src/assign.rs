@@ -8,6 +8,7 @@ use crate::parmap::par_map_on;
 use crate::point::{Point, Point2D};
 use crate::pointid::PointId;
 use crate::pointset::UPoints;
+use crate::util::crop;
 
 /// This assigns the correct PointId to every single cell in `groups`.
 #[cfg_attr(feature = "flame_it", flame)]
@@ -35,13 +36,15 @@ pub fn assign_to_centers(centers: &mut UPoints, workers: &Pool) -> Grouping {
 
 fn assign_to_centers_for_row(x: X, y_range: Y, centers: &UPoints) -> GroupingRow {
     // Guess the point id based on them being homogeneous and ordered.
-    let mut reference = PointId::new(((x.as_index() * centers.len()) as f64 / centers.width().as_index() as f64) as usize);
+    let mut guess = crop(
+        PointId::new(((x.as_index() * centers.len()) as f64 / centers.width().as_index() as f64) as usize),
+        PointId::new(0), PointId::new(centers.len()));
     let mut center_assignments = Vec::with_capacity(y_range.as_index());
     for y in y_range.indices_upto() {
         let current: Point2D = Point2D::new(x, y);
-        let nearest: PointId = nearest_within_box(&centers, current, reference);
+        let nearest: PointId = nearest_within_box(&centers, current, guess);
         center_assignments.push(nearest);
-        reference = nearest;
+        guess = nearest;
     }
     GroupingRow::from(center_assignments, y_range)
 }

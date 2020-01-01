@@ -8,6 +8,7 @@ use crate::point::Point2D;
 use crate::pointid::PointId;
 use crate::pointset::UPoints;
 use crate::dims::X;
+use crate::util::crop;
 
 struct CurrentMinimum {
     index: PointId,
@@ -31,14 +32,16 @@ fn euclidean_pseudo_to_real_floor_raw(pseudo: PseudoDist) -> usize {
 fn first_reachable_center_lowx(centers: &UPoints, goal: X, guess: PointId) -> PointId {
 
     // Special case for if the first value matches.
-    let zero = PointId::new(0);
-    if centers.get(zero).x() >= goal {
-        return zero;
+    let (first_index, last_index) = (PointId::new(0), PointId::new(centers.len()));
+    if centers.get(first_index).x() >= goal {
+        return first_index;
     }
 
     // Search the whole space.
-    let mut min = X::new(1);
+    let mut min = X::new(0);
     let mut max = centers.width();
+    debug_assert!(goal > min);
+    debug_assert!(goal < max);
 
     // Bisection.
     loop {
@@ -48,12 +51,16 @@ fn first_reachable_center_lowx(centers: &UPoints, goal: X, guess: PointId) -> Po
                 (goal - min)._expose() as f64 /
                 (max - min)._expose() as f64) as usize
         );
-        println!(">>>> {:?} / {:?} = {:?} [{:?}, {:?}, {:?}]", (goal - min)._expose(), (max - min)._expose(), (goal - min)._expose() as f64 / (max - min)._expose() as f64, goal, min, max);  //TODO @mark: TEMPORARY! REMOVE THIS!
+//        if goal > max {
+//            println!(">>>> {:?} / {:?} = {:?} [{:?}, {:?}, {:?}, {:?}]", (goal - min)._expose(), (max - min)._expose(),
+//                 (goal - min)._expose() as f64 / (max - min)._expose() as f64,
+//                 goal, centers.get(current).x(), min, max);  //TODO @mark: TEMPORARY! REMOVE THIS!
+//        }
         debug_assert!(current >= PointId::new(0));
         debug_assert!(current < PointId::new(centers.len()));
         debug_assert!(centers.get(current).x() > min);
         debug_assert!(centers.get(current).x() < max);
-        println!(">>> {:?} < {:?} < {:?}", min, centers.get(current).x(), max);  //TODO @mark: TEMPORARY! REMOVE THIS!
+//        println!(">>> {:?} < {:?} < {:?}", min, centers.get(current).x(), max);  //TODO @mark: TEMPORARY! REMOVE THIS!
 
         // Return if a match, adjust bounds otherwise.
         let currentx = centers.get(current).x();
@@ -71,16 +78,19 @@ fn first_reachable_center_lowx(centers: &UPoints, goal: X, guess: PointId) -> Po
 
 /// Find the id of the rightmost center that has x <= goal.
 fn last_reachable_center_highx(centers: &UPoints, minimum: X, goal: X) -> PointId {
+    debug_assert!(goal > minimum);
 
     // Special case for if the value value matches.
-    let last = PointId::new(centers.len() - 1);
-    if centers.get(last).x() <= goal {
-        return last;
+    let (first_index, last_index) = (PointId::new(0), PointId::new(centers.len() - 1));
+    if centers.get(last_index).x() <= goal {
+        return last_index;
     }
 
     // Search the whole space.
     let mut min = minimum;
     let mut max = centers.width();
+    debug_assert!(goal > min);
+    debug_assert!(goal < max);
 
     // Bisection.
     loop {
@@ -116,7 +126,8 @@ pub fn nearest_within_box(
     guess: PointId,
 ) -> PointId {
 
-    let range = (reference - centers.get(guess)).manhattan_norm().ufloor();
+    //TODO @mark: is this +1 needed?
+    let range = (reference - centers.get(guess)).manhattan_norm().ufloor() + 1;
     let left_bound = reference.x().saturating_sub(range);
     let right_bound = reference.x() + range;
     let first = first_reachable_center_lowx(centers, left_bound, guess);
