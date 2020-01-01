@@ -1,11 +1,13 @@
+use ::scoped_pool::Pool;
+
 use crate::dims::{X, Y};
 use crate::grouping::{Grouping, GroupingRow};
+use crate::nearest_within_box::nearest_within_box;
 use crate::norms::{Dist, Norm};
 use crate::parmap::par_map_on;
 use crate::point::{Point, Point2D};
 use crate::pointid::PointId;
 use crate::pointset::UPoints;
-use ::scoped_pool::Pool;
 
 /// This assigns the correct PointId to every single cell in `groups`.
 #[cfg_attr(feature = "flame_it", flame)]
@@ -39,7 +41,7 @@ fn assign_to_centers_for_row(x: X, y_range: Y, centers: &UPoints) -> GroupingRow
     for y in y_range.indices_upto() {
         let current: Point2D = Point2D::new(x, y);
         let dist_upper_limit = (current - reference).manhattan_norm() + Dist::fnew(1.);
-        let nearest: PointId = centers.nearest_within_box(current, dist_upper_limit);
+        let nearest: PointId = nearest_within_box(&centers, current, dist_upper_limit);
         center_assignments.push(nearest);
         reference = centers.get(nearest);
     }

@@ -22,14 +22,26 @@ impl PointColorAverages {
     pub fn compute(self) -> PointColors {
         //TODO @mark: parallel
         let mut colors: Vec<Color> = Vec::with_capacity(self.len());
+        let mut d = 0;  //TODO @mark: TEMPORARY! REMOVE THIS!
+        let mut e = 0;  //TODO @mark: TEMPORARY! REMOVE THIS!
+        for c in &self.averages {  //TODO @mark: TEMPORARY! REMOVE THIS!
+            if c.count <= 0 {
+                d += 1;
+            }
+            e += c.count;
+            eprintln!("{:?}", c);
+        }
+        eprintln!("{} of {} zero, total {}", d, self.averages.len(), e);
         for avg in self.averages.into_iter() {
             colors.push(avg.calc_avg())
         }
         PointColors::new(colors)
     }
+
     pub fn len(&self) -> usize {
         self.averages.len()
     }
+
     pub fn get(&mut self, id: PointId) -> &mut RgbColorAverage {
         &mut self.averages[id.as_index()]
     }

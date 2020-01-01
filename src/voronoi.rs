@@ -24,6 +24,7 @@ mod colorset;
 mod dims;
 pub mod distribute;
 mod find_index;
+mod nearest_within_box;
 mod grouping;
 pub mod img;
 mod norms;
