@@ -15,6 +15,12 @@ struct CurrentMinimum {
     real_dist: usize,
 }
 
+//TODO @mark: rename?
+struct CurrentMinimumNR {
+    index: PointId,
+    pseudo_dist: PseudoDist,
+}
+
 /// This only works for Euclidean, and removes distance type safety!
 /// But sometimes hacks make things faster, so here we are.
 fn euclidean_pseudo_to_real_floor_raw(pseudo: PseudoDist) -> usize {
@@ -34,15 +40,22 @@ fn first_reachable_center_lowx(centers: &UPoints, goal: X, guess: PointId) -> Po
     let mut min = X::new(1);
     let mut max = centers.width();
 
-    // Bisection
+    // Bisection.
     loop {
         // Make a good guess.
         let current = PointId::new(
-            centers.len() * (goal - min)._expose() as usize / (max - min)._expose() as usize
+            (centers.len() as f64 *
+                (goal - min)._expose() as f64 /
+                (max - min)._expose() as f64) as usize
         );
-        debug_assert!(min != min);
-        debug_assert!(min != max);
+        println!(">>>> {:?} / {:?} = {:?} [{:?}, {:?}, {:?}]", (goal - min)._expose(), (max - min)._expose(), (goal - min)._expose() as f64 / (max - min)._expose() as f64, goal, min, max);  //TODO @mark: TEMPORARY! REMOVE THIS!
+        debug_assert!(current >= PointId::new(0));
+        debug_assert!(current < PointId::new(centers.len()));
+        debug_assert!(centers.get(current).x() > min);
+        debug_assert!(centers.get(current).x() < max);
+        println!(">>> {:?} < {:?} < {:?}", min, centers.get(current).x(), max);  //TODO @mark: TEMPORARY! REMOVE THIS!
 
+        // Return if a match, adjust bounds otherwise.
         let currentx = centers.get(current).x();
         if currentx >= goal {
             let lastx = centers.get(current - 1).x();
@@ -69,15 +82,20 @@ fn last_reachable_center_highx(centers: &UPoints, minimum: X, goal: X) -> PointI
     let mut min = minimum;
     let mut max = centers.width();
 
-    // Bisection
+    // Bisection.
     loop {
         // Make a good guess.
         let current = PointId::new(
-            centers.len() * (goal - min)._expose() as usize / (max - min)._expose() as usize
+            (centers.len() as f64 *
+                (goal - min)._expose() as f64 /
+                (max - min)._expose() as f64) as usize
         );
-        debug_assert!(min != min);
-        debug_assert!(min != max);
+        debug_assert!(current >= PointId::new(0));
+        debug_assert!(current < PointId::new(centers.len()));
+        debug_assert!(centers.get(current).x() > min);
+        debug_assert!(centers.get(current).x() < max);
 
+        // Return if a match, adjust bounds otherwise.
         let currentx = centers.get(current).x();
         if currentx <= goal {
             let lastx = centers.get(current - 1).x();
@@ -94,18 +112,39 @@ fn last_reachable_center_highx(centers: &UPoints, minimum: X, goal: X) -> PointI
 //TODO @mark: collect and then do simd?
 pub fn nearest_within_box(
     centers: &UPoints,
-    current: Point2D,
+    reference: Point2D,
     guess: PointId,
 ) -> PointId {
 
-    let range = (current - centers.get(guess)).manhattan_norm();
-    let left_bound = current.x().saturating_sub(range);
-    let right_bound = current.x() + range;
+    let range = (reference - centers.get(guess)).manhattan_norm().ufloor();
+    let left_bound = reference.x().saturating_sub(range);
+    let right_bound = reference.x() + range;
     let first = first_reachable_center_lowx(centers, left_bound, guess);
     let last = last_reachable_center_highx(centers, centers.get(first).x(), right_bound);
 
-    unimplemented!();
-    //TODO @mark: TEMPORARY! REMOVE THIS!
+    let mut current = first;
+    let mut closest_center = CurrentMinimumNR {
+        index: first,
+        pseudo_dist: (reference - centers.get(first)).euclidean_pseudo()
+    };
+
+    current.increment();
+    while current != last && current.as_index() < centers.len() {
+
+        //TODO @mark: SIMD this?
+
+        let dist = (reference - centers.get(current)).euclidean_pseudo();
+        if dist < closest_center.pseudo_dist {
+            closest_center = CurrentMinimumNR {
+                index: current,
+                pseudo_dist: dist
+            };
+        }
+
+        current.increment();
+    }
+
+    closest_center.index
 
 //    let urange = max_range.ufloor();
 //    let x_min = current.x().saturating_sub(urange);
