@@ -147,14 +147,14 @@ impl UPoints {
                 Ordering::Equal
             },
         ).unwrap();
-        let max_dist = Step2D::new(dX::new(urange as i32), dY::new(0)).euclidean_pseudo();
+
+        let max_dist = (reference - self.get(starting_index)).euclidean_pseudo();
         let mut closest_center = (starting_index, max_dist);
         let length = PointId::new(self.len());
 
         // Iterate backward from that point until range is exceeded (since points are ordered)
         let mut index = starting_index;
         let mut current = self.get(index);
-        let x_min = reference.x().saturating_sub(urange);
         while current.x() >= x_min {
             let dist = (self.get(index) - current).euclidean_pseudo();
             if dist < closest_center.1 {
@@ -171,7 +171,6 @@ impl UPoints {
         index = starting_index + 1;
         if index < length {
             current = self.get(index);
-            let x_max = reference.x() + urange;
             while current.x() <= x_max {
                 let dist = (self.get(index) - current).euclidean_pseudo();
                 if dist < closest_center.1 {
