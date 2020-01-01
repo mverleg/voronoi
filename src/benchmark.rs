@@ -26,7 +26,6 @@ use ::vorolib::img::Img;
 use ::vorolib::voronoiify_image;
 #[cfg(feature = "flame_it")]
 use std::fs::File;
-use vorolib::log_counts;
 
 pub mod argparse;
 
@@ -162,7 +161,6 @@ pub fn run_bench(input: PathBuf, reps: usize, do_log_flag: bool) {
     if do_log {
         println!(" {:4} / {:4}", reps, reps);
     }
-    log_counts();
     #[cfg(feature = "flame_it")]
     {
         //flame::dump_stdout();

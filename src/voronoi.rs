@@ -33,7 +33,6 @@ mod parmap;
 mod point;
 mod pointid;
 mod pointset;
-pub use nearest_within_box::log_counts;  //TODO @mark: TEMPORARY! REMOVE THIS!
 
 /// Voronoi transform function
 #[cfg_attr(feature = "flame_it", flame)]
