@@ -124,7 +124,7 @@ Common commands
 -------------------------------
 
 * Run in debug mode: ``cargo build --all-targets --all-features``
-* Get timing: ``RUSTFLAGS="-Ctarget-cpu=native -Clink-arg=-s" cargo build --release --bin voronoi-benchmark --no-default-features ; sleep 0.2; target/release/voronoi-benchmark --reps 500``
+* Get timing: ``RUSTFLAGS="-Ctarget-cpu=native -Clink-arg=-s" cargo build --release --bin voronoi-benchmark --no-default-features && sleep 0.2 && target/release/voronoi-benchmark --reps 500``
 * Flamegraph: ``RUSTFLAGS="-Ctarget-cpu=native -Cinline-threshold=0" cargo flamegraph -o target/flamegraph.svg --bin voronoi-benchmark -- --reps 500 && firefox target/flamegraph.svg``
 * See assembly: ``objdump -dS target/release/voronoi-benchmark > voronoi-benchmark.asm`` (same cargo command as flamegraph)
 

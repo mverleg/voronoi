@@ -47,11 +47,16 @@ macro_rules! make_dim {
             pub fn new(step: i32) -> Self {
                 $dT { step }
             }
+
             pub fn abs(&self) -> Self {
                 if self.step < 0 {
                     return $dT { step: self.step };
                 }
                 self.clone()
+            }
+
+            pub fn _expose(&self) -> i32 {
+                self.step
             }
         }
 

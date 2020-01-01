@@ -70,6 +70,7 @@ impl UPoints {
         let reference_index: Option<PointId> = find_index(
             PointId::new(0),
             PointId::new(self.len() - 1),
+            None,
             |index: PointId| {
                 let x = self.get(index).x();
                 if x < x_min {
