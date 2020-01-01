@@ -1,4 +1,6 @@
 use ::std::cmp::Ordering;
+use ::std::sync::atomic::AtomicUsize;
+use ::std::sync::atomic::Ordering::Relaxed;
 
 use crate::find_index::find_index;
 use crate::norms::Dist;
@@ -7,6 +9,15 @@ use crate::norms::PseudoDist;
 use crate::point::Point2D;
 use crate::pointid::PointId;
 use crate::pointset::UPoints;
+
+
+//TODO @mark: TEMPORARY! REMOVE THIS!
+static CALL_COUNT: AtomicUsize = AtomicUsize::new(0);
+static SEARCH_STEP_COUNT: AtomicUsize = AtomicUsize::new(0);
+pub fn log_counts() {
+    println!("nearest_within_box: {} calls, {} search steps",
+             CALL_COUNT.load(Relaxed), SEARCH_STEP_COUNT.load(Relaxed));
+}
 
 struct CurrentMinimum {
     index: PointId,
@@ -22,11 +33,14 @@ fn euclidean_pseudo_to_real_floor_raw(pseudo: PseudoDist) -> usize {
 
 /// Return the nearest center, searching only within a box.
 // (Because returning a list if a waste of performance)
+// Note: this needs an average of 42 search steps per invocation.
 pub fn nearest_within_box(
     centers: &UPoints,
     reference: Point2D,
     max_range: Dist
 ) -> PointId {
+
+    CALL_COUNT.fetch_add(1, Relaxed);
 
     let urange = max_range.ufloor();
     let mut x_min = reference.x().saturating_sub(urange);
@@ -66,6 +80,7 @@ pub fn nearest_within_box(
             x_min = reference.x().saturating_sub(closest_center.real_dist);
             x_max = reference.x() + closest_center.real_dist;
         }
+        SEARCH_STEP_COUNT.fetch_add(1, Relaxed);
         if index == PointId::new(0) {
             break;
         }
@@ -87,6 +102,7 @@ pub fn nearest_within_box(
                 real_dist: euclidean_pseudo_to_real_floor_raw(pseudo_dist) };
             x_max = reference.x() + closest_center.real_dist;
         }
+        SEARCH_STEP_COUNT.fetch_add(1, Relaxed);
         index.increment();
         if index == length {
             break;
