@@ -10,7 +10,14 @@ use crate::pointset::UPoints;
 
 struct CurrentMinimum {
     index: PointId,
-    pseudo_dist: PseudoDist
+    pseudo_dist: PseudoDist,
+    real_dist: usize,
+}
+
+/// This only works for Euclidean, and removes distance type safety!
+/// But sometimes hacks make things faster, so here we are.
+fn euclidean_pseudo_to_real_floor_raw(pseudo: PseudoDist) -> usize {
+    pseudo._expose().sqrt().floor().abs() as usize
 }
 
 /// Return the nearest center, searching only within a box.
@@ -22,8 +29,8 @@ pub fn nearest_within_box(
 ) -> PointId {
 
     let urange = max_range.ufloor();
-    let x_min = reference.x().saturating_sub(urange);
-    let x_max = reference.x() + urange;
+    let mut x_min = reference.x().saturating_sub(urange);
+    let mut x_max = reference.x() + urange;
     let starting_index: PointId = find_index(
         PointId::new(0),
         PointId::new(centers.len() - 1),
@@ -40,7 +47,11 @@ pub fn nearest_within_box(
     ).unwrap();
 
     let max_pseudo_dist = (reference - centers.get(starting_index)).euclidean_pseudo();
-    let mut closest_center = CurrentMinimum { index: starting_index, pseudo_dist: max_pseudo_dist };
+    let mut closest_center = CurrentMinimum {
+        index: starting_index,
+        pseudo_dist: max_pseudo_dist,
+        real_dist: euclidean_pseudo_to_real_floor_raw(max_pseudo_dist)
+    };
     let length = PointId::new(centers.len());
 
     // Iterate backward from that point until range is exceeded (since points are ordered)
@@ -50,7 +61,10 @@ pub fn nearest_within_box(
     while current.x() >= x_min {
         let pseudo_dist = (reference - current).euclidean_pseudo();
         if pseudo_dist < closest_center.pseudo_dist {
-            closest_center = CurrentMinimum { index, pseudo_dist };
+            closest_center = CurrentMinimum { index, pseudo_dist,
+                real_dist: euclidean_pseudo_to_real_floor_raw(pseudo_dist) };
+            x_min = reference.x().saturating_sub(closest_center.real_dist);
+            x_max = reference.x() + closest_center.real_dist;
         }
         if index == PointId::new(0) {
             break;
@@ -69,7 +83,9 @@ pub fn nearest_within_box(
     while current.x() <= x_max {
         let pseudo_dist = (reference - current).euclidean_pseudo();
         if pseudo_dist < closest_center.pseudo_dist {
-            closest_center = CurrentMinimum { index, pseudo_dist };
+            closest_center = CurrentMinimum { index, pseudo_dist,
+                real_dist: euclidean_pseudo_to_real_floor_raw(pseudo_dist) };
+            x_max = reference.x() + closest_center.real_dist;
         }
         index.increment();
         if index == length {

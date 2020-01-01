@@ -52,6 +52,11 @@ macro_rules! make_dist {
             pub fn ufloor(&self) -> usize {
                 self.value.floor().abs() as usize
             }
+
+            // Not recommended
+            pub fn _expose(&self) -> f64 {
+                self.value
+            }
         }
 
         impl Add<$T> for $T {

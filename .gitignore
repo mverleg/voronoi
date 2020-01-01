@@ -4,3 +4,4 @@ target/
 *.lock
 *.out.*
 cmake-build-*/
+perf.data*
