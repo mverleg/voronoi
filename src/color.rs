@@ -14,7 +14,7 @@ pub struct RgbColorAverage {
     c0: u32,
     c1: u32,
     c2: u32,
-    pub count: u32,  //TODO @mark: TEMPORARY! REMOVE THIS! non-pub
+    count: u32,
 }
 
 impl RgbColorAverage {

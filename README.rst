@@ -120,5 +120,13 @@ Then create the flamegraph like this::
 
 Note that disabling inlining may double the time needed to run.
 
+Common commands
+-------------------------------
+
+* Run in debug mode: ``cargo build --all-targets --all-features``
+* Get timing: ``RUSTFLAGS="-Ctarget-cpu=native -Clink-arg=-s" cargo build --release --bin voronoi-benchmark --no-default-features ; sleep 0.2; target/release/voronoi-benchmark``
+* Flamegraph: ``RUSTFLAGS="-Ctarget-cpu=native -Cinline-threshold=0" cargo flamegraph --bin voronoi-benchmark -- --reps 500 && firefox flamegraph.svg``
+* See assembly: ``objdump -dS target/release/voronoi-benchmark > voronoi-benchmark.asm`` (same cargo command as flamegraph)
+
 
 .. _flamegraph: https://github.com/ferrous-systems/flamegraph

@@ -170,7 +170,7 @@ pub fn run_bench(input: PathBuf, reps: usize, do_log_flag: bool) {
     report_total_time(&times_ns, reps);
 }
 
-#[cfg(test)]
+#[cfg(bench)]
 mod tests {
     extern crate test;
 

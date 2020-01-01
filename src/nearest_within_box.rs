@@ -21,9 +21,7 @@ pub fn nearest_within_box(
     max_range: Dist
 ) -> PointId {
 
-    println!(">> for point {:?}", reference);  //TODO @mark:
-
-    let urange = max_range.ufloor() + 1;  //TODO @mark: TEMPORARY! REMOVE THIS! +1
+    let urange = max_range.ufloor();
     let x_min = reference.x().saturating_sub(urange);
     let x_max = reference.x() + urange;
     let starting_index: PointId = find_index(
@@ -52,7 +50,6 @@ pub fn nearest_within_box(
     while current.x() >= x_min {
         let pseudo_dist = (reference - current).euclidean_pseudo();
         if pseudo_dist < closest_center.pseudo_dist {
-            println!("updating from {:?} to {:?} (left)", closest_center.pseudo_dist, pseudo_dist);  //TODO @mark:
             closest_center = CurrentMinimum { index, pseudo_dist };
         }
         if index == PointId::new(0) {
@@ -72,7 +69,6 @@ pub fn nearest_within_box(
     while current.x() <= x_max {
         let pseudo_dist = (reference - current).euclidean_pseudo();
         if pseudo_dist < closest_center.pseudo_dist {
-            println!("updating from {:?} to {:?} (right)", closest_center.pseudo_dist, pseudo_dist);  //TODO @mark:
             closest_center = CurrentMinimum { index, pseudo_dist };
         }
         index.increment();
