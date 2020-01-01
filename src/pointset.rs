@@ -145,38 +145,7 @@ impl UPoints {
 
     pub fn get(&self, id: PointId) -> Point2D {
         // This method was taking 19% of CPU when it used checked indexing.
-        //rust: pub fn get(&self, id: PointId) -> Point2D {
-
-        // Assembly when checked:
-        //asm: push %rax
-        //asm: mov 0x20(%rdi),%rdx
-        //asm: cmp %rsi,%rdx
-        //asm: jbe e328d <_ZN7vorolib8pointset7UPoints3get17h53098344e78bbbc3E+0x1d>
-        //asm: mov 0x10(%rdi),%rcx
-        //rust: self.points_by_x[id.as_index()]
-        //asm: shl $0x4,%rsi
-        //asm: mov (%rcx,%rsi,1),%rax
-        //asm: mov 0x8(%rcx,%rsi,1),%rdx
-        //rust: }
-        //asm: pop %rcx
-        //asm: retq
-        //asm: lea 0x25361c(%rip),%rdi # 3368b0 <anon.3ad362cbc53c26fd2571867eaf5165d3.16.llvm.13471531638413625083>
-        //asm: callq 50240 <_ZN4core9panicking18panic_bounds_check17h41b7398abc89de8fE>
-        //asm: ud2
-        //asm: nopl 0x0(%rax,%rax,1)
-
-        //Assembly when unchecked
-        //rust: unsafe { self.points_by_x.get_unchecked(id.as_index()) }.clone()
-        //asm: shl $0x4,%rbx // shift bits left by 4
-        //asm: mov (%rax,%rbx,1),%rbp
-        //asm: mov 0x8(%rax,%rbx,1),%r13
-        //asm: mov 0x50(%rsp),%rax
-        //asm: mov %rax,%r14
-        //asm: cmp 0x20(%rsp),%rax
-        //asm: je 1e9d4 <_ZN7vorolib6assign25assign_to_centers_for_row17hed1ff5d1e9f58a4eE+0x1e4>
-        //rust: step: (self.value as i32) - (other.value as i32),
-
-        unsafe { self.points_by_x.get_unchecked(id.as_index()) }.clone()
+        self.points_by_x[id.as_index()]
     }
 }
 

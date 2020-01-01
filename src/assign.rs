@@ -36,7 +36,9 @@ fn assign_to_centers_for_row(x: X, y_range: Y, centers: &UPoints) -> GroupingRow
     // but (at least without parallelization), it is slightly faster to just recreate it.
     // It also makes parallelization easier, since this would otherwise be per-thread.
     let mut output_vec: Vec<PointId> = Vec::with_capacity(centers.len());
-    let mut reference = centers.first_by_x();
+    // Guess the point id based on them being homogeneous and ordered.
+    let index_guess = PointId::new(((x.as_index() * centers.len()) as f64 / centers.width().as_index() as f64) as usize);
+    let mut reference = centers.get(index_guess);
     let mut links = Vec::with_capacity(y_range.as_index());
     for y in y_range.indices_upto() {
         let current: Point2D = Point2D::new(x, y);
