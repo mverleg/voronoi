@@ -19,6 +19,7 @@ pub struct UPoints {
 }
 
 impl UPoints {
+
     pub fn new(width: X, height: Y, points: Vec<Point2D>) -> Self {
         let length = points.len();
         debug_assert!(length > 0);
@@ -40,18 +41,23 @@ impl UPoints {
             points_by_x,
         }
     }
+
     pub fn width(&self) -> X {
         self.width
     }
+
     pub fn height(&self) -> Y {
         self.height
     }
+
     pub fn len(&self) -> usize {
         self.points_by_x.len()
     }
+
     pub fn new_color_averager(&self) -> PointColorAverages {
         PointColorAverages::new(self.len())
     }
+
     fn within_box_internal(&self, reference: Point2D, range: Dist, output_vec: &mut Vec<PointId>) {
         output_vec.clear();
         // Find any point within the range
@@ -83,6 +89,7 @@ impl UPoints {
             while current.x() >= x_min {
                 if y_min <= current.y() && current.y() <= y_max {
                     debug_assert!(output_vec.len() <= self.points_by_x.len());
+                    debug_assert!(output_vec.len() < output_vec.capacity());
                     output_vec.push(index);
                 }
                 if index == PointId::new(0) {
@@ -135,8 +142,41 @@ impl UPoints {
     pub fn first_by_x(&self) -> Point2D {
         self.points_by_x[0]
     }
+
     pub fn get(&self, id: PointId) -> Point2D {
-        self.points_by_x[id.as_index()]
+        // This method was taking 19% of CPU when it used checked indexing.
+        //rust: pub fn get(&self, id: PointId) -> Point2D {
+
+        // Assembly when checked:
+        //asm: push %rax
+        //asm: mov 0x20(%rdi),%rdx
+        //asm: cmp %rsi,%rdx
+        //asm: jbe e328d <_ZN7vorolib8pointset7UPoints3get17h53098344e78bbbc3E+0x1d>
+        //asm: mov 0x10(%rdi),%rcx
+        //rust: self.points_by_x[id.as_index()]
+        //asm: shl $0x4,%rsi
+        //asm: mov (%rcx,%rsi,1),%rax
+        //asm: mov 0x8(%rcx,%rsi,1),%rdx
+        //rust: }
+        //asm: pop %rcx
+        //asm: retq
+        //asm: lea 0x25361c(%rip),%rdi # 3368b0 <anon.3ad362cbc53c26fd2571867eaf5165d3.16.llvm.13471531638413625083>
+        //asm: callq 50240 <_ZN4core9panicking18panic_bounds_check17h41b7398abc89de8fE>
+        //asm: ud2
+        //asm: nopl 0x0(%rax,%rax,1)
+
+        //Assembly when unchecked
+        //rust: unsafe { self.points_by_x.get_unchecked(id.as_index()) }.clone()
+        //asm: shl $0x4,%rbx // shift bits left by 4
+        //asm: mov (%rax,%rbx,1),%rbp
+        //asm: mov 0x8(%rax,%rbx,1),%r13
+        //asm: mov 0x50(%rsp),%rax
+        //asm: mov %rax,%r14
+        //asm: cmp 0x20(%rsp),%rax
+        //asm: je 1e9d4 <_ZN7vorolib6assign25assign_to_centers_for_row17hed1ff5d1e9f58a4eE+0x1e4>
+        //rust: step: (self.value as i32) - (other.value as i32),
+
+        unsafe { self.points_by_x.get_unchecked(id.as_index()) }.clone()
     }
 }
 

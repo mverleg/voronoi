@@ -30,7 +30,8 @@ log_it = []
 [profile.release]
 opt-level = 3
 debug = true  # TODO @mark: TEMPORARY! REMOVE THIS!
-lto = true
+#TODO @mark: temporary:
+#lto = true
 #codegen-units = 1
 
 [profile.dev.package."*"]
