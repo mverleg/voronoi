@@ -5,11 +5,10 @@ use ::std::collections::HashSet;
 use ::std::iter::FromIterator;
 
 use crate::colorset::PointColorAverages;
-use crate::dims::{dX, dY, X, Y};
+use crate::dims::{X, Y};
 use crate::find_index::find_index;
 use crate::norms::Dist;
-use crate::norms::Norm;
-use crate::point::{Point2D, Step, Step2D};
+use crate::point::Point2D;
 use crate::pointid::PointId;
 
 /// Collection of *unique* points.
