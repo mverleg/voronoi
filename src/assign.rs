@@ -19,12 +19,13 @@ pub fn assign_to_centers(centers: &mut UPoints, workers: &Pool) -> Grouping {
     let height = centers.height();
 
     // Keep both parallel and serial codes for benchmarking
-    let use_parallel = true;
+    let use_parallel = false;
     let results = if use_parallel {
         par_map_on(workers, width.indices_upto(), |x: X| {
             assign_to_centers_for_row(x, height, &centers)
         })
     } else {
+        eprintln!("parallel mode is OFF");
         width
             .indices_upto()
             .map(|x: X| assign_to_centers_for_row(x, height, &centers))
@@ -38,7 +39,7 @@ fn assign_to_centers_for_row(x: X, y_range: Y, centers: &UPoints) -> GroupingRow
     // Guess the point id based on them being homogeneous and ordered.
     let mut guess = crop(
         PointId::new(((x.as_index() * centers.len()) as f64 / centers.width().as_index() as f64) as usize),
-        PointId::new(0), PointId::new(centers.len()));
+        PointId::new(0), PointId::new(centers.len() - 1));
     let mut center_assignments = Vec::with_capacity(y_range.as_index());
     for y in y_range.indices_upto() {
         let current: Point2D = Point2D::new(x, y);

@@ -44,34 +44,43 @@ fn first_reachable_center_lowx(centers: &UPoints, goal: X, guess: PointId) -> Po
     debug_assert!(goal < max);
 
     // Bisection.
+    let mut i = 0;  //TODO @mark: TEMPORARY! REMOVE THIS!
     loop {
+        i += 1;
         // Make a good guess.
+//        let current = crop(
+//            PointId::new(
+//                (centers.len() as f64 *
+//                    (goal - min)._expose() as f64 /
+//                    (max - min)._expose() as f64) as usize,
+//            ),
+//            first_index, last_index  //TODO @mark: but the problem is with `x` not `id`
+//        );
         let current = PointId::new(
             (centers.len() as f64 *
                 (goal - min)._expose() as f64 /
                 (max - min)._expose() as f64) as usize
         );
-//        if goal > max {
-//            println!(">>>> {:?} / {:?} = {:?} [{:?}, {:?}, {:?}, {:?}]", (goal - min)._expose(), (max - min)._expose(),
-//                 (goal - min)._expose() as f64 / (max - min)._expose() as f64,
-//                 goal, centers.get(current).x(), min, max);  //TODO @mark: TEMPORARY! REMOVE THIS!
-//        }
-        debug_assert!(current >= PointId::new(0));
-        debug_assert!(current < PointId::new(centers.len()));
-        debug_assert!(centers.get(current).x() > min);
-        debug_assert!(centers.get(current).x() < max);
-//        println!(">>> {:?} < {:?} < {:?}", min, centers.get(current).x(), max);  //TODO @mark: TEMPORARY! REMOVE THIS!
+        println!(">>>> {}: {:?} / {:?} = {:?} [{:?}, {:?}, {:?}]", i, (goal - min)._expose(), (max - min)._expose(),
+                 (goal - min)._expose() as f64 / (max - min)._expose() as f64,
+                 goal, min, max);  //TODO @mark: TEMPORARY! REMOVE THIS!
+        debug_assert!(current >= first_index);
+        debug_assert!(current <= last_index);
+        println!(">>> {:?} < {:?} < {:?}", min, centers.get(current).x(), max);  //TODO @mark: TEMPORARY! REMOVE THIS!
+        //TODO @mark: I think == is possible, there may be multiple centers with the same x coordinate
+        debug_assert!(centers.get(current).x() >= min);
+        debug_assert!(centers.get(current).x() <= max);
 
         // Return if a match, adjust bounds otherwise.
-        let currentx = centers.get(current).x();
-        if currentx >= goal {
-            let lastx = centers.get(current - 1).x();
-            if lastx < goal {
+        let current_x = centers.get(current).x();
+        if current_x >= goal {
+            let prev_x = centers.get(current - 1).x();
+            if prev_x < goal {
                 return current;
             }
-            min = currentx;
+            min = current_x;
         } else {
-            max = currentx;
+            max = current_x;
         }
     }
 }
@@ -93,29 +102,48 @@ fn last_reachable_center_highx(centers: &UPoints, minimum: X, goal: X) -> PointI
     debug_assert!(goal < max);
 
     // Bisection.
+    let mut i = 0;  //TODO @mark: TEMPORARY! REMOVE THIS!
+    let mut prev_iter = None;
     loop {
+        i += 1;
         // Make a good guess.
         let current = PointId::new(
             (centers.len() as f64 *
                 (goal - min)._expose() as f64 /
                 (max - min)._expose() as f64) as usize
         );
-        debug_assert!(current >= PointId::new(0));
-        debug_assert!(current < PointId::new(centers.len()));
-        debug_assert!(centers.get(current).x() > min);
-        debug_assert!(centers.get(current).x() < max);
+        println!(">> i = {:?}", i);
+        println!("  goal = {:?}", goal);
+        println!("  min = {:?}", min);
+        println!("  max = {:?}", max);
+        println!("  current = {:?}", current);
+        println!("  centers->x = {:?}", centers.get(current).x());
+
+        println!(">>>>+ {}: {:?} / {:?} = {:?} -> {:?} [{:?}, {:?}, {:?}]", i, (goal - min)._expose(), (max - min)._expose(),
+                 (goal - min)._expose() as f64 / (max - min)._expose() as f64,
+                 current.as_index(), goal, min, max);  //TODO @mark: TEMPORARY! REMOVE THIS!
+        debug_assert!(current >= first_index);
+        debug_assert!(current <= last_index);
+        println!(">>> {:?} < {:?} < {:?}", min, centers.get(current).x(), max);  //TODO @mark: TEMPORARY! REMOVE THIS!
+        //TODO @mark: I think == is possible, there may be multiple centers with the same x coordinate
+        debug_assert!(centers.get(current).x() >= min);
+        debug_assert!(centers.get(current).x() <= max);
+        if let Some(v) = prev_iter {
+            debug_assert!(v != current);
+        }
 
         // Return if a match, adjust bounds otherwise.
-        let currentx = centers.get(current).x();
-        if currentx <= goal {
-            let lastx = centers.get(current - 1).x();
-            if lastx > goal {
+        let current_x = centers.get(current).x();
+        if current_x <= goal {
+            let next_x = centers.get(current + 1).x();
+            if next_x > goal {
                 return current;
             }
-            min = currentx;
+            min = current_x;
         } else {
-            max = currentx;
+            max = current_x;
         }
+        prev_iter = Some(current);
     }
 }
 
@@ -127,7 +155,7 @@ pub fn nearest_within_box(
 ) -> PointId {
 
     //TODO @mark: is this +1 needed?
-    let range = (reference - centers.get(guess)).manhattan_norm().ufloor() + 1;
+    let range = (reference - centers.get(guess)).manhattan_norm().ufloor();
     let left_bound = reference.x().saturating_sub(range);
     let right_bound = reference.x() + range;
     let first = first_reachable_center_lowx(centers, left_bound, guess);
