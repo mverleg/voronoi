@@ -48,7 +48,7 @@ where
     // Test the order criterion if in debug mode
 
     max = max + 1;
-    let mut mid = match guess {
+    let mid = match guess {
         Some(init) => {
             assert!(init >= min);
             assert!(init <= max);

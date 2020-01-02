@@ -22,6 +22,11 @@ struct CurrentMinimumNR {
     pseudo_dist: PseudoDist,
 }
 
+struct Border {
+    index: PointId,
+    x: X,
+}
+
 /// This only works for Euclidean, and removes distance type safety!
 /// But sometimes hacks make things faster, so here we are.
 fn euclidean_pseudo_to_real_floor_raw(pseudo: PseudoDist) -> usize {
@@ -87,7 +92,9 @@ fn first_reachable_center_lowx(centers: &UPoints, goal: X, guess: PointId) -> Po
 
 /// Find the id of the rightmost center that has x <= goal.
 fn last_reachable_center_highx(centers: &UPoints, minimum: X, goal: X) -> PointId {
-    debug_assert!(goal > minimum);
+    dbg!(goal);  //TODO @mark:
+    dbg!(minimum);  //TODO @mark:
+    debug_assert!(goal >= minimum);
 
     // Special case for if the value value matches.
     let (first_index, last_index) = (PointId::new(0), PointId::new(centers.len() - 1));
@@ -96,10 +103,10 @@ fn last_reachable_center_highx(centers: &UPoints, minimum: X, goal: X) -> PointI
     }
 
     // Search the whole space.
-    let mut min = minimum;
-    let mut max = centers.width();
-    debug_assert!(goal > min);
-    debug_assert!(goal < max);
+    let mut min = Border { index: first_index, x: minimum };
+    let mut max = Border { index: last_index, x: centers.width() };
+    debug_assert!(goal > min.x);
+    debug_assert!(goal < max.x);
 
     // Bisection.
     let mut i = 0;  //TODO @mark: TEMPORARY! REMOVE THIS!
@@ -109,25 +116,35 @@ fn last_reachable_center_highx(centers: &UPoints, minimum: X, goal: X) -> PointI
         // Make a good guess.
         let current = PointId::new(
             (centers.len() as f64 *
-                (goal - min)._expose() as f64 /
-                (max - min)._expose() as f64) as usize
+                (goal - min.x)._expose() as f64 /
+                (max.x - min.x)._expose() as f64) as usize
         );
         println!(">> i = {:?}", i);
         println!("  goal = {:?}", goal);
-        println!("  min = {:?}", min);
-        println!("  max = {:?}", max);
+        println!("  min = {:?}", min.x);
+        println!("  max = {:?}", max.x);
         println!("  current = {:?}", current);
         println!("  centers->x = {:?}", centers.get(current).x());
-
-        println!(">>>>+ {}: {:?} / {:?} = {:?} -> {:?} [{:?}, {:?}, {:?}]", i, (goal - min)._expose(), (max - min)._expose(),
-                 (goal - min)._expose() as f64 / (max - min)._expose() as f64,
-                 current.as_index(), goal, min, max);  //TODO @mark: TEMPORARY! REMOVE THIS!
+        let current = crop(current, min.index + 1, max.index - 1);
+//        while centers.get(current).x() < min {
+//            println!("PERFORMANCE HIT! +1");
+//            current.increment();
+//        }
+//        while centers.get(current).x() > max {
+//            println!("PERFORMANCE HIT! -1");
+//            current.decrement();
+//        }
+        println!("  current = {:?}", current);
+        println!("  centers->x = {:?}", centers.get(current).x());
+        println!(">>>>+ {}: {:?} / {:?} = {:?} -> {:?} [{:?}, {:?}, {:?}]", i, (goal - min.x)._expose(), (max.x - min.x)._expose(),
+                 (goal - min.x)._expose() as f64 / (max.x - min.x)._expose() as f64,
+                 current.as_index(), goal, min.x, max.x);  //TODO @mark: TEMPORARY! REMOVE THIS!
         debug_assert!(current >= first_index);
         debug_assert!(current <= last_index);
-        println!(">>> {:?} < {:?} < {:?}", min, centers.get(current).x(), max);  //TODO @mark: TEMPORARY! REMOVE THIS!
+        println!(">>> {:?} < {:?} < {:?}", min.x, centers.get(current).x(), max.x);  //TODO @mark: TEMPORARY! REMOVE THIS!
         //TODO @mark: I think == is possible, there may be multiple centers with the same x coordinate
-        debug_assert!(centers.get(current).x() >= min);
-        debug_assert!(centers.get(current).x() <= max);
+//        debug_assert!(centers.get(current).x() >= min);
+//        debug_assert!(centers.get(current).x() <= max);
         if let Some(v) = prev_iter {
             debug_assert!(v != current);
         }
@@ -139,9 +156,9 @@ fn last_reachable_center_highx(centers: &UPoints, minimum: X, goal: X) -> PointI
             if next_x > goal {
                 return current;
             }
-            min = current_x;
+            min = Border { index: current, x: current_x };
         } else {
-            max = current_x;
+            max = Border { index: current, x: current_x };
         }
         prev_iter = Some(current);
     }
