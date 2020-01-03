@@ -37,18 +37,19 @@ fn euclidean_pseudo_to_real_floor_raw(pseudo: PseudoDist) -> usize {
 fn first_reachable_center_lowx(centers: &UPoints, goal: X, guess: PointId) -> PointId {
 
     // Special case for if the first value matches.
-    let (first_index, last_index) = (PointId::new(0), PointId::new(centers.len()));
+    let (first_index, last_index) = (PointId::new(0), PointId::new(centers.len() - 1));
     if centers.get(first_index).x() >= goal {
         return first_index;
     }
 
     // Search the whole space.
-    let mut min = X::new(0);
-    let mut max = centers.width();
-    debug_assert!(goal > min);
-    debug_assert!(goal < max);
+    let mut min = Border { index: first_index, x: X::new(0) };
+    let mut max = Border { index: last_index, x: centers.width() };
+    debug_assert!(goal > min.x);
+    debug_assert!(goal < max.x);
 
     // Bisection.
+    let mut i = 0;  //TODO @mark: TEMPORARY! REMOVE THIS!
     loop {
         // Make a good guess.
 //        let current = crop(
@@ -59,11 +60,12 @@ fn first_reachable_center_lowx(centers: &UPoints, goal: X, guess: PointId) -> Po
 //            ),
 //            first_index, last_index  //TODO @mark: but the problem is with `x` not `id`
 //        );
-        let current = PointId::new(
+        let current_id = PointId::new(
             (centers.len() as f64 *
-                (goal - min)._expose() as f64 /
-                (max - min)._expose() as f64) as usize
+                (goal - min.x)._expose() as f64 /
+                (max.x - min.x)._expose() as f64) as usize
         );
+        let current = crop(current_id, min.index + 1, max.index - 1);
 //        println!(">>>> {}: {:?} / {:?} = {:?} [{:?}, {:?}, {:?}]", i, (goal - min)._expose(), (max - min)._expose(),
 //                 (goal - min)._expose() as f64 / (max - min)._expose() as f64,
 //                 goal, min, max);  //TODO @mark: TEMPORARY! REMOVE THIS!
@@ -71,8 +73,8 @@ fn first_reachable_center_lowx(centers: &UPoints, goal: X, guess: PointId) -> Po
         debug_assert!(current <= last_index);
 //        println!(">>> {:?} < {:?} < {:?}", min, centers.get(current).x(), max);  //TODO @mark: TEMPORARY! REMOVE THIS!
         //TODO @mark: I think == is possible, there may be multiple centers with the same x coordinate
-        debug_assert!(centers.get(current).x() >= min);
-        debug_assert!(centers.get(current).x() <= max);
+//        debug_assert!(centers.get(current).x() >= min.x);
+//        debug_assert!(centers.get(current).x() <= max.x);
 
         // Return if a match, adjust bounds otherwise.
         let current_x = centers.get(current).x();
@@ -81,9 +83,18 @@ fn first_reachable_center_lowx(centers: &UPoints, goal: X, guess: PointId) -> Po
             if prev_x < goal {
                 return current;
             }
-            min = current_x;
+            min = Border { index: current, x: current_x };
         } else {
-            max = current_x;
+            max = Border { index: current, x: current_x };
+        }
+
+        i += 1;  //TODO @mark: TEMPORARY! REMOVE THIS!
+        if i > 1_000_000 {  //TODO @mark: TEMPORARY! REMOVE THIS!
+            dbg!(current);
+            dbg!(current_x);
+            dbg!(max.index);
+            dbg!(min.index);
+            panic!();
         }
     }
 }
@@ -110,7 +121,7 @@ fn last_reachable_center_highx(centers: &UPoints, minimum: X, goal: X) -> PointI
     let mut prev_iter = None;
     loop {
         // Make a good guess.
-        let current = PointId::new(
+        let current_id = PointId::new(
             (centers.len() as f64 *
                 (goal - min.x)._expose() as f64 /
                 (max.x - min.x)._expose() as f64) as usize
@@ -121,7 +132,7 @@ fn last_reachable_center_highx(centers: &UPoints, minimum: X, goal: X) -> PointI
 //        println!("  max = {:?}", max.x);
 //        println!("  current = {:?}", current);
 //        println!("  centers->x = {:?}", centers.get(current).x());
-        let current = crop(current, min.index + 1, max.index - 1);
+        let current = crop(current_id, min.index + 1, max.index - 1);
 //        while centers.get(current).x() < min {
 //            println!("PERFORMANCE HIT! +1");
 //            current.increment();

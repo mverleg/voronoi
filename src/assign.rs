@@ -41,7 +41,7 @@ fn assign_to_centers_for_row(x: X, y_range: Y, centers: &UPoints) -> GroupingRow
         PointId::new(((x.as_index() * centers.len()) as f64 / centers.width().as_index() as f64) as usize),
         PointId::new(0), PointId::new(centers.len() - 1));
     let mut center_assignments = Vec::with_capacity(y_range.as_index());
-    dbg!(x);  //TODO @mark: TEMPORARY! REMOVE THIS!
+    dbg!(x.as_index());  //TODO @mark: TEMPORARY! REMOVE THIS!
     for y in y_range.indices_upto() {
         let current: Point2D = Point2D::new(x, y);
         let nearest: PointId = nearest_within_box(&centers, current, guess);
